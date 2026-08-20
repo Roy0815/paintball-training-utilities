@@ -110,8 +110,5 @@ Dateien zusammen anlegen.
   eingebaut und hat den Handyfehler nie verursacht, wirft aber Pixel oberhalb und
   unterhalb der Mitte weg. Der Kompromiss wurde nie sauber gemessen, weil damals
   jedes Ergebnis durch den Backend-Fehler verfälscht war.
-- **Inferenzzeiten auf dem Handy neu messen**, nachdem der Intervall-Standard von
-  100ms auf 10ms gesenkt wurde. Falls weiterhin echte Snaps übersehen werden, ist
-  ein kleineres `alpha` bei MobileNet der nächste Hebel.
 - **Die gesprochenen Zahlen aufnehmen** und nach `public/audio/numbers/` legen.
   Der Wiedergabepfad ist verdrahtet und bleibt bis dahin still.

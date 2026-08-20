@@ -115,10 +115,16 @@ geprüft, was jedes MobileNet-Embedding unabhängig vom Inhalt erfüllen muss:
 
 - kein NaN,
 - Einheitslänge nach Normalisierung,
-- echte Sparsity nach ReLU, denn die vorletzte Schicht hat normalerweise 10 bis
-  15% Nullen, das defekte Gerät lieferte 1 Null von 1280,
 - keine Werte, die sich mit Abstand 4 wiederholen, denn das ist genau ein
   RGBA-Texel und der Fingerabdruck eines Texturadressierungsfehlers.
+
+Die Anzahl der Nullen wird daneben ausgegeben, aber bewusst nicht geprüft. Die
+vorletzte Schicht liegt hinter einem ReLU, ein gesundes Embedding ist also
+dünn besetzt, wie stark hängt jedoch vom Backend ab: dasselbe synthetische Bild
+ergibt 139 Nullen auf dem WebGL des Laptops und 641 auf WASM. Ein einzelner
+Schwellwert passt auf beides nicht, während sich das defekte Gerät mit 1 Null
+von 1280 selbst verraten hat. Es bleibt ein Signal für den, der den Bericht
+liest, keine Schranke.
 
 Scheitert die Modellprüfung, wird das Backend verworfen und der nächste Kandidat
 bekommt ein frisch geladenes Modell.

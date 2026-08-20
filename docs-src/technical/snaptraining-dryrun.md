@@ -168,10 +168,19 @@ threshold of 0.6, three of five decides.
 `intervalMs` is a pause **after** each tick, not a period. The real frame rate is
 `1000 / (inferenceMs + intervalMs)`.
 
-That distinction mattered in practice. WASM inference on the test phone measures
-about 85ms average and 118ms peak, so the old default of 100ms ran at roughly
-5 Hz rather than the assumed 10 Hz and cost about 370ms of extra confirm latency
-on top. The default is now 10ms, since inference itself paces the loop.
+That distinction mattered in practice. With the old default of 100ms, WASM
+inference on the test phone measured about 85ms average and 118ms peak, so the
+loop ran at roughly 5 Hz rather than the assumed 10 Hz and cost about 370ms of
+confirm latency on top. The default is now 10ms, since inference itself paces
+the loop.
+
+Measured again on the same phone afterwards, on a 720x720 crop: 45ms average and
+54ms peak, so about 18 Hz and roughly 110ms of confirm latency at
+`confirmFrames = 2`. Inference itself also halved, which was not isolated: the
+per tick console log was removed in the same period and is the likely candidate.
+
+If a snap out is still missed at that rate, the next lever is MobileNet's
+`alpha`, which shrinks the network rather than the loop.
 
 Tick timing is reported as a rolling 20 tick average, deliberately not an all
 time one: JIT and WASM warmup make the first few ticks much slower and would

@@ -132,6 +132,9 @@ export function renderLiveScreen(container, profile, { onBack }) {
         onReady: ({
           numClasses,
           exampleCounts,
+          // Pulled out so it does not reach backendInfo below, which is printed
+          // key by key and would repeat the roi line debugStartInfo already has.
+          roi: _roi,
           k,
           confidenceThreshold,
           ...backendInfo

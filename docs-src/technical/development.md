@@ -107,8 +107,5 @@ files together.
   phone bug, but it also throws away pixels above and below center. The tradeoff
   was never cleanly measured, because every result at the time was corrupted by
   the backend bug.
-- **Re-measure inference timing on the phone** after the interval default was
-  dropped from 100ms to 10ms. If a real snap out is still being missed, lowering
-  MobileNet's `alpha` is the next lever.
 - **Record the spoken number clips** into `public/audio/numbers/`. The playback
   path is wired up and silently does nothing until they exist.

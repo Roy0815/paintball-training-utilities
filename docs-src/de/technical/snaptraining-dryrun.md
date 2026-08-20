@@ -179,11 +179,20 @@ Mit `k = 5` und Schwelle 0.6 entscheiden drei von fünf.
 `intervalMs` ist eine Pause **nach** jedem Tick, keine Periode. Die tatsächliche
 Bildrate ist `1000 / (inferenceMs + intervalMs)`.
 
-Dieser Unterschied hat sich real ausgewirkt. WASM-Inferenz auf dem Testhandy
-misst rund 85ms im Mittel und 118ms im Maximum, der alte Standardwert von 100ms
-lief damit bei etwa 5 Hz statt der angenommenen 10 Hz und kostete zusätzlich rund
-370ms Bestätigungsverzögerung. Der Standard liegt jetzt bei 10ms, weil die
-Inferenz die Schleife ohnehin taktet.
+Dieser Unterschied hat sich real ausgewirkt. Mit dem alten Standardwert von
+100ms maß die WASM-Inferenz auf dem Testhandy rund 85ms im Mittel und 118ms im
+Maximum, die Schleife lief damit bei etwa 5 Hz statt der angenommenen 10 Hz und
+kostete zusätzlich rund 370ms Bestätigungsverzögerung. Der Standard liegt jetzt
+bei 10ms, weil die Inferenz die Schleife ohnehin taktet.
+
+Danach auf demselben Handy erneut gemessen, bei 720x720 Zuschnitt: 45ms im
+Mittel und 54ms im Maximum, also rund 18 Hz und etwa 110ms
+Bestätigungsverzögerung bei `confirmFrames = 2`. Die Inferenz selbst hat sich
+ebenfalls halbiert, das wurde aber nicht isoliert: im selben Zeitraum ist das
+Logging pro Tick entfallen, was der wahrscheinliche Grund ist.
+
+Wird bei dieser Rate weiterhin ein Snap übersehen, ist der nächste Hebel
+MobileNets `alpha`, das nicht die Schleife, sondern das Netz verkleinert.
 
 Die Tick-Zeiten werden als gleitender Mittelwert über 20 Ticks ausgegeben,
 bewusst nicht über die gesamte Laufzeit: JIT- und WASM-Aufwärmen machen die

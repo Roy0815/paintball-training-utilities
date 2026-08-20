@@ -108,10 +108,15 @@ satisfy regardless of content:
 
 - no NaN,
 - unit length after normalization,
-- real post ReLU sparsity, since the penultimate layer is normally 10 to 15%
-  zeros and the broken device produced 1 zero out of 1280,
 - no values repeating at a lag of 4, which is one RGBA texel and the fingerprint
   of a texture addressing bug.
+
+The zero count is reported next to those but deliberately not asserted. The
+penultimate layer sits behind a ReLU, so a healthy embedding is sparse, but how
+sparse depends on the backend: the same synthetic image gives 139 zeros on the
+laptop's WebGL and 641 on WASM. No single threshold fits both, while the broken
+device gave itself away with 1 zero out of 1280. It stays a signal for whoever
+reads the report rather than a gate.
 
 If the model check fails, the backend is dropped and the next candidate gets a
 freshly loaded model.
