@@ -1,0 +1,625 @@
+:root {
+  --bg: #0a0f1a;
+  --bg-elevated: #131b2c;
+  --border: #253148;
+  --text: #e8ecf5;
+  --text-muted: #8a96ac;
+  --accent: #22d3ee;
+  --accent-strong: #06b6d4;
+  --accent-contrast: #052027;
+  --danger: #f87171;
+  --danger-strong: #ef4444;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: -0.5rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  background: var(--bg-elevated);
+  color: var(--accent);
+}
+
+/* An authored display value on the same class beats the UA's
+   [hidden]{display:none} rule on a specificity tie, so the home screen's
+   hidden back button rendered anyway without this override. */
+.back-link[hidden] {
+  display: none;
+}
+
+.app-title {
+  /* Centered on the header's full width, not in the flex gap between the back
+     button and the language switch. Those two are not the same width, so a
+     flex centered title would drift depending on which of them is visible.
+     .app-header is position: sticky and already provides the containing block
+     this absolute positioning needs. */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 11rem);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Fallback for the home screen (always) and for any title too long for the
+ * centered slot (measured at render time in shell.js). Puts the title back
+ * into the normal flex flow. Declared after .app-title so it wins the
+ * specificity tie between two single class rules.
+ */
+.app-title--left {
+  position: static;
+  left: auto;
+  transform: none;
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  text-align: left;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 0.15rem;
+  flex-shrink: 0;
+  /* .app-title is out of flow, so it no longer pushes this to the far right
+     via flex: 1. Doing it directly works whether or not the back button is
+     visible on the other side. */
+  margin-left: auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem;
+}
+
+/* Same [hidden] pitfall as .back-link and .crop-preview. */
+.lang-switch[hidden] {
+  display: none;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: var(--text);
+}
+
+.lang-btn[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.lang-btn[aria-pressed='true']:hover {
+  color: var(--accent-contrast);
+}
+
+main#view {
+  flex: 1;
+  padding: 1rem;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.2rem;
+  border-radius: 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px rgba(34, 211, 238, 0.14);
+  transform: translateY(-2px);
+}
+
+.tile-icon {
+  font-size: 2rem;
+}
+
+.tile-name {
+  font-weight: 700;
+}
+
+.tile-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.warning {
+  color: var(--accent);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.field-row .field {
+  flex: 1;
+  min-width: 140px;
+}
+
+input,
+select {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--text-muted);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.btn-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: var(--danger-strong);
+}
+
+.btn-ignore {
+  align-self: center;
+  background: none;
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  padding: 0.5rem 1.2rem;
+}
+
+.btn-ignore:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.video-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.video-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.roi-overlay {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+}
+
+.roi-box {
+  position: absolute;
+  border: 2px solid var(--accent);
+  background: rgba(34, 211, 238, 0.15);
+  pointer-events: none;
+}
+
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.5rem;
+}
+
+.thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.swipe-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.swipe-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.swipe-card img {
+  display: block;
+  width: 100%;
+  /* dvh accounts for the mobile browser's address bar, vh does not. Without
+     it the card can be taller than the visible viewport and push the label
+     buttons below the fold. The duplicate declaration is intentional:
+     browsers without dvh ignore that line and keep the vh fallback. */
+  max-height: 42vh;
+  max-height: 42dvh;
+  object-fit: contain;
+  background: #000;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.swipe-tag {
+  position: absolute;
+  top: 14px;
+  z-index: 1;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  pointer-events: none;
+  border: 2px solid currentColor;
+  background: var(--bg);
+}
+
+.swipe-tag-person {
+  right: 14px;
+  color: var(--accent);
+  transform: rotate(8deg);
+}
+
+.swipe-tag-empty {
+  left: 14px;
+  color: var(--text-muted);
+  transform: rotate(-8deg);
+}
+
+.swipe-buttons {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.btn-swipe {
+  flex: 1;
+  max-width: 200px;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.profile-card {
+  position: relative;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.profile-card[data-live='1'] {
+  cursor: pointer;
+  /* Room on the right so the chevron never overlaps the action buttons or
+     the trained-at text, both of which otherwise run to the edge. */
+  padding-right: 2.25rem;
+  transition: border-color 0.15s ease;
+}
+
+.profile-card[data-live='1']:hover,
+.profile-card[data-live='1']:focus-visible {
+  border-color: var(--accent);
+}
+
+.profile-card-chevron {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  /* Purely a "there's more here" hint, not its own hit target. */
+  pointer-events: none;
+}
+
+.profile-card[data-live='1']:hover .profile-card-chevron,
+.profile-card[data-live='1']:focus-visible .profile-card-chevron {
+  color: var(--accent);
+}
+
+.profile-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.profile-card-thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #000;
+}
+
+.profile-card-thumb-empty {
+  background: var(--bg);
+}
+
+.profile-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.profile-card-trained {
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.counter-value {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.counter-live {
+  text-align: center;
+  font-size: 6.5rem;
+  transition: transform 0.15s ease;
+}
+
+.counter-live.flash {
+  transform: scale(1.15);
+  color: var(--accent);
+}
+
+progress {
+  width: 100%;
+  height: 10px;
+  accent-color: var(--accent);
+}
+
+.progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.progress-row .hint {
+  text-align: center;
+}
+
+.debug-panel {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin: 0;
+}
+
+.crop-preview {
+  display: flex;
+  justify-content: center;
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Same [hidden] pitfall as .back-link, see its override above. */
+.crop-preview[hidden] {
+  display: none;
+}
+
+.crop-preview canvas {
+  /* Width driven, no max-height: capping the height of a tall portrait
+     canvas forces a narrow render width, which looks like pillarboxing even
+     though the pixel data has none. */
+  width: 100%;
+  height: auto;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3.5rem 1rem;
+}
+
+.spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
