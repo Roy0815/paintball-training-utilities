@@ -10,12 +10,16 @@
  * Names and descriptions are i18n keys, not display strings: this module is
  * static and loaded before a language is picked, so the lookup has to happen
  * in whichever screen renders them.
+ *
+ * A tile shows `iconUrl` when the feature ships an image in public/icons/, and
+ * falls back to the `icon` emoji otherwise. The URL is built from BASE_URL
+ * because GitHub Pages serves the app from a subpath.
  */
 export const features = [
   {
     id: 'presence-counter',
     nameKey: 'feature.presenceCounter.name',
-    icon: '📷',
+    iconUrl: `${import.meta.env.BASE_URL}icons/temple.png`,
     descriptionKey: 'feature.presenceCounter.description',
     async mount(container) {
       const { mount } = await import('./presence-counter/ui/index.js');

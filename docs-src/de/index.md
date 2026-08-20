@@ -4,6 +4,9 @@ hero:
   name: Paintball Training Utilities
   text: Trainingstools, die komplett auf dem Handy laufen
   tagline: Ein kamerabasierter Wiederholungszähler, den du selbst trainierst. Kein Account, kein Backend, keine Aufnahmen verlassen das Gerät.
+  image:
+    src: /temple.png
+    alt: PTU Temple Bunker
   actions:
     - theme: brand
       text: Anwenderdoku

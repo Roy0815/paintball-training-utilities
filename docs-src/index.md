@@ -4,6 +4,9 @@ hero:
   name: Paintball Training Utilities
   text: Training tools that run entirely on your phone
   tagline: A camera based rep counter you train yourself. No account, no backend, no footage leaving the device.
+  image:
+    src: /temple.png
+    alt: PTU temple bunker
   actions:
     - theme: brand
       text: User guide
