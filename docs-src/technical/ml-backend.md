@@ -37,6 +37,22 @@ similarity of 0.775, so the feature space was scrambled, while `empty` still hel
 together at 0.952 because blank wall photos are nearly identical images. Every
 query therefore collapsed into the `empty` cluster.
 
+### The signals that identified it
+
+Four observations, in the order they narrowed it down. Each one is an invariant
+rather than a symptom, which is what makes them reusable on the next device
+that behaves this way.
+
+- **`row L2` was not 1.0.** `addExample()` unit length normalizes every stored
+  row, so any other row norm proves broken arithmetic whatever produced the
+  vector. The phone measured 0.381 to 1.409, the laptop exactly 1.
+- **A cosine similarity of 1.676.** Impossible between unit vectors.
+- **Values repeating at a lag of 4**, one RGBA texel's worth. This survived
+  disabling packed textures, so it was not a packing bug.
+- **`zeros: 1` out of 1280.** MobileNet's penultimate layer is post ReLU and is
+  normally 10 to 15% zeros. The laptop produced 139 and WASM 641, the phone's
+  WebGL backend produced 1. The sparsity structure was simply gone.
+
 ## Backend selection
 
 ```js
@@ -152,9 +168,28 @@ proof of broken arithmetic.
 because the test phone had no working USB remote debugging and everything had to
 be readable on screen.
 
-## Further reading
+## Ruled out along the way
 
-`DEBUG_HANDOFF.md` in the repository root is the full investigation record: the
-symptoms, the signals that identified the cause, everything that was ruled out
-along the way, and the follow-ups that are still open. This page describes the
-system as it stands, that file describes how it got here.
+All of the following was investigated and verified not to be the cause. It is
+listed so the same ground does not get covered twice:
+
+ROI or resolution mismatch between the setup and capture sessions, class count
+imbalance biasing the KNN vote, `k = 3` making the confidence threshold
+unreachable, inverted label buttons, MobileNet's internal resize, portrait
+aspect ratio distortion, WebGL float precision flags, front camera post
+processing, `knn-classifier`'s internal indexing, vector normalization,
+training loop closure bugs, canvas to texture upload (`canvas vs imageData`
+measured 1.0000 on both devices) and packed WebGL textures.
+
+Several of those turned out to be real bugs even though none of them was this
+one, and their fixes were kept: the
+[stream handoff](./snaptraining-dryrun#stream-handoff),
+[class balancing](./snaptraining-dryrun#class-balancing),
+[k = 5 with a 0.6 threshold](./snaptraining-dryrun#k-and-the-threshold) and the
+[center square crop](./snaptraining-dryrun#camera-and-cropping-capture-js).
+
+## Expected outcome per device
+
+Worth knowing before treating a backend choice as a fault: a desktop or laptop
+with a normal GPU selects `webgl`. The Samsung test phone selects `wasm`, and
+that is the correct outcome rather than a degraded one.

@@ -40,6 +40,25 @@ Merkmalsraum war also durcheinander, während `empty` mit 0.952 zusammenhielt,
 weil Fotos einer leeren Wand einander fast gleichen. Jede Anfrage fiel damit in
 den `empty`-Cluster.
 
+### Die Signale, die es aufgedeckt haben
+
+Vier Beobachtungen, in der Reihenfolge, in der sie eingegrenzt haben. Jede davon
+ist eine Invariante und kein Symptom, und genau deshalb sind sie auf dem
+nächsten Gerät mit diesem Verhalten wieder brauchbar.
+
+- **`row L2` war nicht 1.0.** `addExample()` normalisiert jede gespeicherte
+  Zeile auf Einheitslänge, jede andere Zeilennorm beweist also falsche
+  Arithmetik, egal woher der Vektor kommt. Das Handy maß 0.381 bis 1.409, der
+  Laptop exakt 1.
+- **Eine Kosinusähnlichkeit von 1.676.** Zwischen Einheitsvektoren unmöglich.
+- **Werte, die sich mit Abstand 4 wiederholen**, also genau ein RGBA-Texel. Das
+  blieb auch nach dem Abschalten gepackter Texturen bestehen, war also kein
+  Packing-Fehler.
+- **`zeros: 1` von 1280.** Die vorletzte Schicht von MobileNet liegt hinter
+  einem ReLU und hat normalerweise 10 bis 15% Nullen. Der Laptop lieferte 139,
+  WASM 641, das WebGL-Backend des Handys 1. Die Sparsity-Struktur war schlicht
+  verschwunden.
+
 ## Backendauswahl
 
 ```js
@@ -159,9 +178,29 @@ selbst schon ein Beweis für falsche Arithmetik.
 es, weil das Testhandy kein funktionierendes USB-Remote-Debugging hatte und alles
 auf dem Bildschirm lesbar sein musste.
 
-## Weiterführend
+## Unterwegs ausgeschlossen
 
-`DEBUG_HANDOFF.md` im Wurzelverzeichnis ist das vollständige Untersuchungs-
-protokoll: Symptome, die Signale, die zur Ursache führten, alles, was unterwegs
-ausgeschlossen wurde, und die noch offenen Punkte. Diese Seite beschreibt das
-System, wie es heute ist, jene Datei beschreibt, wie es dorthin kam.
+Alles Folgende wurde untersucht und als Ursache ausgeschlossen. Aufgelistet,
+damit dieselbe Strecke nicht zweimal abgelaufen wird:
+
+ROI- oder Auflösungsunterschiede zwischen Setup- und Aufnahmesitzung, Verzerrung
+der KNN-Abstimmung durch ungleiche Klassenanzahlen, `k = 3`, das die
+Konfidenzschwelle unerreichbar macht, vertauschte Label-Buttons, MobileNets
+interne Skalierung, Verzerrung durch das Hochformat, WebGL-Flags zur
+Float-Genauigkeit, Nachbearbeitung der Frontkamera, die interne Indizierung von
+`knn-classifier`, Vektornormalisierung, Closure-Fehler in der Trainingsschleife,
+der Canvas-zu-Textur-Upload (`canvas vs imageData` maß auf beiden Geräten
+1.0000) und gepackte WebGL-Texturen.
+
+Mehrere davon waren echte Fehler, auch wenn keiner dieser eine war, und ihre
+Korrekturen sind geblieben: die
+[Streamübergabe](./snaptraining-dryrun#streamubergabe), der
+[Klassenausgleich](./snaptraining-dryrun#klassenausgleich),
+[k = 5 mit Schwelle 0.6](./snaptraining-dryrun#k-und-die-schwelle) und der
+[Mittenzuschnitt](./snaptraining-dryrun#kamera-und-zuschnitt-capture-js).
+
+## Erwartetes Ergebnis je Gerät
+
+Bevor man eine Backendwahl für einen Fehler hält: ein Desktop oder Laptop mit
+normaler GPU wählt `webgl`. Das Samsung-Testhandy wählt `wasm`, und das ist das
+richtige Ergebnis, keine Verschlechterung.
