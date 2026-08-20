@@ -178,6 +178,13 @@ main#view {
   margin: 0 auto;
 }
 
+/* Marks the end of the page for the scroll hint's observer. One pixel rather
+   than zero so it always has a box to intersect with. */
+.scroll-end {
+  height: 1px;
+  flex-shrink: 0;
+}
+
 /* Fades in at the bottom edge while there is more content below, and hides
    once the end is reached so it never sits on top of the last element.
    Toggled by shell.js. */

@@ -10,8 +10,9 @@ let currentForceLeftAlign = false;
 
 // Breathing room between the centered title and the chrome on either side.
 const TITLE_GAP_PX = 12;
-// Below this many pixels of remaining scroll the hint is pointless.
-const SCROLL_HINT_THRESHOLD_PX = 24;
+// Roughly the bottom padding of a screen, so the hint gives up once the last
+// real element is clear of it rather than clinging on through empty padding.
+const SCROLL_END_MARGIN_PX = 40;
 
 function renderLangSwitch() {
   langSwitchEl.innerHTML = LANGUAGES.map(
@@ -28,31 +29,23 @@ function renderLangSwitch() {
 /**
  * Screens are long enough to scroll on a phone, and a primary button sitting
  * just below the fold looks like a missing button rather than a hidden one.
- * This fades in at the bottom edge whenever there is more content below, and
- * disappears at the end of the page so it never covers the last element.
+ * This fades in at the bottom edge whenever there is more content below.
+ *
+ * The question it answers is literally "is the end of the page on screen", so
+ * it watches a sentinel sitting after the last content rather than comparing
+ * scroll offsets. Offset arithmetic has to guess a tolerance for fractional
+ * device pixels and reads a layout viewport that a mobile browser resizes under
+ * you as its toolbars collapse, which is exactly when the answer matters. The
+ * observer also needs no scroll, resize or content-height plumbing of its own:
+ * anything that moves the end of the page re-fires it.
  */
-function setupScrollHint(view) {
-  let scheduled = false;
-  const update = () => {
-    scheduled = false;
-    const doc = document.documentElement;
-    const remaining = doc.scrollHeight - doc.scrollTop - doc.clientHeight;
-    scrollHintEl.hidden = remaining <= SCROLL_HINT_THRESHOLD_PX;
-  };
-  // update() reads layout, and scroll fires far more often than the answer can
-  // change, so it is coalesced onto the next frame.
-  const schedule = () => {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(update);
-  };
-  window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', schedule);
-  // Screens swap their content without any navigation, and a camera preview
-  // changes height once the stream reports its resolution, so the page height
-  // has to be watched rather than sampled once per render.
-  new ResizeObserver(schedule).observe(view);
-  schedule();
+function setupScrollHint(sentinelEl) {
+  new IntersectionObserver(
+    ([entry]) => {
+      scrollHintEl.hidden = entry.isIntersecting;
+    },
+    { rootMargin: `0px 0px ${SCROLL_END_MARGIN_PX}px 0px` }
+  ).observe(sentinelEl);
 }
 
 /** Renders the persistent header plus the view outlet and returns the outlet element. */
@@ -68,6 +61,7 @@ export function renderShell(root) {
       <div class="lang-switch" id="lang-switch"></div>
     </header>
     <main id="view"></main>
+    <div class="scroll-end" id="scroll-end" aria-hidden="true"></div>
     <div class="scroll-hint" id="scroll-hint" aria-hidden="true" hidden>
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
@@ -98,9 +92,8 @@ export function renderShell(root) {
 
   window.addEventListener('resize', () => updateTitleAlignment(currentForceLeftAlign));
 
-  const view = root.querySelector('#view');
-  setupScrollHint(view);
-  return view;
+  setupScrollHint(root.querySelector('#scroll-end'));
+  return root.querySelector('#view');
 }
 
 /**
