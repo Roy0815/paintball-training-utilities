@@ -18,9 +18,11 @@ export function renderHome(container) {
           .map(
             (feature) => `
               <a class="tile" href="#/feature/${feature.id}">
+                <span class="tile-text">
+                  <span class="tile-name">${t(feature.nameKey)}</span>
+                  <span class="tile-desc">${t(feature.descriptionKey)}</span>
+                </span>
                 <span class="tile-icon">${renderTileIcon(feature)}</span>
-                <span class="tile-name">${t(feature.nameKey)}</span>
-                <span class="tile-desc">${t(feature.descriptionKey)}</span>
               </a>
             `
           )
