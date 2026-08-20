@@ -1,0 +1,213 @@
+# Snaptraining Dryrun internals
+
+Directory `src/features/presence-counter/`. The id predates the current display
+name and is kept so existing stored profiles stay readable.
+
+| Module | Responsibility |
+| --- | --- |
+| `storage.js` | Profile CRUD, capture defaults, counter updates |
+| `capture.js` | Camera, cropping, ROI selection, timed capture series |
+| `labeling.js` | Label constants, counting, validation |
+| `training.js` | Embeddings, class balancing, KNN training |
+| `live-counter.js` | Detection loop, debouncing, diagnostics |
+| `ui/index.js` | Wizard state machine and history handling |
+| `ui/screens/*.js` | One render function per screen |
+
+## The profile
+
+A snapshot position is one object in `presence-counter:profiles`:
+
+```js
+{
+  id,                    // crypto.randomUUID()
+  name,
+  facingMode,            // 'user' or 'environment'
+  roi,                   // { x, y, w, h } as fractions, or null
+  captureCount,
+  captureIntervalMs,
+  classifierDataset,     // serialized KNN dataset, null until trained
+  trainingDiagnostics,   // per photo record from training time
+  engine,                // { backend, engineMode, verified }
+  previewImage,          // one training photo as the list thumbnail
+  counter,
+  history,               // timestamps of counted reps
+  createdAt,
+  trainedAt,
+}
+```
+
+`roi` is stored as fractions of the frame rather than pixels, so it survives a
+different camera resolution. That only holds if the resolution stays comparable,
+which is why the camera is requested with a pinned target size.
+
+## Camera and cropping, `capture.js`
+
+`startCamera()` asks for a fixed ideal resolution of 1280x720:
+
+```js
+video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } }
+```
+
+Setup, capture and live mode are three separate `getUserMedia` sessions, and
+phone cameras readily negotiate a different resolution per session. Since the
+ROI is fractional, a resolution change silently moves what those fractions crop.
+
+`getCropRect()` returns either the ROI or, without one, a **center square crop**.
+MobileNet stretches whatever it receives to 224x224 without cropping and was
+trained on roughly square images, so a 9:16 portrait frame distorts far enough to
+shift embeddings. A 4:3 webcam frame is a mild stretch, a portrait phone frame is
+twice as extreme in the other direction.
+
+::: warning Open question
+The center square crop was added for that reason and is sound, but it does throw
+away real pixels above and below center, which on a portrait frame can cut off a
+head or a weapon that is not vertically centered. It has never been measured
+against real accuracy, because every result during the period it was added was
+corrupted by the backend bug described in
+[ML backend and verification](./ml-backend). Worth an A/B test now that results
+are trustworthy.
+:::
+
+Three entry points share that rect:
+
+- `captureFrameCanvas()` allocates a canvas per call, used for single captures
+  and for each live tick.
+- `captureFrameDataUrl()` wraps it into a JPEG data URL for storage.
+- `drawCroppedFrame()` draws into a canvas the caller owns, for the continuously
+  updating preview, where allocating per frame would be wasteful.
+
+`attachRoiSelector()` maps pointer positions to fractions through
+`getVideoDisplayRect()`, which accounts for `object-fit: contain` letterboxing.
+A drag smaller than 2% in either dimension is treated as a stray tap and clears
+the ROI instead of cropping the frame down to nothing.
+
+`captureSeries()` resolves with the captured data URLs and is cancellable at any
+point, including during the countdown. The countdown exists because the person
+in the photos is usually the person holding the phone.
+
+### Stream handoff
+
+The setup screen does not stop its stream when moving on. It hands the live
+`MediaStream` to the capture screen through the draft, so the ROI drawn against
+that stream's resolution and the photos actually captured come from the exact
+same feed.
+
+## Labeling, `labeling.js`
+
+Two classes: `LABELS.PERSON` for snap, `LABELS.EMPTY` for cover. The internal
+names are historical, the display strings come from i18n.
+
+Ignored photos keep `label: null`, so the training filter drops them without a
+second flag. `validateLabels()` enforces `MIN_EXAMPLES_PER_CLASS` (5) per class
+and returns what is still missing, which the summary screen shows directly.
+
+## Training, `training.js`
+
+For each labeled photo: decode it, run MobileNet up to the penultimate layer for
+a 1280 value embedding, and add it to the KNN classifier. The classifier dataset
+is then serialized into typed arrays plus shapes, because tensors cannot go into
+IndexedDB but typed arrays survive structured clone.
+
+### Class balancing
+
+`balanceClasses()` caps both classes to the same shuffled count before training.
+
+The KNN picks its k nearest neighbours from all examples pooled together and then
+votes by raw count per class. A class with more examples wins on density alone,
+even when its examples are not particularly similar to the query, so an
+unbalanced training set biases every prediction toward the larger class.
+
+::: tip Open question
+Balancing fixed a real and observed bias, but it has never been retested since
+the backend bug was fixed, so it is unknown whether it still matters for a
+correctly computed feature space.
+:::
+
+### Why diagnostics are recorded at training time
+
+The labeled photos are discarded once training finishes. Without a record, a
+classifier trained from blank or undecoded images is indistinguishable at live
+time from a correct one, and the source images are gone.
+
+So each photo contributes an entry with its pixel statistics and its embedding
+statistics (L2 norm, mean, NaN count). `formatTrainingDiagnostics()` renders it
+inside the live screen's diagnostic report.
+
+`getEngineSignature()` is stored alongside, because embeddings are only
+comparable to others computed by the same, verified engine.
+
+## Live detection, `live-counter.js`
+
+`startLiveDetection(videoEl, options)` returns `{ stop, runDiagnostic }`.
+
+### Counting logic
+
+A raw prediction per frame, then a debounce:
+
+```
+isPersonFrame = label === 'person' && confidence >= 0.6
+
+if isPersonFrame === confirmedPresent   reset the pending streak
+else                                    grow the streak
+  streak >= confirmFrames (2)           flip confirmedPresent
+                                        count on a flip to present
+```
+
+One rep is one cover to snap transition. Holding a snap counts once, and the next
+rep needs a confirmed cover in between, so nothing double counts.
+
+### k and the threshold
+
+`k = 5` is passed explicitly because `knn-classifier` defaults to 3. With three
+neighbours, confidence can only ever be 0, 1/3, 2/3 or 1, so a 0.75 threshold
+silently demands a unanimous vote and is almost never reached. With `k = 5` and a
+threshold of 0.6, three of five decides.
+
+### Loop timing
+
+`intervalMs` is a pause **after** each tick, not a period. The real frame rate is
+`1000 / (inferenceMs + intervalMs)`.
+
+That distinction mattered in practice. WASM inference on the test phone measures
+about 85ms average and 118ms peak, so the old default of 100ms ran at roughly
+5 Hz rather than the assumed 10 Hz and cost about 370ms of extra confirm latency
+on top. The default is now 10ms, since inference itself paces the loop.
+
+Tick timing is reported as a rolling 20 tick average, deliberately not an all
+time one: JIT and WASM warmup make the first few ticks much slower and would
+permanently skew the number away from the steady state speed, which is what
+actually decides whether reps get missed.
+
+### Preview decoupling
+
+The live screen redraws its crop preview on its own `requestAnimationFrame`
+loop, not on classification ticks. Tied to inference it looked like a choppy 8 to
+10 fps preview on an unaccelerated backend.
+
+## Screens
+
+| Screen | File | Notes |
+| --- | --- | --- |
+| Profile list | `screens/profileList.js` | Card click starts live mode, buttons excluded via `closest('button')` |
+| Setup | `screens/setup.js` | Name, camera, ROI, hands its stream to capture |
+| Capture | `screens/capture.js` | Series settings, crop preview, thumbnails, debug panel |
+| Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
+| Train | `screens/train.js` | Progress, saves the profile, no back target |
+| Live | `screens/live.js` | Counter, status line, engine warning, debug tooling |
+
+::: warning The profile card click target
+The card uses a plain click listener on an in flow element, not an absolutely
+positioned overlay hitzone. Several attempts at such an overlay broke differently
+on Android and iOS.
+
+The bug that survived all of them was not CSS at all. The exclusion check for the
+action buttons matched `.profile-card-actions`, the wrapper div, whose box is
+wider than the visible buttons on a narrow screen. Taps in that margin were
+swallowed and looked exactly like a dead zone. Checking `closest('button')` fixed
+it.
+
+It was found by putting a touch event logger on the screen, after three plausible
+CSS fixes had failed in different ways on the two platforms. For a real device UI
+bug that resists several rounds of guessing, build the on device logger before
+trying another blind fix.
+:::

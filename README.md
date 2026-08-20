@@ -2,6 +2,17 @@
 
 Multi tool PWA for paintball training. Runs entirely client side in the browser (on-device ML, no backend, no cloud costs) and is deployed via GitHub Pages.
 
+## Documentation
+
+The full documentation is published alongside the app at
+`/paintball-training-utilities/docs/` and is split in two:
+
+- a **user guide** covering what the app does and how to use it,
+- a **technical section** covering architecture, module layout, the ML pipeline
+  and the device specific pitfalls that shaped it.
+
+Sources live in `docs-src/`, see `npm run docs:dev`.
+
 ## Structure
 
 The app opens on an overview screen with one tile per tool. Each tool is a self-contained module under `src/features/<name>/` with its own entry point and its own IndexedDB stores, so a new tool is added to the central registry (`src/features/index.js`) without touching any existing module.

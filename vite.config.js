@@ -43,6 +43,10 @@ export default defineConfig(({ command }) => ({
         // have no offline inference at all. mp3 covers the spoken number clips
         // in public/audio/numbers/, since training rarely happens on good signal.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm,mp3}'],
+        // The docs site is built into dist/docs and shares this origin, but it
+        // is not part of the app. Precaching it would put unrelated pages into
+        // the offline install and add the docs to every service worker update.
+        globIgnores: ['docs/**'],
         // MobileNet weights (~5 MB) come from the TFHub CDN, so they are not
         // part of the build output and need their own runtime caching rule.
         runtimeCaching: [
