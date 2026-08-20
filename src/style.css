@@ -35,7 +35,11 @@ body {
 #app {
   display: flex;
   flex-direction: column;
+  /* dvh is the viewport actually visible on a phone, vh includes the strip
+     behind the browser's own bars. With vh alone the last element of a screen
+     can sit below the fold while the page looks like it ends there. */
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .app-header {
@@ -90,7 +94,10 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  max-width: calc(100% - 11rem);
+  /* Starting point only. shell.js measures the chrome on both sides and
+     replaces this, because a fixed reserve cannot know whether the back
+     button is showing. */
+  max-width: calc(100% - 13rem);
   text-align: center;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -163,9 +170,66 @@ body {
 main#view {
   flex: 1;
   padding: 1rem;
+  /* Keeps the last element clear of the phone's home indicator and off the
+     very bottom edge, where a button reads as cut off. */
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
   max-width: 640px;
   width: 100%;
   margin: 0 auto;
+}
+
+/* Fades in at the bottom edge while there is more content below, and hides
+   once the end is reached so it never sits on top of the last element.
+   Toggled by shell.js. */
+.scroll-hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 20%, transparent);
+  color: var(--accent);
+  /* Purely an affordance, never a tap target. */
+  pointer-events: none;
+  z-index: 5;
+  animation: scroll-hint-in 0.2s ease;
+}
+
+/* Same [hidden] pitfall as .back-link, see its override above. */
+.scroll-hint[hidden] {
+  display: none;
+}
+
+.scroll-hint svg {
+  animation: scroll-hint-nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes scroll-hint-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes scroll-hint-nudge {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(0.3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint,
+  .scroll-hint svg {
+    animation: none;
+  }
 }
 
 h1,
@@ -359,6 +423,57 @@ select {
 .btn-ignore:hover:not(:disabled) {
   color: var(--text);
   border-color: var(--text-muted);
+}
+
+/* The capture screen's headline instruction. The even split between the two
+   classes is the one thing that decides whether the training set is usable,
+   so it is shown as a bar rather than buried in a sentence. */
+.ratio-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.ratio-hint-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.ratio-bar {
+  display: flex;
+  height: 1.9rem;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* Both halves are flex: 1, so the bar is the 50/50 it is asking for. Colors
+   match the swipe tags on the labeling screen, so the two classes look the
+   same everywhere they appear. */
+.ratio-bar span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ratio-bar-cover {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.ratio-bar-snap {
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 .video-wrap {

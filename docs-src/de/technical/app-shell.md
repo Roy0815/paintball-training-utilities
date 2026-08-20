@@ -29,6 +29,19 @@ der Text abgeschnitten wird. Das muss gemessen statt angenommen werden, weil
 Titel übersetzt sind und auf dem Live-Bildschirm aus Profilnamen bestehen, die
 Nutzer selbst eingeben.
 
+Die Breite dieses zentrierten Bereichs wird ebenfalls gemessen, von
+`fitCenteredTitle()`, anhand der rechten Kante des Zurück-Buttons und der linken
+Kante des Sprachumschalters. Früher stand dafür ein fester Wert im CSS, und der
+war in beide Richtungen falsch: lange deutsche Titel wie "Trainingsdaten
+sammeln" stießen an die Sprachpillen, während auf der Seite des Zurück-Buttons
+Platz verschenkt wurde, der schmaler und manchmal gar nicht vorhanden ist. Da
+der Titel absolut positioniert ist, beeinflusst er diese Messung nicht, beide
+Kanten lassen sich also direkt auslesen.
+
+Das dabei gesetzte Inline-`max-width` muss vor dem Umschalten auf die
+linksbündige Klasse gelöscht werden, sonst gewinnt es gegen die Klassenregel,
+die es aufheben soll.
+
 ### Sprachwechsel außerhalb des Outlets
 
 Der Router rendert `#view` bei einem Sprachwechsel neu, der Header liegt aber
@@ -104,6 +117,33 @@ liegt in `try/catch`: Browser im privaten Modus werfen, und eine verlorene
 Spracheinstellung ist kein Grund, die App zu zerlegen.
 
 `setLang()` benachrichtigt die Listener, wodurch Router und Header neu rendern.
+
+### Scrollposition und Scroll-Hinweis
+
+`setHeader()` scrollt zusätzlich nach oben. Jeder Screen ruft es beim Einhängen
+genau einmal auf, damit ist es die einzige Stelle, die sowohl Router-Navigation
+als auch die Wizard-Schritte eines Features abdeckt. Ohne das übernimmt ein
+neuer Screen die Scrollposition des vorherigen und öffnet irgendwo in seiner
+Mitte.
+
+Die Shell besitzt außerdem einen Scroll-Hinweis: ein Verlauf mit Pfeil, fest am
+unteren Rand, sichtbar nur solange darunter noch Inhalt kommt, und am Seitenende
+ausgeblendet, damit er nie auf dem letzten Element liegt. Die Screens hier sind
+auf einem Handy lang genug zum Scrollen, und ein wichtiger Button knapp unter
+der Kante wirkt nicht versteckt, sondern schlicht nicht vorhanden.
+
+Gesteuert wird er über die Scrollwerte des Dokuments und nicht über einen
+Scroll-Container, weil die Seite als Ganzes scrollt. Ein `ResizeObserver` auf
+`#view` deckt die Fälle ab, in denen weder ein Scroll- noch ein Resize-Event
+feuert: Screens tauschen ihren Inhalt ohne Navigation, und eine Kameravorschau
+ändert ihre Höhe, sobald der Stream seine Auflösung meldet. Scroll und Resize
+werden auf den nächsten Frame gebündelt, weil der Handler Layout liest.
+
+Zwei zugehörige CSS-Details stehen in `style.css`: `#app` nutzt `100dvh` neben
+`100vh`, weil `vh` den Streifen hinter den Browserleisten mitzählt und Screens
+dadurch unter der sichtbaren Kante endeten, und `main#view` hat unten ein
+Padding aus `env(safe-area-inset-bottom)` plus etwas Zugabe, damit der letzte
+Button die Home-Anzeige des Telefons freihält.
 
 ## Navigation innerhalb eines Features, `presence-counter/ui/index.js`
 

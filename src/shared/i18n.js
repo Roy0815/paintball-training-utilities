@@ -98,9 +98,10 @@ const STRINGS = {
   'pc.setup.cameraError': { de: 'Kamerazugriff fehlgeschlagen: {message}', en: 'Camera access failed: {message}' },
 
   'pc.capture.title': { de: 'Trainingsdaten sammeln', en: 'Collect training data' },
+  'pc.capture.ratioTitle': { de: 'Ziel: halb Deckung, halb Snap', en: 'Goal: half cover, half snap' },
   'pc.capture.hint': {
-    de: 'Nimm für "{name}" eine Serie an Fotos auf. Du solltest ungefähr gleich viele Fotos haben wo du vollständig in Deckung bist und wo du gerade heraus-snapst.',
-    en: 'Take a series of photos for "{name}". You should end up with roughly equal numbers of photos where you’re fully in cover and where you’re snapping out.',
+    de: 'Nimm für "{name}" eine Serie auf und drille dabei normal: rein in die Deckung, heraussnappen, zurück.',
+    en: 'Capture a series for "{name}" and drill normally: into cover, snap out, back again.',
   },
   'pc.capture.countLabel': { de: 'Anzahl Fotos', en: 'Number of photos' },
   'pc.capture.intervalLabel': { de: 'Intervall (ms)', en: 'Interval (ms)' },

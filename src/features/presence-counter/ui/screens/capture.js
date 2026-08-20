@@ -9,7 +9,14 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
 
   container.innerHTML = `
     <section class="screen">
-      <p class="hint">${t('pc.capture.hint', { name: draft.name })}</p>
+      <div class="ratio-hint">
+        <p class="ratio-hint-title">${t('pc.capture.ratioTitle')}</p>
+        <div class="ratio-bar" aria-hidden="true">
+          <span class="ratio-bar-cover">${t('label.cover')} 50%</span>
+          <span class="ratio-bar-snap">${t('label.snap')} 50%</span>
+        </div>
+        <p class="hint">${t('pc.capture.hint', { name: draft.name })}</p>
+      </div>
 
       <div class="video-wrap" id="video-wrap">
         <video id="preview" playsinline muted></video>

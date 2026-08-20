@@ -28,6 +28,17 @@ the plain left aligned flex layout when the text is being clipped. It has to be
 measured rather than assumed, because titles are translated and, on the live
 screen, are user entered profile names.
 
+The width of that centered slot is measured too, by `fitCenteredTitle()`, from
+the back button's right edge and the language switch's left edge. It used to be
+a fixed reserve in CSS, which was wrong in both directions: it left long German
+titles such as "Trainingsdaten sammeln" touching the language pill, while
+wasting room on the back button's side, which is narrower and sometimes not
+there at all. Since the title is absolutely positioned it does not affect that
+measurement, so both edges can be read directly.
+
+The inline `max-width` this writes has to be cleared before switching to the
+left aligned class, otherwise it would beat the class rule that removes it.
+
 ### Language changes outside the outlet
 
 The router re-renders `#view` on a language switch, but the header lives outside
@@ -99,6 +110,32 @@ not a reason to break the app.
 
 `setLang()` notifies listeners, which is what makes the router and the header
 re-render.
+
+### Scroll position and the scroll hint
+
+`setHeader()` also scrolls back to the top. Every screen calls it exactly once
+on mount, which makes it the single place that catches both router navigation
+and a feature's own wizard steps. Without it a new screen inherits the previous
+screen's scroll position and can open somewhere in its middle.
+
+The shell also owns a scroll hint, a fade with a chevron fixed to the bottom
+edge, shown only while there is more content below and hidden at the end of the
+page so it never covers the last element. Screens here are long enough to scroll
+on a phone, and a primary button just below the fold reads as a missing button
+rather than a hidden one.
+
+It is driven by the document's own scroll metrics rather than a scroll
+container, because the page scrolls as a whole. A `ResizeObserver` on `#view`
+covers the cases where no scroll or resize event fires at all: screens swap
+their content without navigating, and a camera preview changes height once the
+stream reports its resolution. Both scroll and resize are coalesced onto the
+next animation frame, since the handler reads layout.
+
+Two related CSS details live in `style.css`: `#app` uses `100dvh` alongside
+`100vh`, because `vh` includes the strip behind the mobile browser's own bars
+and made screens end below the fold, and `main#view` carries a bottom padding
+of `env(safe-area-inset-bottom)` plus some, so the last button clears the phone's
+home indicator.
 
 ## Navigation inside a feature, `presence-counter/ui/index.js`
 
