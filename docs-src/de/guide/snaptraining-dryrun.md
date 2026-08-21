@@ -114,8 +114,8 @@ zweimal hintereinander erkannt wurde. Das verhindert, dass ein einzelnes falsch
 gelesenes Bild eine Geisterwiederholung erzeugt.
 
 Jede zehnte Wiederholung bis 100 wird laut angesagt, damit du nicht auf den
-Bildschirm schauen musst. Die Sprachclips sind noch nicht dabei, bis dahin bleibt
-es still.
+Bildschirm schauen musst. Die Ansage folgt der Sprache der App, mit dem
+Umschalten auf Englisch wechselt also auch die Stimme.
 
 ## Wie das Matching funktioniert
 

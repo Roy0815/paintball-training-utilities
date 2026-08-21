@@ -47,8 +47,12 @@ tool and not meant for normal use.
 
 ## No sound on every tenth rep
 
-The spoken number clips are not part of the app yet. Once they are added, the
-callouts work without any change to your snapshot positions.
+Check the phone's own volume and its silent switch first, the app has no volume
+control of its own. Callouts only happen on every tenth rep up to 100, so
+nothing is spoken in between.
+
+If it stays silent, the browser may be refusing to play audio that no tap
+started. Leaving the live screen and tapping back into it usually clears that.
 
 ## Reps are being missed
 

@@ -110,5 +110,3 @@ files together.
   phone bug, but it also throws away pixels above and below center. The tradeoff
   was never cleanly measured, because every result at the time was corrupted by
   the backend bug.
-- **Record the spoken number clips** into `public/audio/numbers/`. The playback
-  path is wired up and silently does nothing until they exist.

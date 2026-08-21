@@ -53,8 +53,13 @@ ein Debugging-Werkzeug ist und nicht für den normalen Betrieb gedacht.
 
 ## Kein Ton bei jeder zehnten Wiederholung
 
-Die gesprochenen Zahlenclips sind noch nicht Teil der App. Sobald sie ergänzt
-sind, funktionieren die Ansagen ohne Änderung an deinen Snapshot-Positionen.
+Prüfe zuerst die Lautstärke des Handys und den Stummschalter, die App hat keine
+eigene Lautstärkeregelung. Angesagt wird nur jede zehnte Wiederholung bis 100,
+dazwischen bleibt es absichtlich still.
+
+Bleibt es ganz still, weigert sich möglicherweise der Browser, Ton abzuspielen,
+den kein Tap ausgelöst hat. Den Live-Bildschirm einmal verlassen und wieder
+antippen behebt das meistens.
 
 ## Wiederholungen werden übersehen
 

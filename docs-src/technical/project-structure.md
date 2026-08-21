@@ -26,7 +26,7 @@ src/
     ml-diagnostics.js        Verification and inspection tooling
 public/
   icons/                     PWA icons
-  audio/numbers/             Spoken number clips, not committed yet
+  audio/numbers/             Spoken number clips, <number>_<lang>.mp3
 docs-src/                    This documentation site
 scripts/tunnel-qr.mjs        Cloudflare tunnel plus QR code for phone testing
 ```

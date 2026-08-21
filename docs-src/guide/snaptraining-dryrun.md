@@ -108,8 +108,8 @@ been seen twice in a row, which prevents a single misread frame from producing a
 phantom rep.
 
 Every tenth rep up to 100 is announced out loud, so you do not have to look at
-the screen. The spoken clips are not included yet, so this is silent until they
-are added.
+the screen. The callout follows the app's language, so switching to English
+switches the voice.
 
 ## How the matching works
 

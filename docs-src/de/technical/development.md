@@ -113,5 +113,3 @@ Dateien zusammen anlegen.
   eingebaut und hat den Handyfehler nie verursacht, wirft aber Pixel oberhalb und
   unterhalb der Mitte weg. Der Kompromiss wurde nie sauber gemessen, weil damals
   jedes Ergebnis durch den Backend-Fehler verfälscht war.
-- **Die gesprochenen Zahlen aufnehmen** und nach `public/audio/numbers/` legen.
-  Der Wiedergabepfad ist verdrahtet und bleibt bis dahin still.

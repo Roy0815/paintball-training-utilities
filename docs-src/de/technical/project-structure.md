@@ -26,7 +26,7 @@ src/
     ml-diagnostics.js        Verifikation und Diagnosewerkzeuge
 public/
   icons/                     PWA-Icons
-  audio/numbers/             Gesprochene Zahlen, noch nicht eingecheckt
+  audio/numbers/             Gesprochene Zahlen, <zahl>_<sprache>.mp3
 docs-src/                    Diese Dokumentationsseite
 scripts/tunnel-qr.mjs        Cloudflare-Tunnel plus QR-Code für Handytests
 ```
