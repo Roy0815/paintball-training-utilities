@@ -1,6 +1,27 @@
-/* The hero's second line supports the title rather than being a second one, so
-   it drops to the third text level instead of sharing the primary colour with
-   body copy. Size and weight stay as the theme has them. */
+/*
+ * The hero's second line supports the title rather than being a second one, so
+ * it steps down from the theme's headline size and weight and drops to the
+ * third text level, instead of matching the title and sharing the primary
+ * colour with body copy. Breakpoints mirror the ones the theme uses for the
+ * heading it is overriding.
+ */
 .VPHero .text {
   color: var(--vp-c-text-3);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .VPHero .text {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPHero .text {
+    font-size: 28px;
+    line-height: 36px;
+  }
 }

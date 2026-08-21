@@ -7,7 +7,12 @@ hero:
     src: /temple.png
     alt: PTU Temple Bunker
   actions:
+    # Absolute URL mit Absicht: relative Links im Hero bekommen den Basispfad
+    # der Doku vorangestellt und zeigten damit unter /docs/ statt daneben.
     - theme: brand
+      text: Zur App
+      link: https://roy0815.github.io/paintball-training-utilities/
+    - theme: alt
       text: Anwenderdoku
       link: /de/guide/
     - theme: alt
@@ -21,9 +26,3 @@ features:
   - title: Nichts verlässt das Handy
     details: Kamerabilder, Trainingsfotos und Zähler bleiben im Speicher des Browsers. Es gibt keinen Server, an den etwas gehen könnte.
 ---
-
-<div style="max-width: 760px; margin: 0 auto; padding: 1rem 1.5rem 0; text-align: center;">
-
-Die App selbst liegt unter <a href="/paintball-training-utilities/">/paintball-training-utilities/</a>.
-
-</div>

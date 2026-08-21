@@ -116,6 +116,7 @@ export default defineConfig({
   themeConfig: {
     // Shown left of the site title in the nav bar, on every page and locale.
     logo: '/logo.png',
+    socialLinks: [{ icon: 'github', link: 'https://github.com/Roy0815/paintball-training-utilities' }],
     search: {
       provider: 'local',
       options: {
