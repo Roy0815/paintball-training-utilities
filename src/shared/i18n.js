@@ -53,9 +53,17 @@ const STRINGS = {
   'shell.loading': { de: 'Wird geladen…', en: 'Loading…' },
 
   'home.subtitle': { de: 'Wähle ein Tool aus.', en: 'Choose a tool.' },
+  'home.settingsLabel': { de: 'Einstellungen', en: 'Settings' },
 
   'notFound.title': { de: 'Nicht gefunden', en: 'Not found' },
   'notFound.message': { de: 'Feature nicht gefunden.', en: 'Feature not found.' },
+
+  'settings.title': { de: 'Einstellungen', en: 'Settings' },
+  'settings.debugToggle': { de: 'Debug-Modus', en: 'Debug mode' },
+  'settings.debugHint': {
+    de: 'Blendet Debug-Logs, Diagnose und den Engine-Wechsel in den Tools ein.',
+    en: 'Shows debug logs, diagnostics and the engine switch in the tools.',
+  },
 
   'feature.snaptrainingDryrun.name': { de: 'Snaptraining Dryrun', en: 'Snaptraining Dryrun' },
   'feature.snaptrainingDryrun.description': {
@@ -149,6 +157,17 @@ const STRINGS = {
   'snap-dryrun.live.stateSnap': { de: 'Snap!', en: 'Snap!' },
   'snap-dryrun.live.stateCover': { de: 'In Deckung', en: 'In cover' },
   'snap-dryrun.live.cameraError': { de: 'Live-Betrieb fehlgeschlagen: {message}', en: 'Live mode failed: {message}' },
+
+  'snap-dryrun.settings.cameraSound': { de: 'Kamera-Sound', en: 'Camera sound' },
+  'snap-dryrun.settings.cameraSoundHint': {
+    de: 'Spielt einen Auslöser-Ton bei jedem aufgenommenen Trainingsfoto.',
+    en: 'Plays a shutter sound for every training photo taken.',
+  },
+  'snap-dryrun.settings.numberSound': { de: 'Zahlen-Sound', en: 'Number sound' },
+  'snap-dryrun.settings.numberSoundHint': {
+    de: 'Sagt den Countdown vor der Aufnahme an und jede zehnte Wiederholung im Live-Training.',
+    en: 'Announces the countdown before capture and every tenth rep during live training.',
+  },
 };
 
 /** Looks up `key` in the active language and fills any `{name}` placeholders from `vars`. */

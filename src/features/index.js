@@ -2,6 +2,8 @@
  * Central feature registry. Every tool on the home screen is one entry here.
  * Adding a tool means creating src/features/<name>/ with a mount(container)
  * entry point and registering it below. Nothing in the app shell changes.
+ * mountSettings(container) is optional; a feature without one just does not
+ * show up in the settings screen's list.
  *
  * mount() is a dynamic import so a feature's dependencies (snaptraining-dryrun
  * pulls in all of TensorFlow.js) only load once the user opens it, instead of
@@ -24,6 +26,14 @@ export const features = [
     async mount(container) {
       const { mount } = await import('./snaptraining-dryrun/ui/index.js');
       return mount(container);
+    },
+    async mountSettings(container) {
+      const { renderSettingsScreen } = await import('./snaptraining-dryrun/ui/screens/settings.js');
+      renderSettingsScreen(container, {
+        onBack: () => {
+          window.location.hash = '#/settings';
+        },
+      });
     },
   },
 ];

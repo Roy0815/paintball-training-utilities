@@ -3,6 +3,9 @@ import { toLabelItems } from '../../labeling.js';
 import { DEFAULT_CAPTURE_COUNT, DEFAULT_CAPTURE_INTERVAL_MS, DEFAULT_CAPTURE_DELAY_MS } from '../../storage.js';
 import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
+import { isDebugMode } from '../../../../shared/debug.js';
+import { unlockAudio, playNumber, playCameraCapture } from '../../../../shared/audio.js';
+import { isCameraSoundEnabled, isNumberSoundEnabled } from '../../settings.js';
 
 export function renderCaptureScreen(container, draft, { onBack, onNext }) {
   setHeader({ title: t('snap-dryrun.capture.title'), onBack });
@@ -44,8 +47,10 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
 
       <div class="thumb-grid" id="thumb-grid"></div>
 
-      <button type="button" class="btn" id="debug-copy-btn">📋 Debug-Log kopieren</button>
-      <pre class="debug-panel" id="debug-panel"></pre>
+      <div class="debug-tools" id="debug-tools" ${isDebugMode() ? '' : 'hidden'}>
+        <button type="button" class="btn" id="debug-copy-btn">📋 Debug-Log kopieren</button>
+        <pre class="debug-panel" id="debug-panel"></pre>
+      </div>
     </section>
   `;
 
@@ -129,6 +134,11 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
   openCamera();
 
   captureBtn.addEventListener('click', async () => {
+    // Has to happen here, inside the gesture: the countdown's own ticks and
+    // the capture loop's later ticks both run off setTimeout/setInterval,
+    // which iOS no longer counts as user driven.
+    unlockAudio();
+
     errorMsg.hidden = true;
     thumbGrid.innerHTML = '';
     capturedFrames = [];
@@ -144,16 +154,27 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
     draft.captureIntervalMs = intervalMs;
     draft.captureDelayMs = delayMs;
 
+    // Every 5 seconds above 5, then every second from 5 down to 1, mirroring
+    // the countdown text. onCountdown ticks every 100ms, so this also has to
+    // dedupe repeated ticks that land on the same second.
+    let lastAnnouncedSecond = null;
     const frames = await captureSeries(videoEl, {
       count,
       intervalMs,
       startDelayMs: delayMs,
       isCancelled: () => cancelled,
       onCountdown: (msRemaining) => {
-        progressText.textContent = t('snap-dryrun.capture.countdown', { seconds: Math.ceil(msRemaining / 1000) });
+        const seconds = Math.ceil(msRemaining / 1000);
+        progressText.textContent = t('snap-dryrun.capture.countdown', { seconds });
+        const isCheckpoint = seconds > 0 && (seconds <= 5 || seconds % 5 === 0);
+        if (isCheckpoint && seconds !== lastAnnouncedSecond) {
+          lastAnnouncedSecond = seconds;
+          if (isNumberSoundEnabled()) playNumber(seconds);
+        }
       },
       onCapture: (dataUrl, index, total) => {
         progressText.textContent = t('snap-dryrun.capture.progress', { index, total });
+        if (isCameraSoundEnabled()) playCameraCapture();
         const img = document.createElement('img');
         img.src = dataUrl;
         img.className = 'thumb';

@@ -5,6 +5,8 @@ import { ENGINE_MODES, getEngineMode, setEngineMode } from '../../../../shared/m
 import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 import { playNumber } from '../../../../shared/audio.js';
+import { isDebugMode } from '../../../../shared/debug.js';
+import { isNumberSoundEnabled } from '../../settings.js';
 
 // Every 10th confirmed snap gets a spoken callout, up to 100. Beyond that no
 // clip is defined (see public/audio/numbers/README.md), so it stops rather
@@ -29,11 +31,13 @@ export function renderLiveScreen(container, profile, { onBack }) {
       <p class="warning" id="engine-warning" hidden></p>
       <p class="error" id="error-msg" hidden></p>
 
-      <button type="button" class="btn" id="debug-copy-btn">📋 Debug-Log kopieren</button>
-      <button type="button" class="btn" id="diagnose-btn">🔬 Diagnose ausführen</button>
-      <button type="button" class="btn" id="backend-btn"></button>
-      <pre class="debug-panel" id="debug-panel"></pre>
-      <pre class="debug-panel" id="diagnostic-panel" hidden></pre>
+      <div class="debug-tools" id="debug-tools" ${isDebugMode() ? '' : 'hidden'}>
+        <button type="button" class="btn" id="debug-copy-btn">📋 Debug-Log kopieren</button>
+        <button type="button" class="btn" id="diagnose-btn">🔬 Diagnose ausführen</button>
+        <button type="button" class="btn" id="backend-btn"></button>
+        <pre class="debug-panel" id="debug-panel"></pre>
+        <pre class="debug-panel" id="diagnostic-panel" hidden></pre>
+      </div>
     </section>
   `;
 
@@ -160,7 +164,7 @@ export function renderLiveScreen(container, profile, { onBack }) {
           counterDisplay.textContent = updated.counter;
           counterDisplay.classList.add('flash');
           setTimeout(() => counterDisplay.classList.remove('flash'), 400);
-          if (updated.counter % MILESTONE_STEP === 0 && updated.counter <= MILESTONE_MAX) {
+          if (isNumberSoundEnabled() && updated.counter % MILESTONE_STEP === 0 && updated.counter <= MILESTONE_MAX) {
             playNumber(updated.counter);
           }
         },

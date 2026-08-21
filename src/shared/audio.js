@@ -1,6 +1,7 @@
 import { getLang } from './i18n.js';
 
-const AUDIO_BASE = `${import.meta.env.BASE_URL}audio/numbers/`;
+const NUMBERS_BASE = `${import.meta.env.BASE_URL}audio/numbers/`;
+const CAMERA_CAPTURE_SRC = `${import.meta.env.BASE_URL}audio/camera-capture.mp3`;
 
 /**
  * iOS refuses to play audio that no user gesture started, and it grants that
@@ -51,16 +52,12 @@ export function unlockAudio() {
 }
 
 /**
- * Plays the spoken number clip for `number` in the active language, from
- * public/audio/numbers/<number>_<lang>.mp3. Any feature can call this for any
- * number. Which numbers get announced and when is the calling feature's
- * decision.
- *
- * Fails with a console warning instead of throwing. A missing clip, or a
- * browser refusing to play, must not break the feature using it.
+ * Plays `src` through the single shared element, so every clip rides on
+ * whichever gesture already unlocked it. Fails with a console warning instead
+ * of throwing: a missing clip, or a browser refusing to play, must not break
+ * the feature using it.
  */
-export function playNumber(number) {
-  const src = `${AUDIO_BASE}${number}_${getLang()}.mp3`;
+function playClip(src) {
   const audio = getPlayer();
   if (currentSrc !== src) {
     currentSrc = src;
@@ -71,4 +68,19 @@ export function playNumber(number) {
   audio.play().catch((err) => {
     console.warn(`[audio] could not play "${src}":`, err.message);
   });
+}
+
+/**
+ * Plays the spoken number clip for `number` in the active language, from
+ * public/audio/numbers/<number>_<lang>.mp3. Any feature can call this for any
+ * number. Which numbers get announced and when is the calling feature's
+ * decision.
+ */
+export function playNumber(number) {
+  playClip(`${NUMBERS_BASE}${number}_${getLang()}.mp3`);
+}
+
+/** Plays the camera shutter clip from public/audio/camera-capture.mp3. */
+export function playCameraCapture() {
+  playClip(CAMERA_CAPTURE_SRC);
 }

@@ -251,7 +251,37 @@ h3 {
 
 .subtitle {
   color: var(--text-muted);
-  margin-top: 0;
+  margin: 0;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* One tile per row rather than a multi column grid: a tile puts its text
@@ -399,6 +429,122 @@ select {
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.settings-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.settings-link,
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: border-color 0.15s ease;
+}
+
+.settings-link {
+  text-decoration: none;
+}
+
+.settings-link:hover,
+.settings-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.settings-link svg {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.settings-toggle-row {
+  position: relative;
+  cursor: pointer;
+}
+
+.settings-toggle-row:hover,
+.settings-toggle-row:focus-visible,
+.settings-toggle-row.is-active {
+  border-color: var(--accent);
+}
+
+.settings-toggle-row:focus-visible {
+  outline: none;
+}
+
+/* Anchored to the row so it tracks it regardless of where the row sits on the
+   screen, and stays clear of the row's own padding on both sides. */
+.settings-tooltip {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 1.2rem;
+  right: 1.2rem;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-lg);
+  z-index: 5;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.setting-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.switch[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.switch[aria-checked='true'] .switch-thumb {
+  transform: translateX(1.35rem);
+  background: var(--accent-contrast);
 }
 
 .btn-primary {
@@ -707,6 +853,17 @@ progress {
 
 .progress-row .hint {
   text-align: center;
+}
+
+.debug-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Same [hidden] pitfall as .back-link, see its override above. */
+.debug-tools[hidden] {
+  display: none;
 }
 
 .debug-panel {
