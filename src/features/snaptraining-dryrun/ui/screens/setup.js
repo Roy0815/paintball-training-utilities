@@ -3,35 +3,35 @@ import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 
 export function renderSetupScreen(container, draft, { onBack, onNext }) {
-  setHeader({ title: t('snaptraining.setup.title'), onBack });
+  setHeader({ title: t('snap-dryrun.setup.title'), onBack });
 
   container.innerHTML = `
     <section class="screen">
       <label class="field">
-        ${t('snaptraining.setup.nameLabel')}
-        <input type="text" id="name-input" placeholder="${t('snaptraining.setup.namePlaceholder')}" value="${draft.name}" />
+        ${t('snap-dryrun.setup.nameLabel')}
+        <input type="text" id="name-input" placeholder="${t('snap-dryrun.setup.namePlaceholder')}" value="${draft.name}" />
       </label>
 
       <label class="field">
-        ${t('snaptraining.setup.cameraLabel')}
+        ${t('snap-dryrun.setup.cameraLabel')}
         <select id="facing-select">
           <option value="environment" ${draft.facingMode === 'environment' ? 'selected' : ''}>${t(
-    'snaptraining.setup.cameraRear'
+    'snap-dryrun.setup.cameraRear'
   )}</option>
-          <option value="user" ${draft.facingMode === 'user' ? 'selected' : ''}>${t('snaptraining.setup.cameraFront')}</option>
+          <option value="user" ${draft.facingMode === 'user' ? 'selected' : ''}>${t('snap-dryrun.setup.cameraFront')}</option>
         </select>
       </label>
 
       <div class="class-hint">
-        <p class="class-hint-title">${t('snaptraining.setup.classTitle', { min: MIN_EXAMPLES_PER_CLASS })}</p>
+        <p class="class-hint-title">${t('snap-dryrun.setup.classTitle', { min: MIN_EXAMPLES_PER_CLASS })}</p>
         <div class="class-bar" aria-hidden="true">
           <span class="class-bar-cover">${t('label.cover')} ≥ ${MIN_EXAMPLES_PER_CLASS}</span>
           <span class="class-bar-snap">${t('label.snap')} ≥ ${MIN_EXAMPLES_PER_CLASS}</span>
         </div>
-        <p class="hint">${t('snaptraining.setup.classHint', { min: MIN_EXAMPLES_PER_CLASS })}</p>
+        <p class="hint">${t('snap-dryrun.setup.classHint', { min: MIN_EXAMPLES_PER_CLASS })}</p>
       </div>
 
-      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('snaptraining.setup.next')}</button>
+      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('snap-dryrun.setup.next')}</button>
     </section>
   `;
 

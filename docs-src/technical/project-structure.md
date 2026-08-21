@@ -33,9 +33,9 @@ scripts/tunnel-qr.mjs        Cloudflare tunnel plus QR code for phone testing
 
 ::: tip Naming
 The feature was called `presence-counter` until its directory, id, route and
-IndexedDB store were renamed to match the display name. Since the store name
-carries the feature id, that rename came with a data migration, see
-[Storage](#storage).
+IndexedDB store were renamed to match the display name. Its i18n keys sit under
+`snap-dryrun.` rather than anything starting with "snaptraining", so a second
+snaptraining tool later on cannot end up sharing a namespace with this one.
 :::
 
 ## Build pipeline
@@ -111,17 +111,12 @@ returns a small promise based wrapper with `getAll`, `get`, `put` and `delete`.
 Everything stored is a whole object keyed by id, so there are no indexes or
 cursors.
 
-### Renaming a store
+The upgrade treats the schema as the truth: it creates what the schema lists and
+drops every store the schema does not. Stores are only ever created from
+`STORE_SCHEMA`, so anything else is left over from an earlier name. That makes a
+rename a one line change, at the price of the old store's contents, which is the
+right trade while the app has no released users.
 
-Because the name carries the feature id, renaming a feature renames its store,
-and a device that already holds profiles would simply stop seeing them. So the
-schema also lists renames:
-
-```js
-const RENAMED_STORES = [{ from: 'presence-counter:profiles', to: 'snaptraining-dryrun:profiles' }];
-```
-
-The upgrade copies every row into the new store and drops the old one, all
-inside the same version change transaction. A failure anywhere aborts the whole
-transaction, which leaves the version unbumped and the old data untouched for
-the next attempt, rather than half migrated.
+`DB_VERSION` only ever counts up. Lowering it makes every browser that has
+already opened a higher version throw a `VersionError`, with no way out but
+clearing the site data.

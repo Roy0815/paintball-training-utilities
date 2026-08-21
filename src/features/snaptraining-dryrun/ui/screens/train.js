@@ -4,15 +4,15 @@ import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 
 export function renderTrainScreen(container, draft, { onDone }) {
-  setHeader({ title: t('snaptraining.train.title'), onBack: null });
+  setHeader({ title: t('snap-dryrun.train.title'), onBack: null });
 
   container.innerHTML = `
     <section class="screen">
-      <h2>${t('snaptraining.train.title')}</h2>
-      <p class="hint" id="status">${t('snaptraining.train.running')}</p>
+      <h2>${t('snap-dryrun.train.title')}</h2>
+      <p class="hint" id="status">${t('snap-dryrun.train.running')}</p>
       <progress id="progress" max="1" value="0"></progress>
       <p class="error" id="error-msg" hidden></p>
-      <button type="button" class="btn btn-primary" id="done-btn" hidden>${t('snaptraining.train.doneBtn')}</button>
+      <button type="button" class="btn btn-primary" id="done-btn" hidden>${t('snap-dryrun.train.doneBtn')}</button>
     </section>
   `;
 
@@ -33,7 +33,7 @@ export function renderTrainScreen(container, draft, { onDone }) {
       } = await trainFromLabeledItems(draft.items, {
         onProgress: (done, total) => {
           if (cancelled) return;
-          statusEl.textContent = t('snaptraining.train.runningProgress', { done, total });
+          statusEl.textContent = t('snap-dryrun.train.runningProgress', { done, total });
           progressEl.max = total;
           progressEl.value = done;
         },
@@ -51,12 +51,12 @@ export function renderTrainScreen(container, draft, { onDone }) {
       profile.trainedAt = Date.now();
       await saveProfile(profile);
 
-      statusEl.textContent = t('snaptraining.train.done', { name: profile.name });
+      statusEl.textContent = t('snap-dryrun.train.done', { name: profile.name });
       progressEl.hidden = true;
       doneBtn.hidden = false;
     } catch (err) {
       if (cancelled) return;
-      errorMsg.textContent = t('snaptraining.train.error', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.train.error', { message: err.message });
       errorMsg.hidden = false;
       progressEl.hidden = true;
     }

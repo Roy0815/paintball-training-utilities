@@ -5,11 +5,11 @@ import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 
 export function renderCaptureScreen(container, draft, { onBack, onNext }) {
-  setHeader({ title: t('snaptraining.capture.title'), onBack });
+  setHeader({ title: t('snap-dryrun.capture.title'), onBack });
 
   container.innerHTML = `
     <section class="screen">
-      <button type="button" class="btn btn-primary" id="start-camera-btn" hidden>${t('snaptraining.capture.startCamera')}</button>
+      <button type="button" class="btn btn-primary" id="start-camera-btn" hidden>${t('snap-dryrun.capture.startCamera')}</button>
       <p class="error" id="error-msg" hidden></p>
 
       <div class="video-wrap" id="video-wrap">
@@ -19,28 +19,28 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
 
       <div class="field-row">
         <label class="field">
-          ${t('snaptraining.capture.countLabel')}
+          ${t('snap-dryrun.capture.countLabel')}
           <input type="number" id="count-input" min="4" max="100" value="${draft.captureCount ?? DEFAULT_CAPTURE_COUNT}" />
         </label>
         <label class="field">
-          ${t('snaptraining.capture.intervalLabel')}
+          ${t('snap-dryrun.capture.intervalLabel')}
           <input type="number" id="interval-input" min="200" step="100" value="${
             draft.captureIntervalMs ?? DEFAULT_CAPTURE_INTERVAL_MS
           }" />
         </label>
         <label class="field">
-          ${t('snaptraining.capture.delayLabel')}
+          ${t('snap-dryrun.capture.delayLabel')}
           <input type="number" id="delay-input" min="0" step="1" value="${
             (draft.captureDelayMs ?? DEFAULT_CAPTURE_DELAY_MS) / 1000
           }" />
         </label>
       </div>
 
-      <button type="button" class="btn btn-primary" id="capture-btn" disabled>${t('snaptraining.capture.start')}</button>
-      <button type="button" class="btn" id="cancel-capture-btn" hidden>${t('snaptraining.capture.stop')}</button>
+      <button type="button" class="btn btn-primary" id="capture-btn" disabled>${t('snap-dryrun.capture.start')}</button>
+      <button type="button" class="btn" id="cancel-capture-btn" hidden>${t('snap-dryrun.capture.stop')}</button>
       <p class="hint" id="progress-text"></p>
 
-      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('snaptraining.capture.next')}</button>
+      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('snap-dryrun.capture.next')}</button>
 
       <div class="thumb-grid" id="thumb-grid"></div>
 
@@ -119,7 +119,7 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
       });
       startCropPreviewLoop();
     } catch (err) {
-      errorMsg.textContent = t('snaptraining.capture.cameraError', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.capture.cameraError', { message: err.message });
       errorMsg.hidden = false;
       startCameraBtn.hidden = false;
     }
@@ -150,10 +150,10 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
       startDelayMs: delayMs,
       isCancelled: () => cancelled,
       onCountdown: (msRemaining) => {
-        progressText.textContent = t('snaptraining.capture.countdown', { seconds: Math.ceil(msRemaining / 1000) });
+        progressText.textContent = t('snap-dryrun.capture.countdown', { seconds: Math.ceil(msRemaining / 1000) });
       },
       onCapture: (dataUrl, index, total) => {
-        progressText.textContent = t('snaptraining.capture.progress', { index, total });
+        progressText.textContent = t('snap-dryrun.capture.progress', { index, total });
         const img = document.createElement('img');
         img.src = dataUrl;
         img.className = 'thumb';
@@ -163,7 +163,7 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
 
     capturedFrames = frames;
     captureBtn.hidden = false;
-    captureBtn.textContent = t('snaptraining.capture.retake');
+    captureBtn.textContent = t('snap-dryrun.capture.retake');
     cancelBtn.hidden = true;
     nextBtn.disabled = frames.length === 0;
   });

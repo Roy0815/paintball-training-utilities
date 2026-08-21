@@ -97,7 +97,7 @@ A flat table of dot namespaced keys to `{ de, en }`, deliberately not nested, so
 a lookup is one property access on a path that runs for every rendered screen.
 
 ```js
-t('snaptraining.list.deleteConfirm', { name: profile.name });
+t('snap-dryrun.list.deleteConfirm', { name: profile.name });
 ```
 
 `t()` substitutes `{name}` placeholders and warns on a missing key rather than

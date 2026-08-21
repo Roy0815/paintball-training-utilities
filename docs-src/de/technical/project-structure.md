@@ -33,9 +33,10 @@ scripts/tunnel-qr.mjs        Cloudflare-Tunnel plus QR-Code für Handytests
 
 ::: tip Benennung
 Das Feature hieß `presence-counter`, bis Verzeichnis, id, Route und
-IndexedDB-Store auf den Anzeigenamen umgestellt wurden. Da der Storename die
-Feature-id enthält, gehörte zu dieser Umbenennung eine Datenmigration, siehe
-[Speicher](#speicher).
+IndexedDB-Store auf den Anzeigenamen umgestellt wurden. Seine i18n-Schlüssel
+liegen unter `snap-dryrun.` statt unter etwas, das mit "snaptraining" beginnt,
+damit ein späteres zweites Snaptraining-Tool sich keinen Namensraum mit diesem
+hier teilt.
 :::
 
 ## Build-Pipeline
@@ -115,17 +116,13 @@ Ein neuer Store heißt: ein Eintrag mehr plus erhöhte `DB_VERSION`.
 `put` und `delete`. Gespeichert werden immer ganze Objekte mit id als Schlüssel,
 deshalb gibt es weder Indizes noch Cursor.
 
-### Einen Store umbenennen
+Das Upgrade behandelt das Schema als Wahrheit: es legt an, was das Schema
+auflistet, und wirft jeden Store weg, den das Schema nicht kennt. Stores
+entstehen ausschließlich aus `STORE_SCHEMA`, alles andere stammt also aus einer
+früheren Benennung. Damit ist eine Umbenennung eine einzige Zeile, zum Preis des
+Inhalts des alten Stores, was richtig ist, solange die App keine
+veröffentlichten Nutzer hat.
 
-Weil der Storename die Feature-id enthält, benennt das Umbenennen eines Features
-auch seinen Store um, und ein Gerät mit vorhandenen Profilen würde sie schlicht
-nicht mehr sehen. Deshalb führt das Schema auch Umbenennungen:
-
-```js
-const RENAMED_STORES = [{ from: 'presence-counter:profiles', to: 'snaptraining-dryrun:profiles' }];
-```
-
-Das Upgrade kopiert jede Zeile in den neuen Store und wirft den alten weg, alles
-in derselben Version-Change-Transaktion. Ein Fehler an irgendeiner Stelle bricht
-die ganze Transaktion ab, die Version bleibt dann ungeändert und die alten Daten
-unangetastet für den nächsten Versuch, statt halb migriert zu sein.
+`DB_VERSION` zählt ausschließlich hoch. Wird sie gesenkt, wirft jeder Browser,
+der bereits eine höhere Version geöffnet hat, einen `VersionError`, und der
+einzige Ausweg ist das Löschen der Website-Daten.

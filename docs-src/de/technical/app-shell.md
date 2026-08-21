@@ -104,7 +104,7 @@ nicht verschachtelt, damit ein Lookup ein einziger Property-Zugriff ist, auf
 einem Pfad, der bei jedem Screen-Rendern läuft.
 
 ```js
-t('snaptraining.list.deleteConfirm', { name: profile.name });
+t('snap-dryrun.list.deleteConfirm', { name: profile.name });
 ```
 
 `t()` ersetzt `{name}`-Platzhalter und warnt bei einem fehlenden Schlüssel,

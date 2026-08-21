@@ -4,8 +4,8 @@ import { unlockAudio } from '../../../../shared/audio.js';
 import { t, formatDate } from '../../../../shared/i18n.js';
 
 function formatTrainedAt(profile) {
-  if (!profile.trainedAt) return t('snaptraining.list.notTrained');
-  return t('snaptraining.list.trainedAt', { date: formatDate(profile.trainedAt) });
+  if (!profile.trainedAt) return t('snap-dryrun.list.notTrained');
+  return t('snap-dryrun.list.trainedAt', { date: formatDate(profile.trainedAt) });
 }
 
 export function renderListScreen(container, profiles, { onCreate, onRetrain, onLive, onBack, refresh }) {
@@ -14,11 +14,11 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
   container.innerHTML = `
     <section class="screen">
       <div class="screen-header">
-        <button type="button" class="btn btn-primary" id="new-profile-btn">${t('snaptraining.list.newPosition')}</button>
+        <button type="button" class="btn btn-primary" id="new-profile-btn">${t('snap-dryrun.list.newPosition')}</button>
       </div>
       ${
         profiles.length === 0
-          ? `<p class="hint">${t('snaptraining.list.emptyState')}</p>`
+          ? `<p class="hint">${t('snap-dryrun.list.emptyState')}</p>`
           : `<div class="profile-list">
               ${profiles
                 .map(
@@ -34,9 +34,9 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
                             : '<div class="profile-card-thumb profile-card-thumb-empty"></div>'
                         }
                         <div class="profile-card-actions">
-                          <button type="button" class="btn" data-action="retrain">${t('snaptraining.list.retrain')}</button>
+                          <button type="button" class="btn" data-action="retrain">${t('snap-dryrun.list.retrain')}</button>
                           <button type="button" class="btn btn-danger" data-action="delete">${t(
-                            'snaptraining.list.delete'
+                            'snap-dryrun.list.delete'
                           )}</button>
                         </div>
                       </div>
@@ -95,7 +95,7 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
     card.querySelector('[data-action="retrain"]').addEventListener('click', () => onRetrain(profile));
 
     card.querySelector('[data-action="delete"]').addEventListener('click', async () => {
-      if (window.confirm(t('snaptraining.list.deleteConfirm', { name: profile.name }))) {
+      if (window.confirm(t('snap-dryrun.list.deleteConfirm', { name: profile.name }))) {
         await storage.deleteProfile(id);
         refresh();
       }

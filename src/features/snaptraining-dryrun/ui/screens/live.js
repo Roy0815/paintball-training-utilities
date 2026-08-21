@@ -23,9 +23,9 @@ export function renderLiveScreen(container, profile, { onBack }) {
       <div class="crop-preview" id="crop-preview" hidden><canvas id="crop-canvas"></canvas></div>
 
       <p class="counter-value counter-live" id="counter-display">${profile.counter}</p>
-      <p class="hint" id="status-line">${t('snaptraining.live.starting')}</p>
+      <p class="hint" id="status-line">${t('snap-dryrun.live.starting')}</p>
 
-      <button type="button" class="btn" id="reset-btn">${t('snaptraining.live.reset')}</button>
+      <button type="button" class="btn" id="reset-btn">${t('snap-dryrun.live.reset')}</button>
       <p class="warning" id="engine-warning" hidden></p>
       <p class="error" id="error-msg" hidden></p>
 
@@ -176,8 +176,8 @@ export function renderLiveScreen(container, profile, { onBack }) {
         }) => {
           const personPct = Math.round((confidences.person ?? 0) * 100);
           const emptyPct = Math.round((confidences.empty ?? 0) * 100);
-          statusLine.textContent = `${t('snaptraining.live.status', { snap: personPct, cover: emptyPct })} · ${
-            present ? t('snaptraining.live.stateSnap') : t('snaptraining.live.stateCover')
+          statusLine.textContent = `${t('snap-dryrun.live.status', { snap: personPct, cover: emptyPct })} · ${
+            present ? t('snap-dryrun.live.stateSnap') : t('snap-dryrun.live.stateCover')
           }`;
           debugPanel.textContent =
             `${debugStartInfo}\n\ncanvas: ${canvasWidth}x${canvasHeight}\nconfidences: ${JSON.stringify(
@@ -190,7 +190,7 @@ export function renderLiveScreen(container, profile, { onBack }) {
       });
       diagnoseBtn.disabled = false;
     } catch (err) {
-      errorMsg.textContent = t('snaptraining.live.cameraError', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.live.cameraError', { message: err.message });
       errorMsg.hidden = false;
     }
   })();

@@ -1,6 +1,8 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'paintball-training-utilities';
+// Only ever counts up. Lowering it makes every browser that already opened a
+// higher version throw a VersionError, with no way out but clearing site data.
 const DB_VERSION = 2;
 
 /**
@@ -12,35 +14,25 @@ const STORE_SCHEMA = [
   { name: 'snaptraining-dryrun:profiles', options: { keyPath: 'id' } },
 ];
 
-/**
- * Stores that changed name. Because the name carries the feature id, renaming a
- * feature renames its store, and without this every profile already trained on
- * a device would simply stop existing. The rows are copied into the new store
- * and the old one is dropped, inside the same version change transaction, so a
- * failure anywhere aborts the whole thing and leaves the old data untouched for
- * the next attempt.
- */
-const RENAMED_STORES = [{ from: 'presence-counter:profiles', to: 'snaptraining-dryrun:profiles' }];
-
 let dbPromise = null;
 
 function getDB() {
   if (!dbPromise) {
     dbPromise = openDB(DB_NAME, DB_VERSION, {
-      async upgrade(db, oldVersion, newVersion, transaction) {
+      // The schema is the truth: create what it lists, drop what it does not.
+      // Since stores are only ever created from STORE_SCHEMA, anything else is
+      // left over from an older name and its contents are not worth keeping.
+      upgrade(db) {
         for (const store of STORE_SCHEMA) {
           if (!db.objectStoreNames.contains(store.name)) {
             db.createObjectStore(store.name, store.options);
           }
         }
-        for (const { from, to } of RENAMED_STORES) {
-          if (!db.objectStoreNames.contains(from)) continue;
-          const rows = await transaction.objectStore(from).getAll();
-          for (const row of rows) {
-            await transaction.objectStore(to).put(row);
-          }
-          db.deleteObjectStore(from);
-          console.log(`[db] migrated ${rows.length} rows from "${from}" to "${to}"`);
+        const known = new Set(STORE_SCHEMA.map((store) => store.name));
+        // Array.from, not spread: objectStoreNames is a DOMStringList, which is array
+        // like but does not reliably carry a Symbol.iterator.
+        for (const name of Array.from(db.objectStoreNames)) {
+          if (!known.has(name)) db.deleteObjectStore(name);
         }
       },
     });
