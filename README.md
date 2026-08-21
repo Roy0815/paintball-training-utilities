@@ -2,16 +2,22 @@
 
 Multi tool PWA for paintball training. Runs entirely client side in the browser (on-device ML, no backend, no cloud costs) and is deployed via GitHub Pages.
 
+| | |
+| --- | --- |
+| **App** | https://roy0815.github.io/paintball-training-utilities/ |
+| **Documentation** | https://roy0815.github.io/paintball-training-utilities/docs/ |
+
 ## Documentation
 
-The full documentation is published alongside the app at
-`/paintball-training-utilities/docs/` and is split in two:
+Both are one GitHub Pages deployment: the app at the base path, the docs in a
+`docs/` subfolder of it. The documentation is split in two:
 
 - a **user guide** covering what the app does and how to use it,
 - a **technical section** covering architecture, module layout, the ML pipeline
   and the device specific pitfalls that shaped it.
 
-Sources live in `docs-src/`, see `npm run docs:dev`.
+Each exists in English and German. Sources live in `docs-src/`, served locally
+with `npm run docs:dev`.
 
 ## Structure
 
@@ -86,3 +92,5 @@ The tunnel URL changes on every start (anonymous quick tunnel, no account). `npm
 ## Deployment
 
 Deployment is automated via GitHub Actions (`.github/workflows/deploy.yml`) on every push to `main`. Requires **Settings, Pages, Source** to be set to "GitHub Actions" in the repo.
+
+The Actions based Pages flow uploads exactly one artifact per run, so both sites travel in the same `dist/`. `npm run build` runs `vite build` first, which empties `dist/` and fills it with the app, then `npm run docs:build`, which writes the docs into `dist/docs/`. That order matters: the other way round the docs would be deleted.
