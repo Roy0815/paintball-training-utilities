@@ -8,6 +8,7 @@ src/
     shell.js                 Persistent header, setHeader() contract
     router.js                Hash routing and screen cleanup
     home.js                  Tile grid built from the feature registry
+    settings.js              Settings screen: debug toggle, feature links
   features/
     index.js                 Feature registry
     snaptraining-dryrun/     Snaptraining Dryrun
@@ -16,17 +17,21 @@ src/
       labeling.js            Label constants and validation
       training.js            Embeddings plus KNN training
       live-counter.js        Detection loop and diagnostics
+      settings.js            Camera and number sound flags
       ui/index.js            Wizard state machine, history handling
       ui/screens/*.js        One render function per screen
   shared/
     db.js                    IndexedDB wrapper, one store per feature
     i18n.js                  Flat string table, t(), language events
-    audio.js                 Spoken number playback
+    audio.js                 Shared player for spoken numbers and the shutter clip
+    debug.js                 On device debug tooling on/off flag
     ml-utils.js              Model loading, backend selection
     ml-diagnostics.js        Verification and inspection tooling
 public/
   icons/                     PWA icons
-  audio/numbers/             Spoken number clips, <number>_<lang>.mp3
+  audio/
+    camera-capture.mp3       Shutter clip for the capture screen
+    numbers/                 Spoken number clips, <number>_<lang>.mp3
 docs-src/                    This documentation site
 scripts/tunnel-qr.mjs        Cloudflare tunnel plus QR code for phone testing
 ```

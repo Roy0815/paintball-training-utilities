@@ -56,6 +56,8 @@ Hash-basiert, damit GitHub Pages keine Rewrite-Regeln braucht.
 ```
 #/                    Startseite
 #/feature/<id>        dieses Feature einhängen
+#/settings            Einstellungen-Screen
+#/settings/<id>       Einstellungen-Screen dieses Features, falls vorhanden
 alles andere          Startseite
 ```
 
@@ -96,6 +98,37 @@ Lookup zur Renderzeit in dem Screen passieren, der sie anzeigt.
 Ein neues Tool heißt: `src/features/<name>/` mit einem `mount(container)`
 anlegen, die Strings in `i18n.js` ergänzen und hier einen Eintrag hinzufügen. An
 der Shell ändert sich nichts.
+
+Ein Feature kann außerdem `mountSettings(container)` neben `mount` definieren.
+Das ist optional und wird genauso verdrahtet, ein Feature ohne das taucht
+einfach nicht als Link im Einstellungen-Screen auf.
+
+## Einstellungen-Screen, `app/settings.js`
+
+Erreichbar über ein Zahnradsymbol neben dem Untertitel der Startseite. Eine
+flache Liste aus Boxen, gleich gestaltet, egal ob sie navigieren oder
+umschalten:
+
+- ein Link (`<a class="settings-link">`) pro Feature, das `mountSettings`
+  definiert, führt über `#/settings/<id>` und endet mit einem Chevron,
+- der Debug-Schalter, ein `<div class="settings-toggle-row">`, endet mit einem
+  Switch.
+
+Eine Toggle-Zeile ist als Ganzes klickbar, nicht nur ihr Switch. Ein Tap auf die
+Zeile öffnet ein Tooltip mit der Erklärung der Einstellung und highlightet die
+Zeile; ein Tap auf den Switch selbst schaltet stattdessen die Einstellung um,
+abgesichert durch dieselbe `closest('button')`-Prüfung, die auch die
+Snaptraining-Dryrun-Profilkarte nutzt, damit ihr eigener Click-Handler nicht für
+verschachtelte Buttons feuert. Ein `click`-Listener auf `document` schließt das
+Tooltip bei einem Klick außerhalb, deshalb gibt `renderSettings()` eine
+Cleanup-Funktion zurück, die einzige reine Route neben einem eingehängten
+Feature, die eine braucht.
+
+`shared/debug.js` und `snaptraining-dryrun/settings.js` folgen fürs Flag selbst
+demselben Muster, ein `localStorage`-Eintrag hinter `try/catch`. Das
+Debug-Flag ist standardmäßig aus, die beiden Sound-Flags des Features
+standardmäßig an, ihr Speicherzugriff liest deshalb `!== '0'` statt `=== '1'`,
+Abwesenheit bedeutet so oder so den jeweiligen Standard.
 
 ## Internationalisierung, `shared/i18n.js`
 

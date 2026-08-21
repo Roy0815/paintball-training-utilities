@@ -52,6 +52,8 @@ Hash based, so GitHub Pages needs no rewrite rules.
 ```
 #/                    home screen
 #/feature/<id>        mount that feature
+#/settings            settings screen
+#/settings/<id>       that feature's settings screen, if it has one
 anything else         home screen
 ```
 
@@ -90,6 +92,34 @@ time in whichever screen displays them.
 Adding a tool means creating `src/features/<name>/` with a `mount(container)`
 entry point, adding its strings to `i18n.js`, and adding one entry here. Nothing
 in the shell changes.
+
+A feature can also define `mountSettings(container)` next to `mount`. It is
+optional and wired the same way, a link to it just does not appear on the
+settings screen for a feature that has none.
+
+## Settings screen, `app/settings.js`
+
+Reachable from a gear icon beside the home screen's subtitle. One flat list of
+boxed rows, styled identically whether they navigate or toggle:
+
+- a link (`<a class="settings-link">`) per feature that defines
+  `mountSettings`, routed through `#/settings/<id>` and ending in a chevron,
+- the debug toggle, a `<div class="settings-toggle-row">` ending in a switch.
+
+A toggle row is clickable as a whole, not just its switch. A tap on the row
+opens a tooltip with the setting's explanation and highlights the row; a tap on
+the switch itself flips the setting instead, guarded by the same
+`closest('button')` check the snaptraining-dryrun profile card uses to keep its
+own click handler from firing for nested buttons. A `click` listener on
+`document` closes the tooltip on an outside tap, which is why
+`renderSettings()` returns a cleanup function, the only bare route besides a
+mounted feature that needs one.
+
+`shared/debug.js` and `snaptraining-dryrun/settings.js` follow the same
+pattern for the flag itself, one `localStorage` entry read through a
+`try/catch`. The debug flag defaults to off; the feature's two sound flags
+default to on, so their storage reads `!== '0'` rather than `=== '1'`, absence
+means the default either way.
 
 ## Internationalisation, `shared/i18n.js`
 

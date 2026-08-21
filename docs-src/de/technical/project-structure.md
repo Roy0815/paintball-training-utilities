@@ -8,6 +8,7 @@ src/
     shell.js                 Fester Header, setHeader()-Vertrag
     router.js                Hash-Routing und Screen-Cleanup
     home.js                  Kachelraster aus der Feature-Registry
+    settings.js              Einstellungen-Screen: Debug-Schalter, Feature-Links
   features/
     index.js                 Feature-Registry
     snaptraining-dryrun/     Snaptraining Dryrun
@@ -16,17 +17,21 @@ src/
       labeling.js            Label-Konstanten und Validierung
       training.js            Embeddings und KNN-Training
       live-counter.js        Erkennungsschleife und Diagnose
+      settings.js            Kamera- und Zahlen-Sound-Flags
       ui/index.js            Wizard-Zustandsautomat, History-Handling
       ui/screens/*.js        Eine Renderfunktion pro Screen
   shared/
     db.js                    IndexedDB-Wrapper, ein Store pro Feature
     i18n.js                  Flache Stringtabelle, t(), Sprachevents
-    audio.js                 Wiedergabe gesprochener Zahlen
+    audio.js                 Gemeinsamer Player für Zahlen und den Auslöser-Clip
+    debug.js                 An/Aus-Flag für die Debug-Werkzeuge am Gerät
     ml-utils.js              Modell laden, Backendauswahl
     ml-diagnostics.js        Verifikation und Diagnosewerkzeuge
 public/
   icons/                     PWA-Icons
-  audio/numbers/             Gesprochene Zahlen, <zahl>_<sprache>.mp3
+  audio/
+    camera-capture.mp3       Auslöser-Clip für den Aufnahme-Screen
+    numbers/                 Gesprochene Zahlen, <zahl>_<sprache>.mp3
 docs-src/                    Diese Dokumentationsseite
 scripts/tunnel-qr.mjs        Cloudflare-Tunnel plus QR-Code für Handytests
 ```

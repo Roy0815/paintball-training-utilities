@@ -10,6 +10,7 @@ name and is kept so existing stored profiles stay readable.
 | `labeling.js` | Label constants, counting, validation |
 | `training.js` | Embeddings, class balancing, KNN training |
 | `live-counter.js` | Detection loop, debouncing, diagnostics |
+| `settings.js` | Camera and number sound flags |
 | `ui/index.js` | Wizard state machine and history handling |
 | `ui/screens/*.js` | One render function per screen |
 
@@ -89,6 +90,19 @@ that activation normally still counts. A start button appears only if that
 throws, on a denied permission or a browser that insists on its own gesture, and
 disappears again once a stream is running. The capture button stays disabled
 until then, so a series can never be recorded against a dead video element.
+
+### Training sounds
+
+The capture screen, `ui/screens/capture.js`, plays two more clips through
+`shared/audio.js`: `playCameraCapture()` for a shutter sound on every photo,
+and `playNumber()` again for the countdown before a series starts, every five
+seconds down to five remaining, then every second from five to one. Both check
+`snaptraining-dryrun/settings.js` before playing and default to on.
+
+`unlockAudio()` gets its own call here, on the capture button's own click,
+because the existing call lived only on the profile list's tap into live mode.
+Without it, the first clip this screen ever plays, whichever one fires first
+depending on whether a start delay is set, would be the one iOS blocks.
 
 ## Labeling, `labeling.js`
 
@@ -203,7 +217,9 @@ actually decides whether reps get missed.
 
 ### Spoken callouts
 
-Every tenth confirmed rep up to 100 is announced through `shared/audio.js`.
+Every tenth confirmed rep up to 100 is announced through `shared/audio.js`,
+gated by the same number sound flag as the capture screen's countdown (see
+[training sounds](#training-sounds)), in `snaptraining-dryrun/settings.js`.
 
 iOS only plays audio that a user gesture started, and grants that per element
 rather than per page, so all clips share one `Audio` whose `src` is swapped
@@ -233,6 +249,7 @@ loop, not on classification ticks. Tied to inference it looked like a choppy 8 t
 | Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
 | Train | `screens/train.js` | Progress, saves the profile, no back target |
 | Live | `screens/live.js` | Counter, status line, engine warning, debug tooling |
+| Settings | `screens/settings.js` | Camera and number sound switches, reached from the app's settings screen |
 
 ::: warning The profile card click target
 The card uses a plain click listener on an in flow element, not an absolutely

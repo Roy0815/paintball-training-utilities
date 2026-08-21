@@ -11,6 +11,7 @@ bleiben.
 | `labeling.js` | Label-Konstanten, Zählung, Validierung |
 | `training.js` | Embeddings, Klassenausgleich, KNN-Training |
 | `live-counter.js` | Erkennungsschleife, Entprellung, Diagnose |
+| `settings.js` | Kamera- und Zahlen-Sound-Flags |
 | `ui/index.js` | Wizard-Zustandsautomat und History-Handling |
 | `ui/screens/*.js` | Eine Renderfunktion pro Screen |
 
@@ -93,6 +94,21 @@ erscheint nur, wenn das fehlschlägt, etwa bei abgelehnter Berechtigung oder
 einem Browser, der auf seiner eigenen Geste besteht, und verschwindet wieder,
 sobald ein Stream läuft. Der Aufnahmeknopf bleibt bis dahin deaktiviert, damit
 keine Serie gegen ein totes Videoelement aufgezeichnet werden kann.
+
+### Trainings-Sounds
+
+Der Aufnahme-Screen, `ui/screens/capture.js`, spielt über `shared/audio.js`
+noch zwei weitere Clips: `playCameraCapture()` für einen Auslöser-Ton bei jedem
+Foto, und erneut `playNumber()` für den Countdown vor dem Start einer Serie,
+alle fünf Sekunden bis fünf verbleibend, danach jede Sekunde von fünf bis eins.
+Beide prüfen vorher `snaptraining-dryrun/settings.js` und sind standardmäßig
+an.
+
+`unlockAudio()` bekommt hier einen eigenen Aufruf, direkt am Klick auf den
+Aufnahme-Button, weil der bestehende Aufruf bisher nur am Tap aus der
+Profilliste in den Live-Betrieb hing. Ohne ihn wäre der erste Clip auf diesem
+Screen, egal welcher der beiden je nach Start-Verzögerung zuerst dran ist,
+genau der, den iOS blockiert.
 
 ## Labeling, `labeling.js`
 
@@ -218,7 +234,9 @@ verloren gehen.
 ### Gesprochene Ansagen
 
 Jede zehnte bestätigte Wiederholung bis 100 wird über `shared/audio.js`
-angesagt.
+angesagt, gesteuert vom selben Zahlen-Sound-Flag wie der Countdown im
+Aufnahme-Screen (siehe [Trainings-Sounds](#trainings-sounds)), in
+`snaptraining-dryrun/settings.js`.
 
 iOS spielt nur Ton ab, den eine Nutzergeste ausgelöst hat, und vergibt diese
 Erlaubnis pro Element statt pro Seite. Deshalb teilen sich alle Clips ein
@@ -249,6 +267,7 @@ ruckelige Vorschau mit 8 bis 10 fps.
 | Labeln | `screens/label.js` | Wischkarten über Pointer-Events, Ignorieren, Zurück |
 | Training | `screens/train.js` | Fortschritt, speichert das Profil, kein Zurück-Ziel |
 | Live | `screens/live.js` | Zähler, Statuszeile, Engine-Warnung, Debug-Werkzeuge |
+| Einstellungen | `screens/settings.js` | Schalter für Kamera- und Zahlen-Sound, erreichbar über den Einstellungen-Screen der App |
 
 ::: warning Das Klickziel der Profilkarte
 Die Karte nutzt einen einfachen Click-Listener auf einem Element im normalen

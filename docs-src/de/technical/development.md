@@ -39,11 +39,26 @@ läuft. Also nur während des Testens offen lassen. Die URL ändert sich bei jed
 Start. `cloudflared` muss installiert und im `PATH` sein. `npm run tunnel`
 startet nur den Tunnel, wenn der Dev-Server bereits woanders läuft.
 
+`scripts/tunnel-qr.mjs` erzwingt `--protocol http2`. cloudflared nutzt
+standardmäßig QUIC, das über UDP läuft und über WSL2s virtualisiertes NAT
+innerhalb weniger Minuten still abbricht, danach liefert Cloudflare für die
+ausgegebene URL nur noch Fehler 1033. HTTP/2 läuft über eine normale
+TCP-Verbindung und bleibt für die Dauer einer Session stabil.
+
 ## Debug-Werkzeuge auf dem Gerät
 
 Fest eingebaut statt pro Fehler hinzugefügt und wieder entfernt, weil genau diese
-Werkzeuge das Backend-Problem überhaupt gefunden haben. Sie liegen auf dem
-Aufnahme- und dem Live-Bildschirm.
+Werkzeuge das Backend-Problem überhaupt gefunden haben. Standardmäßig aber
+ausgeblendet: sie stehen allen im Weg, die keinem gerätespezifischen Fehler
+hinterherjagen, und als einziges Diagnosewerkzeug für eine rein clientseitige
+App waren sie es trotzdem wert, hinter einem Schalter zu bleiben statt gelöscht
+zu werden.
+
+Eingeschaltet wird über das Zahnradsymbol auf der Startseite, Einstellungen,
+Debug-Modus. Das Flag liegt in `localStorage` (`shared/debug.js`) und umschließt
+die Bedienelemente unten auf dem Aufnahme- und dem Live-Bildschirm mit einem
+`hidden`-Container, an ihnen selbst ändert sich also nichts, nur an ihrer
+Sichtbarkeit.
 
 | Element | Funktion |
 | --- | --- |
@@ -72,6 +87,10 @@ eigentliche Freigabe ist die Bestätigung auf echter Hardware.
    `STORE_SCHEMA` in `shared/db.js` ergänzen und `DB_VERSION` erhöhen.
 5. Titel und Zurück-Ziel über `setHeader()` setzen, nie über einen eigenen
    Zurück-Button im Screen.
+6. Hat das Feature Einstellungen, die es wert sind, ein optionales
+   `mountSettings(container)` neben `mount` ergänzen. Es taucht dann automatisch
+   als Link im übergeordneten Einstellungen-Screen auf, siehe
+   [Einstellungen-Screen](./app-shell#einstellungen-screen-app-settings-js).
 
 An der Shell ändert sich nichts.
 

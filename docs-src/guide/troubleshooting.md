@@ -29,10 +29,11 @@ If one class sits at 100% no matter what the camera sees, the prediction is not
 reacting to the image at all. That is a different problem from bad accuracy.
 
 Check for a warning below the counter about the engine (see the next section),
-and retrain if it is there. If there is no warning, the **🔬 Diagnose** button
-on the live screen produces a technical report, and **📋 Debug-Log kopieren**
-copies it to the clipboard so it can be pasted into a bug report. The
-[technical documentation](/technical/ml-backend) explains how to read it.
+and retrain if it is there. If there is no warning, turn on **Debug mode**
+(gear icon on the home screen, Settings) to reveal the **🔬 Diagnose** button
+on the live screen. It produces a technical report, and **📋 Debug-Log
+kopieren** copies it to the clipboard so it can be pasted into a bug report.
+The [technical documentation](/technical/ml-backend) explains how to read it.
 
 ## Warning: trained with one engine, running on another
 
@@ -42,18 +43,26 @@ stored model and the running engine no longer speak the same language, and the
 predictions become meaningless rather than merely worse.
 
 The fix is always the same: **retrain the snapshot position**. It also appears
-if you switched the engine manually with the ⚙️ button, which is a debugging
-tool and not meant for normal use.
+if you switched the engine manually with the ⚙️ button, which only shows up
+once Debug mode is turned on in Settings and is not meant for normal use.
 
 ## No sound on every tenth rep
 
 Check the phone's own volume and its silent switch first, the app has no volume
-control of its own. Callouts only happen on every tenth rep up to 100, so
+control of its own. Also check that **Number sound** is still on in Settings,
+Snaptraining Dryrun. Callouts only happen on every tenth rep up to 100, so
 nothing is spoken in between.
 
 On an iPhone, audio is only allowed once you have tapped something. Opening the
 live screen by tapping the snapshot position counts, so use that rather than
 reloading straight into it.
+
+## No shutter sound while capturing
+
+Check that **Camera sound** is on in Settings, Snaptraining Dryrun, and that
+the phone is not muted. Like the countdown and the rep callouts, the very
+first sound this screen plays only works on an iPhone if it follows a tap
+closely enough to still count as your permission.
 
 ## Reps are being missed
 

@@ -37,11 +37,24 @@ runs, so keep it open only while testing. The URL changes on every start.
 `cloudflared` must be installed and on `PATH`. `npm run tunnel` starts only the
 tunnel when the dev server is already running elsewhere.
 
+`scripts/tunnel-qr.mjs` forces `--protocol http2`. cloudflared defaults to
+QUIC, which rides on UDP and drops silently within minutes across WSL2's
+virtualized NAT, after which Cloudflare serves error 1033 for the printed URL
+instead. HTTP/2 rides on a plain TCP connection and stays up for the length of
+a session.
+
 ## On device debug tooling
 
 Built into the app rather than added and removed per bug, because it is what
-found the backend problem in the first place. All of it lives on the capture and
-live screens.
+found the backend problem in the first place. Hidden by default though: it is
+in the way for anyone not chasing a device specific bug, and the only field
+diagnostics available for a fully client side app was still worth keeping
+around behind a flag rather than deleting.
+
+Turn it on from the gear icon on the home screen, Settings, Debug mode. The
+flag lives in `localStorage` (`shared/debug.js`) and wraps the controls below
+in a `hidden` container on the capture and live screens, so nothing about them
+changes when it flips, only their visibility.
 
 | Control | What it does |
 | --- | --- |
@@ -70,6 +83,10 @@ device confirmation is the actual gate.
    `shared/db.js` and bump `DB_VERSION`.
 5. Use `setHeader()` for the title and back target, never a screen local back
    button.
+6. If the feature has settings worth exposing, add an optional
+   `mountSettings(container)` next to `mount`. It shows up as a link from the
+   top level settings screen automatically, see
+   [settings screen](./app-shell#settings-screen-app-settings-js).
 
 Nothing in the shell needs to change.
 

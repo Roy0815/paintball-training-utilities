@@ -34,10 +34,12 @@ Genauigkeit.
 
 Schau nach einer Warnung unter dem Zähler, die die Engine betrifft (siehe
 nächster Abschnitt), und trainiere in dem Fall neu. Gibt es keine Warnung,
-erzeugt der Button **🔬 Diagnose ausführen** auf dem Live-Bildschirm einen
-technischen Bericht, und **📋 Debug-Log kopieren** legt ihn in die
-Zwischenablage, sodass er in einen Fehlerbericht passt. Die
-[technische Doku](/de/technical/ml-backend) erklärt, wie man ihn liest.
+schalte den **Debug-Modus** ein (Zahnradsymbol auf der Startseite,
+Einstellungen), um den Button **🔬 Diagnose ausführen** auf dem
+Live-Bildschirm einzublenden. Er erzeugt einen technischen Bericht, und
+**📋 Debug-Log kopieren** legt ihn in die Zwischenablage, sodass er in einen
+Fehlerbericht passt. Die [technische Doku](/de/technical/ml-backend) erklärt,
+wie man ihn liest.
 
 ## Warnung: mit einer Engine trainiert, läuft auf einer anderen
 
@@ -48,18 +50,28 @@ nicht mehr dieselbe Sprache, und die Vorhersagen werden nicht nur schlechter,
 sondern bedeutungslos.
 
 Die Lösung ist immer dieselbe: **Snapshot-Position neu trainieren.** Die Warnung
-erscheint auch, wenn du die Engine manuell mit dem ⚙️-Button umgestellt hast, was
-ein Debugging-Werkzeug ist und nicht für den normalen Betrieb gedacht.
+erscheint auch, wenn du die Engine manuell mit dem ⚙️-Button umgestellt hast,
+der erst auftaucht, wenn der Debug-Modus in den Einstellungen eingeschaltet
+ist, und nicht für den normalen Betrieb gedacht ist.
 
 ## Kein Ton bei jeder zehnten Wiederholung
 
 Prüfe zuerst die Lautstärke des Handys und den Stummschalter, die App hat keine
-eigene Lautstärkeregelung. Angesagt wird nur jede zehnte Wiederholung bis 100,
-dazwischen bleibt es absichtlich still.
+eigene Lautstärkeregelung. Prüfe außerdem, ob **Zahlen-Sound** in den
+Einstellungen unter Snaptraining Dryrun noch an ist. Angesagt wird nur jede
+zehnte Wiederholung bis 100, dazwischen bleibt es absichtlich still.
 
 Auf dem iPhone ist Ton erst erlaubt, nachdem du etwas angetippt hast. Der Tap
 auf die Snapshot-Position zählt dafür, öffne den Live-Bildschirm also darüber
 und nicht durch einen Reload.
+
+## Kein Auslöser-Ton bei der Aufnahme
+
+Prüfe, ob **Kamera-Sound** in den Einstellungen unter Snaptraining Dryrun an
+ist und ob das Handy nicht stummgeschaltet ist. Wie beim Countdown und den
+Wiederholungsansagen funktioniert der allererste Ton auf diesem Bildschirm auf
+dem iPhone nur, wenn er nah genug auf einen Tap folgt, um noch als deine
+Erlaubnis zu zählen.
 
 ## Wiederholungen werden übersehen
 

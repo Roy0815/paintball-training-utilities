@@ -61,6 +61,10 @@ into cover, snap out, go back into cover. Aim for **roughly the same number of
 photos in cover as snapped out**. Photos appear as thumbnails while the series
 runs. **Stop capture** ends it early, **Retake series** starts over.
 
+If you set a start delay, it counts down out loud, every five seconds and then
+every second from five down to one, and a shutter sound plays for every photo
+taken. Both can be turned off, see [sound settings](#sound-settings) below.
+
 Then press **Continue to labeling**.
 
 ## 3. Label the photos
@@ -109,7 +113,15 @@ phantom rep.
 
 Every tenth rep up to 100 is announced out loud, so you do not have to look at
 the screen. The callout follows the app's language, so switching to English
-switches the voice.
+switches the voice. Turn it off the same way as the capture screen's sounds,
+see the next section.
+
+## Sound settings
+
+The camera shutter sound and the spoken countdown while capturing, and the
+every tenth rep callout during live counting, can each be turned off from the
+gear icon on the home screen: **Settings**, then **Snaptraining Dryrun**. Both
+switches default to on.
 
 ## How the matching works
 

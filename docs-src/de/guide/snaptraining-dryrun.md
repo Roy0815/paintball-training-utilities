@@ -62,6 +62,11 @@ Fotos in Deckung wie herausgesnapt**. Während der Serie erscheinen die Fotos al
 Vorschaubilder. **Aufnahme stoppen** bricht früher ab, **Serie erneut aufnehmen**
 fängt von vorn an.
 
+Ist eine Start-Verzögerung eingestellt, zählt sie laut herunter, alle fünf
+Sekunden und dann jede Sekunde von fünf bis eins, und bei jedem Foto ertönt ein
+Auslöser-Ton. Beides lässt sich abschalten, siehe
+[Sound-Einstellungen](#sound-einstellungen) weiter unten.
+
 Danach **Weiter zum Labeling**.
 
 ## 3. Fotos labeln
@@ -115,7 +120,15 @@ gelesenes Bild eine Geisterwiederholung erzeugt.
 
 Jede zehnte Wiederholung bis 100 wird laut angesagt, damit du nicht auf den
 Bildschirm schauen musst. Die Ansage folgt der Sprache der App, mit dem
-Umschalten auf Englisch wechselt also auch die Stimme.
+Umschalten auf Englisch wechselt also auch die Stimme. Abschalten lässt sie
+sich genauso wie die Sounds im Aufnahme-Screen, siehe der nächste Abschnitt.
+
+## Sound-Einstellungen
+
+Der Auslöser-Ton und der gesprochene Countdown beim Aufnehmen sowie die Ansage
+jeder zehnten Wiederholung beim Live-Zählen lassen sich jeweils einzeln
+abschalten, über das Zahnradsymbol auf der Startseite: **Einstellungen**, dann
+**Snaptraining Dryrun**. Beide Schalter stehen standardmäßig auf an.
 
 ## Wie das Matching funktioniert
 
