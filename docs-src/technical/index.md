@@ -67,7 +67,7 @@ camera frame
 live frame
   └── same crop
       └── MobileNet embedding
-          └── KNN predictClass, k = 5
+          └── KNN predictClass, k = 6
               └── debounce, then count on the cover to snap edge
 ```
 

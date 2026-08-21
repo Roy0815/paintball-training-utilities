@@ -187,12 +187,13 @@ training loop closure bugs, canvas to texture upload (`canvas vs imageData`
 measured 1.0000 on both devices) and packed WebGL textures.
 
 Several of those turned out to be real bugs even though none of them was this
-one, and their fixes were kept:
-[class balancing](./snaptraining-dryrun#class-balancing),
-[k = 5 with a 0.6 threshold](./snaptraining-dryrun#k-and-the-threshold) and the
-[center square crop](./snaptraining-dryrun#camera-and-cropping-capture-js). One
-more, handing the camera stream from setup to capture so both saw the same
-resolution, has since become moot: setup no longer opens a camera at all.
+one. Two of those fixes are still in place: the
+[explicit k and confidence threshold](./snaptraining-dryrun#k-and-the-threshold)
+and the [center square crop](./snaptraining-dryrun#camera-and-cropping-capture-js).
+Two have since been undone rather than kept. Handing the camera stream from
+setup to capture is moot now that setup opens no camera at all, and
+[class balancing](./snaptraining-dryrun#why-classes-are-not-balanced) was
+dropped when the capture guidance switched to a minimum per class.
 
 ## Expected outcome per device
 

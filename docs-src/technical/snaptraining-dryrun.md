@@ -96,7 +96,8 @@ Two classes: `LABELS.PERSON` for snap, `LABELS.EMPTY` for cover. The internal
 names are historical, the display strings come from i18n.
 
 Ignored photos keep `label: null`, so the training filter drops them without a
-second flag. `validateLabels()` enforces `MIN_EXAMPLES_PER_CLASS` (5) per class
+second flag. `validateLabels()` enforces `MIN_EXAMPLES_PER_CLASS` (6, matched to the k of the
+live vote so a class can supply every neighbour) per class
 and returns what is still missing, which the summary screen shows directly.
 
 ## Training, `training.js`
@@ -106,19 +107,24 @@ a 1280 value embedding, and add it to the KNN classifier. The classifier dataset
 is then serialized into typed arrays plus shapes, because tensors cannot go into
 IndexedDB but typed arrays survive structured clone.
 
-### Class balancing
+### Why classes are not balanced
 
-`balanceClasses()` caps both classes to the same shuffled count before training.
+Training used to cap both classes to the size of the smaller one. The KNN picks
+its k nearest neighbours from all examples pooled together and votes by raw
+count, so a class with more examples can win on density alone even when its
+examples are not particularly similar to the query.
 
-The KNN picks its k nearest neighbours from all examples pooled together and then
-votes by raw count per class. A class with more examples wins on density alone,
-even when its examples are not particularly similar to the query, so an
-unbalanced training set biases every prediction toward the larger class.
+That capping is gone. It threw away labeled photos, sometimes most of them, and
+the capture guidance now asks for a minimum per class rather than an even split,
+which makes an imbalance intentional: one set of cover photos can stand against
+several different snap positions.
 
-::: tip Open question
-Balancing fixed a real and observed bias, but it has never been retested since
-the backend bug was fixed, so it is unknown whether it still matters for a
-correctly computed feature space.
+::: warning Untested
+The bias balancing fixed was real, but it was only ever observed while the
+backend was computing wrong numbers, so whether a lopsided training set skews
+the vote on a correct feature space has never been measured. The `intra-class
+sim` and `inter-class sim` lines in the diagnostic report are where it would
+show up.
 :::
 
 ### Why diagnostics are recorded at training time
@@ -156,10 +162,20 @@ rep needs a confirmed cover in between, so nothing double counts.
 
 ### k and the threshold
 
-`k = 5` is passed explicitly because `knn-classifier` defaults to 3. With three
-neighbours, confidence can only ever be 0, 1/3, 2/3 or 1, so a 0.75 threshold
-silently demands a unanimous vote and is almost never reached. With `k = 5` and a
-threshold of 0.6, three of five decides.
+The confidence attached to a prediction is not a probability. `predictClass()`
+takes the cosine similarity of the frame against every stored example, sorts
+them, keeps the k highest and returns `votes for the class / k`. Only multiples
+of 1/k are reachable, so k and the threshold have to be chosen together.
+
+`k = 6` is passed explicitly because `knn-classifier` defaults to 3, where the
+only steps are 0, 1/3, 2/3 and 1 and a 0.75 threshold silently demands a
+unanimous vote. With sixths there is no step at 0.6 either, so the 0.6 threshold
+effectively asks for **4 of 6, or 66.7%**.
+
+An even k can tie 3 to 3. `calculateTopClass()` keeps the first class it sees
+with a strictly higher share, so a tie resolves to whichever class was
+concatenated first, which is arbitrary. It does not matter here: a tie is 0.5
+and falls below the threshold whichever way it lands.
 
 ### Loop timing
 
@@ -196,7 +212,7 @@ loop, not on classification ticks. Tied to inference it looked like a choppy 8 t
 | Screen | File | Notes |
 | --- | --- | --- |
 | Profile list | `screens/profileList.js` | Card click starts live mode, buttons excluded via `closest('button')` |
-| Setup | `screens/setup.js` | Name, camera choice, the 50/50 reminder, no camera |
+| Setup | `screens/setup.js` | Name, camera choice, the per class minimum, no camera |
 | Capture | `screens/capture.js` | Opens the camera, series settings, crop preview, thumbnails, debug panel |
 | Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
 | Train | `screens/train.js` | Progress, saves the profile, no back target |

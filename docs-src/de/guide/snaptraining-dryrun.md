@@ -27,8 +27,9 @@ Drücke **+ Neue Snapshot-Position** und gib ihr einen Namen, der dir sagt, wo
 das war, zum Beispiel "Maya Tempel" oder "Dorito 1".
 
 Wähle Front- oder Rückkamera. Der Bildschirm zeigt dir außerdem das eine, was
-darüber entscheidet, ob der Trainingssatz brauchbar wird: halb Deckung, halb
-Snap.
+darüber entscheidet, ob der Trainingssatz brauchbar wird: mindestens sechs Fotos
+von der leeren Deckung und mindestens sechs von jeder Snap-Position, die gezählt
+werden soll. Mehr ist besser.
 
 Mehr ist das Formular nicht. Die Kamera geht im nächsten Schritt auf, dort
 richtest du das Handy aus.
@@ -80,7 +81,9 @@ bringt dem Modell bei, dass der halbe Weg schon eine Wiederholung ist, und genau
 so zählt es später.
 
 Am Ende siehst du eine Zusammenfassung mit den Anzahlen. Für das Training
-brauchst du mindestens **5 Fotos pro Klasse**.
+brauchst du mindestens **6 Fotos pro Klasse**, denn mit so vielen Fotos
+vergleicht der Live-Zähler später jedes Bild. Siehe
+[wie das Matching funktioniert](#wie-das-matching-funktioniert).
 
 ## 4. Trainieren
 
@@ -114,6 +117,45 @@ Jede zehnte Wiederholung bis 100 wird laut angesagt, damit du nicht auf den
 Bildschirm schauen musst. Die Sprachclips sind noch nicht dabei, bis dahin bleibt
 es still.
 
+## Wie das Matching funktioniert
+
+Die App erkennt keine Menschen. Sie vergleicht Bilder mit Bildern.
+
+Beim Training wird jedes gelabelte Foto in eine Liste aus 1280 Zahlen
+umgerechnet, eine Art Fingerabdruck dessen, wie das Bild aussieht. Nur diese
+Fingerabdrücke werden gespeichert, die Fotos selbst werden danach gelöscht.
+
+Beim Zählen bekommt jedes Kamerabild denselben Fingerabdruck, der dann mit jedem
+gespeicherten verglichen wird. Die App behält die **sechs ähnlichsten
+Trainingsfotos**, und die Prozentzahlen auf dem Bildschirm sind nichts anderes
+als deren Abstimmung:
+
+| Die sechs ähnlichsten Trainingsfotos | Snap | Deckung | Zählt? |
+| --- | --- | --- | --- |
+| 6 Snap | 100% | 0% | ja |
+| 5 Snap, 1 Deckung | 83% | 17% | ja |
+| 4 Snap, 2 Deckung | 67% | 33% | ja |
+| 3 Snap, 3 Deckung | 50% | 50% | nein |
+| 2 Snap, 4 Deckung | 33% | 67% | nein |
+
+Eine Wiederholung braucht mehr als 60%, und eine Stufe bei genau 60% gibt es
+nicht. Praktisch heißt das: **vier der sechs ähnlichsten Fotos müssen
+Snap-Fotos sein.**
+
+Daraus folgen drei Dinge:
+
+- **Nur deine eigenen Fotos sind der Maßstab.** Ein Bild wird nie gegen eine
+  allgemeine Vorstellung davon geprüft, wie ein Mensch aussieht, sondern nur
+  gegen die Fotos, die du gelabelt hast. Deshalb muss das Handy dort stehen, wo
+  es beim Training stand, und das Licht sollte vergleichbar sein.
+- **Sechs pro Klasse ist eine Untergrenze, kein Ziel.** Bei genau sechs
+  Deckungsfotos muss jedes einzelne davon unter den ähnlichsten sechs landen,
+  damit die Abstimmung einstimmig ausgeht. Mehr Fotos heißt mehr Chancen, dass
+  etwas dabei ist, das dem aktuellen Bild nahekommt.
+- **Eine Snap-Position, die du nie fotografiert hast, kann keine Abstimmung
+  gewinnen.** Wenn du an einer Stelle zwei verschiedene Snaps drillst,
+  fotografiere beide, jeweils mindestens sechsmal.
+
 ## Gute Ergebnisse erreichen
 
 - **Handy genauso aufstellen wie beim Training.** Das Modell lernt einen
@@ -122,8 +164,8 @@ es still.
   Lampe zählen ist ebenfalls ein anderes Bild.
 - **Während der Serie wirklich drillen.** Gestellte Fotos bringen dem Modell
   Posen bei, keine Wiederholungen.
-- **Beide Klassen ausgewogen halten.** Ungefähr gleich viele Deckungs- und
-  Snap-Fotos.
+- **Jeder Klasse genug Fotos geben.** Sechs ist das Minimum, mehr ist besser,
+  und jede eigene Snap-Position braucht ihre eigenen sechs.
 - **Bewegten Hintergrund aus dem Bild halten.** Alles, was sich im Bild bewegt,
   muss das Modell ignorieren lernen.
 - **Nach dem Umstellen des Handys neu trainieren.** Das dauert eine Minute und

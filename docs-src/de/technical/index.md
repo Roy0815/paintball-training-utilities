@@ -71,7 +71,7 @@ Kamerabild
 Live-Bild
   └── derselbe Zuschnitt
       └── MobileNet-Embedding
-          └── KNN predictClass, k = 5
+          └── KNN predictClass, k = 6
               └── Entprellung, dann Zählen an der Flanke Deckung zu Snap
 ```
 

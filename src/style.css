@@ -432,10 +432,10 @@ select {
   border-color: var(--text-muted);
 }
 
-/* The capture screen's headline instruction. The even split between the two
-   classes is the one thing that decides whether the training set is usable,
-   so it is shown as a bar rather than buried in a sentence. */
-.ratio-hint {
+/* The setup screen's headline instruction. How many photos each class needs is
+   the one thing that decides whether the training set is usable, so it gets a
+   bar of its own rather than being buried in a sentence. */
+.class-hint {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
@@ -446,13 +446,13 @@ select {
   background: var(--bg-elevated);
 }
 
-.ratio-hint-title {
+.class-hint-title {
   margin: 0;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-.ratio-bar {
+.class-bar {
   display: flex;
   height: 1.9rem;
   border-radius: 999px;
@@ -463,22 +463,21 @@ select {
   letter-spacing: 0.04em;
 }
 
-/* Both halves are flex: 1, so the bar is the 50/50 it is asking for. Colors
-   match the swipe tags on the labeling screen, so the two classes look the
-   same everywhere they appear. */
-.ratio-bar span {
+/* Colors match the swipe tags on the labeling screen, so the two classes look
+   the same everywhere they appear. */
+.class-bar span {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.ratio-bar-cover {
+.class-bar-cover {
   background: var(--bg);
   color: var(--text-muted);
 }
 
-.ratio-bar-snap {
+.class-bar-snap {
   background: var(--accent);
   color: var(--accent-contrast);
 }

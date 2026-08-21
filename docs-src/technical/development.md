@@ -99,9 +99,12 @@ files together.
 
 ## Open follow-ups
 
-- **Retest `balanceClasses()`.** It fixed a real class count bias, but has never
-  been retested since the backend bug was fixed, so it is unknown whether it
-  matters for a correctly computed feature space.
+- **Watch for class count bias now that balancing is gone.** Capping both
+  classes to the smaller one was dropped in favour of a minimum per class. The
+  bias it fixed was real, but was only ever observed while the backend computed
+  wrong numbers, so whether a lopsided training set skews the vote on a correct
+  feature space is untested. The `intra-class sim` and `inter-class sim` lines
+  in the diagnostic report are where it would show up.
 - **A/B test the center square crop** in `captureFrameCanvas()` against real
   accuracy. It was added for a sound and independent reason and never caused the
   phone bug, but it also throws away pixels above and below center. The tradeoff

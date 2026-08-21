@@ -1,6 +1,8 @@
 import { t } from '../../shared/i18n.js';
 
-export const MIN_EXAMPLES_PER_CLASS = 5;
+// Matched to the k of the live vote, so a class can always supply every one of
+// the k nearest neighbours. More than this is better, there is no upper bound.
+export const MIN_EXAMPLES_PER_CLASS = 6;
 export const LABELS = { PERSON: 'person', EMPTY: 'empty' };
 
 /**

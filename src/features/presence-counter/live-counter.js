@@ -31,11 +31,15 @@ import { LABELS } from './labeling.js';
  *
  * Returns { stop, runDiagnostic }.
  *
- * k is passed explicitly because knn-classifier defaults to 3, and with 3
- * neighbors confidence can only ever be 0, 1/3, 2/3 or 1. A 0.75 threshold
- * would then demand a unanimous vote, which rarely happens even on obvious
- * footage. k = 5 with a 0.6 threshold gives finer and reachable steps
- * (3 of 5 = 0.6).
+ * The confidence a prediction comes back with is literally the share of the k
+ * most similar training photos that belong to that class, so the reachable
+ * values are the k-ths and nothing in between. k is passed explicitly because
+ * knn-classifier defaults to 3, where the only steps are 0, 1/3, 2/3 and 1.
+ *
+ * With k = 6 the steps are sixths, and there is none at 0.6, so the threshold
+ * effectively asks for 4 of 6, or 66.7%. An even k can also tie 3 to 3, which
+ * resolves to whichever class was concatenated first, but a tie is 0.5 and
+ * therefore below the threshold either way.
  *
  * intervalMs is a pause after each tick, not a period, so the real time
  * between frames is inferenceMs + intervalMs. It only needs to be long enough
@@ -49,7 +53,7 @@ export async function startLiveDetection(
     trainingDiagnostics,
     intervalMs = 10,
     confirmFrames = 2,
-    k = 5,
+    k = 6,
     confidenceThreshold = 0.6,
     onDetect,
     onTick,

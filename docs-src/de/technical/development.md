@@ -101,10 +101,13 @@ Dateien zusammen anlegen.
 
 ## Offene Punkte
 
-- **`balanceClasses()` erneut prüfen.** Der Ausgleich hat eine echte Verzerrung
-  durch Klassenanzahlen behoben, wurde seit der Korrektur des Backend-Fehlers
-  aber nie erneut getestet. Ob er für einen korrekt berechneten Merkmalsraum noch
-  nötig ist, ist offen.
+- **Auf Verzerrung durch Klassenanzahlen achten, jetzt wo der Ausgleich weg
+  ist.** Das Deckeln beider Klassen auf die kleinere ist zugunsten eines
+  Minimums pro Klasse entfallen. Die behobene Verzerrung war echt, wurde aber
+  nur beobachtet, während das Backend falsch rechnete. Ob ein schiefer
+  Trainingssatz die Abstimmung auf einem korrekten Merkmalsraum verzieht, ist
+  ungeprüft. Zeigen würde es sich an `intra-class sim` und `inter-class sim` im
+  Diagnosebericht.
 - **Den Mittenzuschnitt in `captureFrameCanvas()` per A/B-Test** gegen echte
   Genauigkeit messen. Er wurde aus einem eigenständigen, richtigen Grund
   eingebaut und hat den Handyfehler nie verursacht, wirft aber Pixel oberhalb und

@@ -27,8 +27,9 @@ Press **+ New snapshot position** and give it a name that tells you where it
 was, for example "Maya temple" or "dorito 1".
 
 Choose the front or rear camera. The screen also shows the one thing that
-decides whether the training set is usable: half the photos in cover, half
-snapped out.
+decides whether the training set is usable: at least six photos of the empty
+cover, and at least six of every snap position you want counted. More is
+better.
 
 That is the whole form. The camera opens on the next screen, so that is where
 you aim the phone.
@@ -75,8 +76,10 @@ Each photo is shown as a card:
 Be strict here. A blurred half way photo labeled as snap teaches the model that
 half way counts as a rep, and it will count that way later.
 
-At the end you get a summary with the counts. You need at least **5 photos per
-class** before training can start.
+At the end you get a summary with the counts. You need at least **6 photos per
+class** before training can start, because that is how many photos the live
+counter compares each frame against. See
+[how the matching works](#how-the-matching-works).
 
 ## 4. Train
 
@@ -108,6 +111,43 @@ Every tenth rep up to 100 is announced out loud, so you do not have to look at
 the screen. The spoken clips are not included yet, so this is silent until they
 are added.
 
+## How the matching works
+
+Nothing in the app recognises "a person". It compares pictures with pictures.
+
+During training, every labeled photo is turned into a list of 1280 numbers, a
+kind of fingerprint of what that picture looks like. Those fingerprints are all
+that gets stored, the photos themselves are deleted afterwards.
+
+While counting, every camera frame gets the same fingerprint, which is then
+compared against every stored one. The app keeps the **six most similar training
+photos**, and the percentages on screen are nothing more than how those six
+voted:
+
+| The six closest training photos | Snap | Cover | Counts? |
+| --- | --- | --- | --- |
+| 6 snap | 100% | 0% | yes |
+| 5 snap, 1 cover | 83% | 17% | yes |
+| 4 snap, 2 cover | 67% | 33% | yes |
+| 3 snap, 3 cover | 50% | 50% | no |
+| 2 snap, 4 cover | 33% | 67% | no |
+
+A rep needs more than 60%, and there is no step at exactly 60%, so in practice
+**four of the six closest photos have to be snap photos**.
+
+Three things follow from that:
+
+- **Your own photos are the only yardstick.** A frame is never judged against
+  some general idea of what a person looks like, only against the photos you
+  labeled. That is why the phone has to stand where it stood during training,
+  and why the light should be comparable.
+- **Six per class is a floor, not a target.** With exactly six cover photos,
+  every single one of them has to land in the top six for a unanimous cover
+  vote. More photos mean more chances that something close to the current frame
+  is in there.
+- **A snap position you never photographed cannot win a vote.** If you drill two
+  different snap-outs at one spot, photograph both, at least six each.
+
 ## Getting good results
 
 - **Place the phone the same way as during training.** The model learns one
@@ -116,7 +156,8 @@ are added.
   under a lamp is a different picture too.
 - **Really drill during the capture series.** Photos posed to look right teach
   poses, not reps.
-- **Balance the two classes.** Roughly equal numbers of cover and snap photos.
+- **Give every class enough photos.** Six is the minimum, more is better, and
+  every distinct snap position needs its own six.
 - **Keep moving background out of the frame.** Anything that moves in the
   picture is something the model has to learn to ignore.
 - **Retrain after moving the phone.** It takes a minute and is the fix for

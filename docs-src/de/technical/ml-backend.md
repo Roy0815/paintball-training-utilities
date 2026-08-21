@@ -198,14 +198,16 @@ Float-Genauigkeit, Nachbearbeitung der Frontkamera, die interne Indizierung von
 der Canvas-zu-Textur-Upload (`canvas vs imageData` maß auf beiden Geräten
 1.0000) und gepackte WebGL-Texturen.
 
-Mehrere davon waren echte Fehler, auch wenn keiner dieser eine war, und ihre
-Korrekturen sind geblieben: der
-[Klassenausgleich](./snaptraining-dryrun#klassenausgleich),
-[k = 5 mit Schwelle 0.6](./snaptraining-dryrun#k-und-die-schwelle) und der
-[Mittenzuschnitt](./snaptraining-dryrun#kamera-und-zuschnitt-capture-js). Eine
-weitere, die Übergabe des Kamerastreams vom Setup an die Aufnahme, damit beide
-dieselbe Auflösung sehen, hat sich erledigt: das Setup öffnet gar keine Kamera
-mehr.
+Mehrere davon waren echte Fehler, auch wenn keiner dieser eine war. Zwei dieser
+Korrekturen sind geblieben: das
+[explizite k mit Schwelle](./snaptraining-dryrun#k-und-die-schwelle) und der
+[Mittenzuschnitt](./snaptraining-dryrun#kamera-und-zuschnitt-capture-js). Zwei
+sind inzwischen wieder zurückgenommen. Die Übergabe des Kamerastreams vom Setup
+an die Aufnahme hat sich erledigt, weil das Setup gar keine Kamera mehr öffnet,
+und der
+[Klassenausgleich](./snaptraining-dryrun#warum-die-klassen-nicht-ausgeglichen-werden)
+ist entfallen, als die Aufnahmeanleitung auf ein Minimum pro Klasse umgestellt
+wurde.
 
 ## Erwartetes Ergebnis je Gerät
 

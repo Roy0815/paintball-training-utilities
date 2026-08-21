@@ -17,34 +17,16 @@ function loadImage(src) {
   });
 }
 
-function shuffle(array) {
-  const copy = [...array];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-/**
- * The KNN picks its k nearest neighbors from all examples pooled together and
- * then votes by raw count per class. If one class has far more examples than
- * the other, its neighbors dominate that pool by sheer density even when they
- * are not visually similar to the query, so an unbalanced training set biases
- * every prediction toward the larger class. Capping both classes to the same
- * shuffled count removes that bias.
- */
-function balanceClasses(items) {
-  const byLabel = {};
-  for (const item of items) {
-    (byLabel[item.label] ??= []).push(item);
-  }
-  const minCount = Math.min(...Object.values(byLabel).map((group) => group.length));
-  return Object.values(byLabel).flatMap((group) => shuffle(group).slice(0, minCount));
-}
-
 /**
  * Computes a MobileNet embedding per labeled photo and feeds a KNN classifier.
+ *
+ * Every labeled photo is used, class counts are deliberately not equalized.
+ * Capping both classes to the smaller one did remove a density bias in the KNN
+ * vote, since it picks its k nearest neighbours from all examples pooled
+ * together, but it also threw away labeled photos. The capture guidance now
+ * asks for a minimum per class rather than an even split, which makes an
+ * imbalance intentional: one set of cover photos can stand against several
+ * different snap positions.
  *
  * The labeled photos are discarded once training ends, so a per example record
  * of what each one looked like (pixel stats) and embedded to (vector stats) is
@@ -58,12 +40,12 @@ function balanceClasses(items) {
 export async function trainFromLabeledItems(items, { onProgress } = {}) {
   const model = await loadMobileNet();
   const classifier = createClassifier();
-  const labeled = balanceClasses(items.filter((item) => item.label));
+  const labeled = items.filter((item) => item.label);
 
   console.log(
     '[presence-counter] training on',
     labeled.length,
-    'balanced examples:',
+    'examples:',
     labeled.reduce((acc, item) => ({ ...acc, [item.label]: (acc[item.label] ?? 0) + 1 }), {})
   );
 

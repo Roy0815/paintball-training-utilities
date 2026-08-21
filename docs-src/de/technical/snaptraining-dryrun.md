@@ -100,7 +100,9 @@ Zwei Klassen: `LABELS.PERSON` für Snap, `LABELS.EMPTY` für Deckung. Die intern
 Namen sind historisch, die Anzeigetexte kommen aus i18n.
 
 Ignorierte Fotos behalten `label: null`, damit der Trainingsfilter sie ohne
-zweites Flag verwirft. `validateLabels()` erzwingt `MIN_EXAMPLES_PER_CLASS` (5)
+zweites Flag verwirft. `validateLabels()` erzwingt `MIN_EXAMPLES_PER_CLASS` (6,
+abgestimmt auf das k der Live-Abstimmung, damit eine Klasse jeden Nachbarn
+stellen kann)
 pro Klasse und liefert zurück, was noch fehlt, was der Zusammenfassungsbildschirm
 direkt anzeigt.
 
@@ -112,21 +114,25 @@ Dataset wird anschließend in typisierte Arrays plus Shapes serialisiert, weil
 Tensoren nicht in IndexedDB passen, typisierte Arrays aber Structured Clone
 überstehen.
 
-### Klassenausgleich
+### Warum die Klassen nicht ausgeglichen werden
 
-`balanceClasses()` deckelt beide Klassen vor dem Training auf dieselbe, zufällig
-gemischte Anzahl.
+Das Training hat früher beide Klassen auf die Größe der kleineren gedeckelt. Das
+KNN wählt seine k nächsten Nachbarn aus allen Beispielen gemeinsam und stimmt
+nach roher Anzahl ab, eine Klasse mit mehr Beispielen kann also allein über die
+Dichte gewinnen, auch wenn ihre Beispiele der Anfrage gar nicht besonders
+ähnlich sind.
 
-Das KNN wählt seine k nächsten Nachbarn aus allen Beispielen gemeinsam und
-stimmt dann nach roher Anzahl pro Klasse ab. Eine Klasse mit mehr Beispielen
-gewinnt allein über die Dichte, auch wenn ihre Beispiele der Anfrage gar nicht
-besonders ähnlich sind. Ein unausgewogener Trainingssatz verschiebt also jede
-Vorhersage zur größeren Klasse.
+Dieses Deckeln ist weg. Es hat gelabelte Fotos weggeworfen, teils die meisten,
+und die Aufnahmeanleitung fordert inzwischen ein Minimum pro Klasse statt eines
+Gleichstands. Damit ist ein Ungleichgewicht gewollt: ein Satz Deckungsfotos kann
+mehreren verschiedenen Snap-Positionen gegenüberstehen.
 
-::: tip Offene Frage
-Der Ausgleich hat eine echte, beobachtete Verzerrung behoben, wurde seit der
-Korrektur des Backend-Fehlers aber nie erneut geprüft. Ob er für einen korrekt
-berechneten Merkmalsraum noch nötig ist, ist unbekannt.
+::: warning Ungeprüft
+Die Verzerrung, die der Ausgleich behoben hat, war echt, wurde aber nur
+beobachtet, während das Backend falsch rechnete. Ob ein schiefer Trainingssatz
+die Abstimmung auf einem korrekten Merkmalsraum verzieht, ist nie gemessen
+worden. Zeigen würde es sich an den Zeilen `intra-class sim` und
+`inter-class sim` im Diagnosebericht.
 :::
 
 ### Warum Diagnosedaten beim Training entstehen
@@ -167,10 +173,21 @@ dazwischen. Doppelt zählt nichts.
 
 ### k und die Schwelle
 
-`k = 5` wird explizit übergeben, weil `knn-classifier` standardmäßig 3 nutzt. Bei
-drei Nachbarn kann die Konfidenz nur 0, 1/3, 2/3 oder 1 sein, eine Schwelle von
-0.75 verlangt damit still eine einstimmige Abstimmung und wird fast nie erreicht.
-Mit `k = 5` und Schwelle 0.6 entscheiden drei von fünf.
+Die Konfidenz einer Vorhersage ist keine Wahrscheinlichkeit. `predictClass()`
+bildet die Kosinus-Ähnlichkeit des Bildes zu jedem gespeicherten Beispiel,
+sortiert, behält die k höchsten und gibt `Stimmen der Klasse / k` zurück.
+Erreichbar sind also nur Vielfache von 1/k, k und Schwelle gehören damit
+zusammen gewählt.
+
+`k = 6` wird explizit übergeben, weil `knn-classifier` standardmäßig 3 nutzt, wo
+es nur die Stufen 0, 1/3, 2/3 und 1 gibt und eine Schwelle von 0.75 still eine
+einstimmige Abstimmung verlangt. Auch bei Sechsteln gibt es keine Stufe bei 0.6,
+die Schwelle verlangt effektiv also **4 von 6, also 66,7%**.
+
+Ein gerades k kann 3 zu 3 unentschieden ausgehen. `calculateTopClass()` behält
+die erste Klasse mit echt höherem Anteil, ein Gleichstand fällt also der Klasse
+zu, die zuerst konkateniert wurde, und das ist willkürlich. Hier spielt es keine
+Rolle: ein Gleichstand sind 0.5 und liegt damit ohnehin unter der Schwelle.
 
 ### Timing der Schleife
 
@@ -210,7 +227,7 @@ ruckelige Vorschau mit 8 bis 10 fps.
 | Screen | Datei | Anmerkung |
 | --- | --- | --- |
 | Profilliste | `screens/profileList.js` | Klick auf die Karte startet den Live-Betrieb, Buttons über `closest('button')` ausgenommen |
-| Setup | `screens/setup.js` | Name, Kamerawahl, der 50/50-Hinweis, keine Kamera |
+| Setup | `screens/setup.js` | Name, Kamerawahl, das Minimum pro Klasse, keine Kamera |
 | Aufnahme | `screens/capture.js` | Öffnet die Kamera, Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel |
 | Labeln | `screens/label.js` | Wischkarten über Pointer-Events, Ignorieren, Zurück |
 | Training | `screens/train.js` | Fortschritt, speichert das Profil, kein Zurück-Ziel |

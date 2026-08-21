@@ -92,10 +92,13 @@ const STRINGS = {
   'pc.setup.cameraRear': { de: 'Rückkamera', en: 'Rear camera' },
   'pc.setup.cameraFront': { de: 'Frontkamera', en: 'Front camera' },
   'pc.setup.next': { de: 'Weiter zur Aufnahme', en: 'Continue to capture' },
-  'pc.setup.ratioTitle': { de: 'Ziel: halb Deckung, halb Snap', en: 'Goal: half cover, half snap' },
-  'pc.setup.ratioHint': {
-    de: 'Gleich viele Fotos in Deckung wie beim Heraussnappen. Drille im nächsten Schritt ganz normal: rein in die Deckung, heraussnappen, zurück.',
-    en: 'The same number of photos in cover as snapping out. In the next step just drill normally: into cover, snap out, back again.',
+  'pc.setup.classTitle': {
+    de: 'Mindestens {min} Fotos pro Zustand',
+    en: 'At least {min} photos per state',
+  },
+  'pc.setup.classHint': {
+    de: 'Mindestens {min} Fotos von der leeren Deckung und {min} pro Snap-Position. Je mehr, desto besser. Drille im nächsten Schritt ganz normal: rein in die Deckung, heraussnappen, zurück.',
+    en: 'At least {min} photos of the empty cover and {min} per snap position. The more the better. In the next step just drill normally: into cover, snap out, back again.',
   },
 
   'pc.capture.title': { de: 'Trainingsdaten sammeln', en: 'Collect training data' },
