@@ -6,9 +6,15 @@
 import { spawn } from 'node:child_process';
 import qrcode from 'qrcode-terminal';
 
-const child = spawn('cloudflared', ['tunnel', '--url', 'https://localhost:5173', '--no-tls-verify'], {
-  stdio: ['ignore', 'pipe', 'pipe'],
-});
+// cloudflared defaults to QUIC (UDP), which is unreliable across WSL2's
+// virtualized NAT: the tunnel would register fine and then silently drop
+// within minutes (Cloudflare then serves error 1033 for the URL). Forcing
+// HTTP/2, which rides on a plain TCP connection, keeps it up.
+const child = spawn(
+  'cloudflared',
+  ['tunnel', '--protocol', 'http2', '--url', 'https://localhost:5173', '--no-tls-verify'],
+  { stdio: ['ignore', 'pipe', 'pipe'] }
+);
 
 const urlPattern = /https:\/\/[a-z0-9-]+\.trycloudflare\.com/;
 let qrPrinted = false;
