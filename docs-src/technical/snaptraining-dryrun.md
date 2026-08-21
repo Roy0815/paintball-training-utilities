@@ -207,10 +207,15 @@ Every tenth confirmed rep up to 100 is announced through `shared/audio.js`.
 
 iOS only plays audio that a user gesture started, and grants that per element
 rather than per page, so all clips share one `Audio` whose `src` is swapped
-instead of one element per number. `unlockAudio()` primes that element muted
-from inside the tap on the profile card, because by the time the live screen has
+instead of one element per number. `unlockAudio()` primes that element from
+inside the tap on the profile card, because by the time the live screen has
 imported its module and opened the camera the gesture no longer counts. Android
 never needs it and is unaffected.
+
+What it primes with is 50ms of inlined PCM silence, not a real clip turned
+down. iOS ignores `muted` on an audio element the same way it makes `volume`
+read only, so the first attempt at this announced "one" at full volume on an
+iPhone. Silence has to come from the content.
 
 ### Preview decoupling
 

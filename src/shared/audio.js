@@ -21,32 +21,31 @@ function getPlayer() {
   return player;
 }
 
+// 50ms of PCM silence. The unlock has to be silent through its content: iOS
+// ignores `muted` on an audio element, the same way it makes `volume` read
+// only, so muting a real clip just plays it at full volume.
+const SILENCE = 'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+
 /**
  * Marks the shared player as user started. Has to run synchronously inside a
  * real tap handler, which is why the profile list calls it on the tap that
  * opens the live screen: by the time that screen has loaded its module and
  * started the camera, the gesture is long over.
  *
- * Plays muted and stops immediately, so nothing is audible. Android does not
- * need this and is unaffected by it.
+ * Android does not need this and is unaffected by it.
  */
 export function unlockAudio() {
   if (unlocked) return;
   const audio = getPlayer();
-  audio.muted = true;
-  currentSrc = `${AUDIO_BASE}1_${getLang()}.mp3`;
-  audio.src = currentSrc;
+  currentSrc = SILENCE;
+  audio.src = SILENCE;
   audio.play().then(
     () => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.muted = false;
       unlocked = true;
     },
     () => {
       // Nothing to recover from: playNumber() still tries on its own, and on
       // Android it works without ever being unlocked.
-      audio.muted = false;
     }
   );
 }

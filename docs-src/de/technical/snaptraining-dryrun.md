@@ -223,10 +223,14 @@ angesagt.
 iOS spielt nur Ton ab, den eine Nutzergeste ausgelöst hat, und vergibt diese
 Erlaubnis pro Element statt pro Seite. Deshalb teilen sich alle Clips ein
 einziges `Audio`, dessen `src` getauscht wird, statt ein Element pro Zahl.
-`unlockAudio()` weckt dieses Element stumm aus dem Tap auf die Profilkarte
-heraus, denn sobald der Live-Screen sein Modul geladen und die Kamera geöffnet
-hat, zählt die Geste nicht mehr. Android braucht das nie und stört sich nicht
-daran.
+`unlockAudio()` weckt dieses Element aus dem Tap auf die Profilkarte heraus,
+denn sobald der Live-Screen sein Modul geladen und die Kamera geöffnet hat,
+zählt die Geste nicht mehr. Android braucht das nie und stört sich nicht daran.
+
+Geweckt wird mit 50 ms eingebetteter PCM-Stille, nicht mit einem
+leisegedrehten Clip. iOS ignoriert `muted` an einem Audio-Element genauso, wie
+es `volume` nur lesbar macht, der erste Versuch hat auf dem iPhone deshalb
+lautstark "Eins" angesagt. Die Stille muss aus dem Inhalt kommen.
 
 ### Entkoppelte Vorschau
 
