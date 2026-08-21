@@ -654,10 +654,15 @@ select {
   background: var(--bg);
 }
 
+/* Always stacked, never side by side. With wrapping, the layout depended on
+   how long the labels happened to be: the German "Neu trainieren" wrapped
+   while the English "Retrain" still fit, so the same card looked different per
+   language. Stacking also keeps the buttons narrow, which leaves more free
+   card around them, and the card itself is the tap target for going live. */
 .profile-card-actions {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.5rem;
 }
 
