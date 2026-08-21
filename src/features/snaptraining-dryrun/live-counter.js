@@ -71,7 +71,7 @@ export async function startLiveDetection(
     confidenceThreshold,
     ...getBackendInfo(),
   };
-  console.log('[presence-counter] live classifier loaded:', readyInfo);
+  console.log('[snaptraining] live classifier loaded:', readyInfo);
   onReady?.(readyInfo);
 
   let stopped = false;

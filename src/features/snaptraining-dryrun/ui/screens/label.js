@@ -6,7 +6,7 @@ const SWIPE_THRESHOLD_PX = 80;
 const FLY_OUT_PX = 600;
 
 export function renderLabelScreen(container, draft, { onBack, onNext }) {
-  setHeader({ title: t('pc.label.title'), onBack });
+  setHeader({ title: t('snaptraining.label.title'), onBack });
 
   let index = 0;
 
@@ -38,16 +38,16 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
     const { valid, missing, counts } = validateLabels(draft.items);
     container.innerHTML = `
       <section class="screen">
-        <h2>${t('pc.label.summaryTitle')}</h2>
-        <p class="hint">${t('pc.label.summaryCounts', {
+        <h2>${t('snaptraining.label.summaryTitle')}</h2>
+        <p class="hint">${t('snaptraining.label.summaryCounts', {
           snap: counts[LABELS.PERSON],
           cover: counts[LABELS.EMPTY],
           ignored: counts.ignored,
         })}</p>
-        ${!valid ? `<p class="error">${t('pc.label.summaryMissing', { list: missing.join(', ') })}</p>` : ''}
-        <button type="button" class="btn" id="prev-photo-btn">${t('pc.label.prev')}</button>
+        ${!valid ? `<p class="error">${t('snaptraining.label.summaryMissing', { list: missing.join(', ') })}</p>` : ''}
+        <button type="button" class="btn" id="prev-photo-btn">${t('snaptraining.label.prev')}</button>
         <button type="button" class="btn btn-primary" id="next-btn" ${valid ? '' : 'disabled'}>${t(
-      'pc.label.nextTrain'
+      'snaptraining.label.nextTrain'
     )}</button>
       </section>
     `;
@@ -66,11 +66,11 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
     const item = draft.items[index];
     const total = draft.items.length;
     const currentState = describeCurrentLabel(item);
-    const currentLabelText = currentState ? ` · ${t('pc.label.currentPrefix')}: ${currentState}` : '';
+    const currentLabelText = currentState ? ` · ${t('snaptraining.label.currentPrefix')}: ${currentState}` : '';
 
     container.innerHTML = `
       <section class="screen">
-        <p class="hint">${t('pc.label.hint')}</p>
+        <p class="hint">${t('snaptraining.label.hint')}</p>
 
         <div class="swipe-stage">
           <div class="swipe-card" id="swipe-card">
@@ -81,17 +81,17 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
         </div>
 
         <div class="progress-row">
-          <p class="hint">${t('pc.label.photoCounter', { index: index + 1, total })}${currentLabelText}</p>
+          <p class="hint">${t('snaptraining.label.photoCounter', { index: index + 1, total })}${currentLabelText}</p>
           <progress max="${total}" value="${index}"></progress>
         </div>
 
         <div class="swipe-buttons">
-          <button type="button" class="btn btn-swipe" id="empty-btn">${t('pc.label.btnCover')}</button>
-          <button type="button" class="btn btn-swipe btn-primary" id="person-btn">${t('pc.label.btnSnap')}</button>
+          <button type="button" class="btn btn-swipe" id="empty-btn">${t('snaptraining.label.btnCover')}</button>
+          <button type="button" class="btn btn-swipe btn-primary" id="person-btn">${t('snaptraining.label.btnSnap')}</button>
         </div>
-        <button type="button" class="btn btn-ignore" id="ignore-btn">${t('pc.label.btnIgnore')}</button>
+        <button type="button" class="btn btn-ignore" id="ignore-btn">${t('snaptraining.label.btnIgnore')}</button>
         <button type="button" class="btn" id="prev-photo-btn" ${index === 0 ? 'disabled' : ''}>${t(
-      'pc.label.prev'
+      'snaptraining.label.prev'
     )}</button>
       </section>
     `;

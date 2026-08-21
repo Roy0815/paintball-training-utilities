@@ -43,7 +43,7 @@ export async function trainFromLabeledItems(items, { onProgress } = {}) {
   const labeled = items.filter((item) => item.label);
 
   console.log(
-    '[presence-counter] training on',
+    '[snaptraining] training on',
     labeled.length,
     'examples:',
     labeled.reduce((acc, item) => ({ ...acc, [item.label]: (acc[item.label] ?? 0) + 1 }), {})
@@ -71,14 +71,14 @@ export async function trainFromLabeledItems(items, { onProgress } = {}) {
     onProgress?.(i + 1, labeled.length);
   }
 
-  console.log('[presence-counter] classifier example counts:', classifier.getClassExampleCount());
+  console.log('[snaptraining] classifier example counts:', classifier.getClassExampleCount());
 
   const dataset = await serializeDataset(classifier);
   console.log(
-    '[presence-counter] serialized dataset shapes:',
+    '[snaptraining] serialized dataset shapes:',
     Object.fromEntries(Object.entries(dataset).map(([label, { shape }]) => [label, shape]))
   );
-  console.log('[presence-counter] training diagnostics:', diagnostics);
+  console.log('[snaptraining] training diagnostics:', diagnostics);
   classifier.dispose();
 
   const previewItem = labeled.find((item) => item.label === LABELS.PERSON) ?? labeled[0];

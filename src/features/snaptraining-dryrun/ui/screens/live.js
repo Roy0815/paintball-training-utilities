@@ -23,9 +23,9 @@ export function renderLiveScreen(container, profile, { onBack }) {
       <div class="crop-preview" id="crop-preview" hidden><canvas id="crop-canvas"></canvas></div>
 
       <p class="counter-value counter-live" id="counter-display">${profile.counter}</p>
-      <p class="hint" id="status-line">${t('pc.live.starting')}</p>
+      <p class="hint" id="status-line">${t('snaptraining.live.starting')}</p>
 
-      <button type="button" class="btn" id="reset-btn">${t('pc.live.reset')}</button>
+      <button type="button" class="btn" id="reset-btn">${t('snaptraining.live.reset')}</button>
       <p class="warning" id="engine-warning" hidden></p>
       <p class="error" id="error-msg" hidden></p>
 
@@ -117,7 +117,7 @@ export function renderLiveScreen(container, profile, { onBack }) {
         `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}\n` +
         `trainedAt: ${profile.trainedAt ? new Date(profile.trainedAt).toLocaleString('de-DE') : '-'}`;
       debugPanel.textContent = debugStartInfo;
-      console.log('[presence-counter] live camera started:', {
+      console.log('[snaptraining] live camera started:', {
         facingMode: profile.facingMode,
         videoSize: `${videoEl.videoWidth}x${videoEl.videoHeight}`,
         trainedAt: profile.trainedAt,
@@ -176,8 +176,8 @@ export function renderLiveScreen(container, profile, { onBack }) {
         }) => {
           const personPct = Math.round((confidences.person ?? 0) * 100);
           const emptyPct = Math.round((confidences.empty ?? 0) * 100);
-          statusLine.textContent = `${t('pc.live.status', { snap: personPct, cover: emptyPct })} · ${
-            present ? t('pc.live.stateSnap') : t('pc.live.stateCover')
+          statusLine.textContent = `${t('snaptraining.live.status', { snap: personPct, cover: emptyPct })} · ${
+            present ? t('snaptraining.live.stateSnap') : t('snaptraining.live.stateCover')
           }`;
           debugPanel.textContent =
             `${debugStartInfo}\n\ncanvas: ${canvasWidth}x${canvasHeight}\nconfidences: ${JSON.stringify(
@@ -190,7 +190,7 @@ export function renderLiveScreen(container, profile, { onBack }) {
       });
       diagnoseBtn.disabled = false;
     } catch (err) {
-      errorMsg.textContent = t('pc.live.cameraError', { message: err.message });
+      errorMsg.textContent = t('snaptraining.live.cameraError', { message: err.message });
       errorMsg.hidden = false;
     }
   })();

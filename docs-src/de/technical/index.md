@@ -34,7 +34,7 @@ main.js
   └── app/shell.js        fester Header, ein Zurück-Button, Titel
       └── app/router.js   Hash-Routing, Screen-Cleanup, Sprachwechsel
           └── features/index.js      Registry, dynamische Imports
-              └── features/presence-counter/ui/index.js
+              └── features/snaptraining-dryrun/ui/index.js
                     Wizard-Zustandsautomat, History-Handling
                     └── ui/screens/*.js    eine Renderfunktion pro Screen
                           └── Feature-Module: capture, labeling,

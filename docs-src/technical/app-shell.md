@@ -68,12 +68,12 @@ re-rendered.
 ```js
 export const features = [
   {
-    id: 'presence-counter',
-    nameKey: 'feature.presenceCounter.name',
+    id: 'snaptraining-dryrun',
+    nameKey: 'feature.snaptrainingDryrun.name',
     icon: '📷',
-    descriptionKey: 'feature.presenceCounter.description',
+    descriptionKey: 'feature.snaptrainingDryrun.description',
     async mount(container) {
-      const { mount } = await import('./presence-counter/ui/index.js');
+      const { mount } = await import('./snaptraining-dryrun/ui/index.js');
       return mount(container);
     },
   },
@@ -97,7 +97,7 @@ A flat table of dot namespaced keys to `{ de, en }`, deliberately not nested, so
 a lookup is one property access on a path that runs for every rendered screen.
 
 ```js
-t('pc.list.deleteConfirm', { name: profile.name });
+t('snaptraining.list.deleteConfirm', { name: profile.name });
 ```
 
 `t()` substitutes `{name}` placeholders and warns on a missing key rather than
@@ -137,7 +137,7 @@ and made screens end below the fold, and `main#view` carries a bottom padding
 of `env(safe-area-inset-bottom)` plus some, so the last button clears the phone's
 home indicator.
 
-## Navigation inside a feature, `presence-counter/ui/index.js`
+## Navigation inside a feature, `snaptraining-dryrun/ui/index.js`
 
 The wizard is a small in memory state machine: `goList`, `goSetup`, `goCapture`,
 `goLabel`, `goTrain`, `goLive`. Each function tears down the previous screen,

@@ -28,7 +28,7 @@ src/
   app/                       App shell: hash router, header, home screen
   features/
     index.js                 Feature registry (new tools are registered here)
-    presence-counter/        Feature 1: Snaptraining Dryrun
+    snaptraining-dryrun/     Feature 1: Snaptraining Dryrun
   shared/
     db.js                    Shared IndexedDB wrapper
     i18n.js                  German and English strings
@@ -42,7 +42,7 @@ public/
 
 **Current features:**
 
-- **Snaptraining Dryrun** (`src/features/presence-counter/`, the internal id still uses the original name): trains a recognition pattern from your own camera (MobileNet embeddings plus a KNN classifier) and counts snap out reps automatically. Flow: create snapshot position, capture training photos, label them, train, then run live.
+- **Snaptraining Dryrun** (`src/features/snaptraining-dryrun/`): trains a recognition pattern from your own camera (MobileNet embeddings plus a KNN classifier) and counts snap out reps automatically. Flow: create snapshot position, capture training photos, label them, train, then run live.
 
 ## Development
 

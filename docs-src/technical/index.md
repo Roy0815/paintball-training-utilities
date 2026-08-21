@@ -31,7 +31,7 @@ main.js
   └── app/shell.js        persistent header, single back button, title
       └── app/router.js   hash routing, screen cleanup, language re-render
           └── features/index.js      registry, dynamic imports
-              └── features/presence-counter/ui/index.js
+              └── features/snaptraining-dryrun/ui/index.js
                     wizard state machine, history handling
                     └── ui/screens/*.js    one render function per screen
                           └── feature modules: capture, labeling,

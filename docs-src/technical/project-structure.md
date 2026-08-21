@@ -10,7 +10,7 @@ src/
     home.js                  Tile grid built from the feature registry
   features/
     index.js                 Feature registry
-    presence-counter/        Snaptraining Dryrun (id kept from the old name)
+    snaptraining-dryrun/     Snaptraining Dryrun
       storage.js             Profile CRUD on IndexedDB
       capture.js             Camera, center square cropping, capture series
       labeling.js            Label constants and validation
@@ -32,10 +32,10 @@ scripts/tunnel-qr.mjs        Cloudflare tunnel plus QR code for phone testing
 ```
 
 ::: tip Naming
-The feature directory, its id and its IndexedDB store are still called
-`presence-counter`. Only the display name became "Snaptraining Dryrun". Renaming
-the id would orphan every profile already stored on a device, which is not worth
-it for a cosmetic change.
+The feature was called `presence-counter` until its directory, id, route and
+IndexedDB store were renamed to match the display name. Since the store name
+carries the feature id, that rename came with a data migration, see
+[Storage](#storage).
 :::
 
 ## Build pipeline
@@ -102,7 +102,7 @@ namespaced per feature:
 
 ```js
 const STORE_SCHEMA = [
-  { name: 'presence-counter:profiles', options: { keyPath: 'id' } },
+  { name: 'snaptraining-dryrun:profiles', options: { keyPath: 'id' } },
 ];
 ```
 
@@ -110,3 +110,18 @@ A new store means one more entry plus a bumped `DB_VERSION`. `createStore(name)`
 returns a small promise based wrapper with `getAll`, `get`, `put` and `delete`.
 Everything stored is a whole object keyed by id, so there are no indexes or
 cursors.
+
+### Renaming a store
+
+Because the name carries the feature id, renaming a feature renames its store,
+and a device that already holds profiles would simply stop seeing them. So the
+schema also lists renames:
+
+```js
+const RENAMED_STORES = [{ from: 'presence-counter:profiles', to: 'snaptraining-dryrun:profiles' }];
+```
+
+The upgrade copies every row into the new store and drops the old one, all
+inside the same version change transaction. A failure anywhere aborts the whole
+transaction, which leaves the version unbumped and the old data untouched for
+the next attempt, rather than half migrated.

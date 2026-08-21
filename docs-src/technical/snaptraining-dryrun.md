@@ -1,6 +1,6 @@
 # Snaptraining Dryrun internals
 
-Directory `src/features/presence-counter/`. The id predates the current display
+Directory `src/features/snaptraining-dryrun/`. The id predates the current display
 name and is kept so existing stored profiles stay readable.
 
 | Module | Responsibility |
@@ -15,7 +15,7 @@ name and is kept so existing stored profiles stay readable.
 
 ## The profile
 
-A snapshot position is one object in `presence-counter:profiles`:
+A snapshot position is one object in `snaptraining-dryrun:profiles`:
 
 ```js
 {

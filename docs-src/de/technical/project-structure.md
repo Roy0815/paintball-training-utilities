@@ -10,7 +10,7 @@ src/
     home.js                  Kachelraster aus der Feature-Registry
   features/
     index.js                 Feature-Registry
-    presence-counter/        Snaptraining Dryrun (id aus dem alten Namen)
+    snaptraining-dryrun/     Snaptraining Dryrun
       storage.js             Profil-CRUD auf IndexedDB
       capture.js             Kamera, Mittenzuschnitt, Aufnahmeserie
       labeling.js            Label-Konstanten und Validierung
@@ -32,10 +32,10 @@ scripts/tunnel-qr.mjs        Cloudflare-Tunnel plus QR-Code für Handytests
 ```
 
 ::: tip Benennung
-Verzeichnis, id und IndexedDB-Store des Features heißen weiterhin
-`presence-counter`. Nur der Anzeigename wurde zu "Snaptraining Dryrun". Die id
-umzubenennen würde jedes bereits gespeicherte Profil auf jedem Gerät verwaisen
-lassen, was eine rein kosmetische Änderung nicht wert ist.
+Das Feature hieß `presence-counter`, bis Verzeichnis, id, Route und
+IndexedDB-Store auf den Anzeigenamen umgestellt wurden. Da der Storename die
+Feature-id enthält, gehörte zu dieser Umbenennung eine Datenmigration, siehe
+[Speicher](#speicher).
 :::
 
 ## Build-Pipeline
@@ -106,7 +106,7 @@ namensraumgetrennten Stores:
 
 ```js
 const STORE_SCHEMA = [
-  { name: 'presence-counter:profiles', options: { keyPath: 'id' } },
+  { name: 'snaptraining-dryrun:profiles', options: { keyPath: 'id' } },
 ];
 ```
 
@@ -114,3 +114,18 @@ Ein neuer Store heißt: ein Eintrag mehr plus erhöhte `DB_VERSION`.
 `createStore(name)` liefert einen kleinen Promise-Wrapper mit `getAll`, `get`,
 `put` und `delete`. Gespeichert werden immer ganze Objekte mit id als Schlüssel,
 deshalb gibt es weder Indizes noch Cursor.
+
+### Einen Store umbenennen
+
+Weil der Storename die Feature-id enthält, benennt das Umbenennen eines Features
+auch seinen Store um, und ein Gerät mit vorhandenen Profilen würde sie schlicht
+nicht mehr sehen. Deshalb führt das Schema auch Umbenennungen:
+
+```js
+const RENAMED_STORES = [{ from: 'presence-counter:profiles', to: 'snaptraining-dryrun:profiles' }];
+```
+
+Das Upgrade kopiert jede Zeile in den neuen Store und wirft den alten weg, alles
+in derselben Version-Change-Transaktion. Ein Fehler an irgendeiner Stelle bricht
+die ganze Transaktion ab, die Version bleibt dann ungeändert und die alten Daten
+unangetastet für den nächsten Versuch, statt halb migriert zu sein.

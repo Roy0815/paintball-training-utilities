@@ -1,6 +1,6 @@
 # Snaptraining Dryrun im Detail
 
-Verzeichnis `src/features/presence-counter/`. Die id stammt aus der Zeit vor dem
+Verzeichnis `src/features/snaptraining-dryrun/`. Die id stammt aus der Zeit vor dem
 heutigen Anzeigenamen und bleibt, damit bereits gespeicherte Profile lesbar
 bleiben.
 
@@ -16,7 +16,7 @@ bleiben.
 
 ## Das Profil
 
-Eine Snapshot-Position ist ein Objekt in `presence-counter:profiles`:
+Eine Snapshot-Position ist ein Objekt in `snaptraining-dryrun:profiles`:
 
 ```js
 {

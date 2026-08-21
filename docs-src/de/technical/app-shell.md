@@ -73,12 +73,12 @@ String neu zu rendern.
 ```js
 export const features = [
   {
-    id: 'presence-counter',
-    nameKey: 'feature.presenceCounter.name',
+    id: 'snaptraining-dryrun',
+    nameKey: 'feature.snaptrainingDryrun.name',
     icon: '📷',
-    descriptionKey: 'feature.presenceCounter.description',
+    descriptionKey: 'feature.snaptrainingDryrun.description',
     async mount(container) {
-      const { mount } = await import('./presence-counter/ui/index.js');
+      const { mount } = await import('./snaptraining-dryrun/ui/index.js');
       return mount(container);
     },
   },
@@ -104,7 +104,7 @@ nicht verschachtelt, damit ein Lookup ein einziger Property-Zugriff ist, auf
 einem Pfad, der bei jedem Screen-Rendern läuft.
 
 ```js
-t('pc.list.deleteConfirm', { name: profile.name });
+t('snaptraining.list.deleteConfirm', { name: profile.name });
 ```
 
 `t()` ersetzt `{name}`-Platzhalter und warnt bei einem fehlenden Schlüssel,
@@ -145,7 +145,7 @@ dadurch unter der sichtbaren Kante endeten, und `main#view` hat unten ein
 Padding aus `env(safe-area-inset-bottom)` plus etwas Zugabe, damit der letzte
 Button die Home-Anzeige des Telefons freihält.
 
-## Navigation innerhalb eines Features, `presence-counter/ui/index.js`
+## Navigation innerhalb eines Features, `snaptraining-dryrun/ui/index.js`
 
 Der Wizard ist ein kleiner Zustandsautomat im Speicher: `goList`, `goSetup`,
 `goCapture`, `goLabel`, `goTrain`, `goLive`. Jede Funktion baut den vorherigen

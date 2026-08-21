@@ -1,6 +1,6 @@
 import { createStore } from '../../shared/db.js';
 
-const store = createStore('presence-counter:profiles');
+const store = createStore('snaptraining-dryrun:profiles');
 
 export const DEFAULT_CAPTURE_COUNT = 30;
 export const DEFAULT_CAPTURE_INTERVAL_MS = 1000;

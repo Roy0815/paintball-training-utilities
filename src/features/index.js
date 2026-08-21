@@ -3,7 +3,7 @@
  * Adding a tool means creating src/features/<name>/ with a mount(container)
  * entry point and registering it below. Nothing in the app shell changes.
  *
- * mount() is a dynamic import so a feature's dependencies (presence-counter
+ * mount() is a dynamic import so a feature's dependencies (snaptraining-dryrun
  * pulls in all of TensorFlow.js) only load once the user opens it, instead of
  * on every app boot.
  *
@@ -17,12 +17,12 @@
  */
 export const features = [
   {
-    id: 'presence-counter',
-    nameKey: 'feature.presenceCounter.name',
+    id: 'snaptraining-dryrun',
+    nameKey: 'feature.snaptrainingDryrun.name',
     iconUrl: `${import.meta.env.BASE_URL}icons/temple.png`,
-    descriptionKey: 'feature.presenceCounter.description',
+    descriptionKey: 'feature.snaptrainingDryrun.description',
     async mount(container) {
-      const { mount } = await import('./presence-counter/ui/index.js');
+      const { mount } = await import('./snaptraining-dryrun/ui/index.js');
       return mount(container);
     },
   },
