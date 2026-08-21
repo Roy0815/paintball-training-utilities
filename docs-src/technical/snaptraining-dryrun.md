@@ -201,6 +201,17 @@ time one: JIT and WASM warmup make the first few ticks much slower and would
 permanently skew the number away from the steady state speed, which is what
 actually decides whether reps get missed.
 
+### Spoken callouts
+
+Every tenth confirmed rep up to 100 is announced through `shared/audio.js`.
+
+iOS only plays audio that a user gesture started, and grants that per element
+rather than per page, so all clips share one `Audio` whose `src` is swapped
+instead of one element per number. `unlockAudio()` primes that element muted
+from inside the tap on the profile card, because by the time the live screen has
+imported its module and opened the camera the gesture no longer counts. Android
+never needs it and is unaffected.
+
 ### Preview decoupling
 
 The live screen redraws its crop preview on its own `requestAnimationFrame`

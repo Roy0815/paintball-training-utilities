@@ -195,3 +195,16 @@ This was hit three separate times, on `.back-link`, `.crop-preview` and
 Any new class that sets `display` and is toggled with `hidden` needs the same
 line.
 :::
+
+::: warning Scaling a full width block
+A `transform: scale()` does not reflow anything, but it does overflow. A block
+level element in a flex column stretches to the full container width by default,
+so scaling it up pushes its edges past the viewport on both sides. That is what
+the live counter's flash did: a horizontal scrollbar on Android, and on iOS a
+reflow that shifted the button underneath it.
+
+The fix is to let the element hug its content, `align-self: center` here, so the
+growth is a share of the text width rather than of the screen width. `#app` also
+carries `overflow-x: clip` as a backstop, clip rather than hidden so the sticky
+header and the fixed scroll hint keep working.
+:::

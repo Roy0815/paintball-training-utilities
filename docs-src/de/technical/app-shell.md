@@ -206,3 +206,18 @@ Jede betroffene Klasse trägt jetzt einen expliziten Override:
 Jede neue Klasse, die `display` setzt und über `hidden` umgeschaltet wird,
 braucht dieselbe Zeile.
 :::
+
+::: warning Ein Block über die volle Breite skalieren
+Ein `transform: scale()` löst kein Reflow aus, es überläuft aber sehr wohl. Ein
+Blockelement in einer Flex-Spalte wird standardmäßig auf die volle
+Containerbreite gestreckt, beim Hochskalieren schieben sich seine Kanten also
+auf beiden Seiten über den Viewport hinaus. Genau das tat der Flash des
+Live-Zählers: auf Android eine horizontale Scrollbar, auf iOS ein Reflow, der
+den Button darunter verschoben hat.
+
+Die Lösung ist, das Element seinen Inhalt umschließen zu lassen, hier
+`align-self: center`, damit das Wachstum ein Anteil der Textbreite ist und nicht
+der Bildschirmbreite. `#app` trägt zusätzlich `overflow-x: clip` als Auffangnetz,
+clip statt hidden, damit der sticky Header und der fixierte Scroll-Hinweis
+weiter funktionieren.
+:::

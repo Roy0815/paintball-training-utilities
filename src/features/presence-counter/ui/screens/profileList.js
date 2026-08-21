@@ -1,5 +1,6 @@
 import * as storage from '../../storage.js';
 import { setHeader } from '../../../../app/shell.js';
+import { unlockAudio } from '../../../../shared/audio.js';
 import { t, formatDate } from '../../../../shared/i18n.js';
 
 function formatTrainedAt(profile) {
@@ -76,12 +77,16 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
     if (profile.classifierDataset) {
       card.addEventListener('click', (event) => {
         if (event.target.closest('button')) return;
+        // Has to happen here, inside the gesture. The live screen's own
+        // startup is async and by then iOS no longer counts it as user driven.
+        unlockAudio();
         onLive(profile);
       });
       card.addEventListener('keydown', (event) => {
         if (event.target.closest('button')) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
+          unlockAudio();
           onLive(profile);
         }
       });

@@ -40,6 +40,10 @@ body {
      can sit below the fold while the page looks like it ends there. */
   min-height: 100vh;
   min-height: 100dvh;
+  /* A transform that overshoots must never make the whole page scroll
+     sideways. clip rather than hidden, because hidden would turn this into a
+     scroll container and break the sticky header and the fixed scroll hint. */
+  overflow-x: clip;
 }
 
 .app-header {
@@ -668,7 +672,12 @@ select {
   margin: 0;
 }
 
+/* Hugs its digits instead of stretching across the screen. The flash scales
+   this box, and as a full width block it grew past the viewport on both sides,
+   which made the page scroll sideways on Android and reflowed the layout on
+   iOS, shifting the button below it. */
 .counter-live {
+  align-self: center;
   text-align: center;
   font-size: 6.5rem;
   transition: transform 0.15s ease;

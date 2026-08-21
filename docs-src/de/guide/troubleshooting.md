@@ -57,9 +57,9 @@ Prüfe zuerst die Lautstärke des Handys und den Stummschalter, die App hat kein
 eigene Lautstärkeregelung. Angesagt wird nur jede zehnte Wiederholung bis 100,
 dazwischen bleibt es absichtlich still.
 
-Bleibt es ganz still, weigert sich möglicherweise der Browser, Ton abzuspielen,
-den kein Tap ausgelöst hat. Den Live-Bildschirm einmal verlassen und wieder
-antippen behebt das meistens.
+Auf dem iPhone ist Ton erst erlaubt, nachdem du etwas angetippt hast. Der Tap
+auf die Snapshot-Position zählt dafür, öffne den Live-Bildschirm also darüber
+und nicht durch einen Reload.
 
 ## Wiederholungen werden übersehen
 

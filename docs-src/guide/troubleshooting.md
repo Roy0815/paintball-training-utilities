@@ -51,8 +51,9 @@ Check the phone's own volume and its silent switch first, the app has no volume
 control of its own. Callouts only happen on every tenth rep up to 100, so
 nothing is spoken in between.
 
-If it stays silent, the browser may be refusing to play audio that no tap
-started. Leaving the live screen and tapping back into it usually clears that.
+On an iPhone, audio is only allowed once you have tapped something. Opening the
+live screen by tapping the snapshot position counts, so use that rather than
+reloading straight into it.
 
 ## Reps are being missed
 
