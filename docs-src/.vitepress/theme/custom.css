@@ -1,0 +1,6 @@
+/* The hero's second line supports the title rather than being a second one, so
+   it drops to the third text level instead of sharing the primary colour with
+   body copy. Size and weight stay as the theme has them. */
+.VPHero .text {
+  color: var(--vp-c-text-3);
+}

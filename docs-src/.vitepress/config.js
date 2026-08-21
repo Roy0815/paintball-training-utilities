@@ -114,6 +114,8 @@ export default defineConfig({
     },
   },
   themeConfig: {
+    // Shown left of the site title in the nav bar, on every page and locale.
+    logo: '/logo.png',
     search: {
       provider: 'local',
       options: {
