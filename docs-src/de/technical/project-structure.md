@@ -12,7 +12,7 @@ src/
     index.js                 Feature-Registry
     presence-counter/        Snaptraining Dryrun (id aus dem alten Namen)
       storage.js             Profil-CRUD auf IndexedDB
-      capture.js             Kamera, Zuschnitt, ROI, Aufnahmeserie
+      capture.js             Kamera, Mittenzuschnitt, Aufnahmeserie
       labeling.js            Label-Konstanten und Validierung
       training.js            Embeddings und KNN-Training
       live-counter.js        Erkennungsschleife und Diagnose

@@ -54,8 +54,7 @@ callouts work without any change to your snapshot positions.
 
 The status line updates once per classified frame. If the phone is slow, there
 is a real gap between frames and a very fast snap out can fall between two of
-them. Try snapping with a brief hold at the top, or use a ROI so there is less
-picture to process.
+them. Try snapping with a brief hold at the top of the movement.
 
 ## Nothing works offline
 

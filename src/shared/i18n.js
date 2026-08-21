@@ -84,25 +84,22 @@ const STRINGS = {
 
   'pc.setup.title': { de: 'Neue Snapshot-Position', en: 'New snapshot position' },
   'pc.setup.nameLabel': { de: 'Name des Szenarios', en: 'Scenario name' },
-  'pc.setup.namePlaceholder': { de: 'z.B. Flur-Spiegel', en: 'e.g. hallway mirror' },
+  'pc.setup.namePlaceholder': {
+    de: 'Maya Tempel / Dorito 1 / Eingangstür',
+    en: 'Maya temple / dorito 1 / entrance door',
+  },
   'pc.setup.cameraLabel': { de: 'Kamera', en: 'Camera' },
   'pc.setup.cameraRear': { de: 'Rückkamera', en: 'Rear camera' },
   'pc.setup.cameraFront': { de: 'Frontkamera', en: 'Front camera' },
-  'pc.setup.startCamera': { de: 'Kamera starten', en: 'Start camera' },
   'pc.setup.next': { de: 'Weiter zur Aufnahme', en: 'Continue to capture' },
-  'pc.setup.roiHint': {
-    de: 'Optional: Ziehe im Vorschaubild ein Rechteck, um nur einen Bildausschnitt (ROI) zu analysieren.',
-    en: 'Optional: drag a rectangle over the preview to analyze only part of the frame (ROI).',
+  'pc.setup.ratioTitle': { de: 'Ziel: halb Deckung, halb Snap', en: 'Goal: half cover, half snap' },
+  'pc.setup.ratioHint': {
+    de: 'Gleich viele Fotos in Deckung wie beim Heraussnappen. Drille im nächsten Schritt ganz normal: rein in die Deckung, heraussnappen, zurück.',
+    en: 'The same number of photos in cover as snapping out. In the next step just drill normally: into cover, snap out, back again.',
   },
-  'pc.setup.clearRoi': { de: 'ROI zurücksetzen', en: 'Clear ROI' },
-  'pc.setup.cameraError': { de: 'Kamerazugriff fehlgeschlagen: {message}', en: 'Camera access failed: {message}' },
 
   'pc.capture.title': { de: 'Trainingsdaten sammeln', en: 'Collect training data' },
-  'pc.capture.ratioTitle': { de: 'Ziel: halb Deckung, halb Snap', en: 'Goal: half cover, half snap' },
-  'pc.capture.hint': {
-    de: 'Nimm für "{name}" eine Serie auf und drille dabei normal: rein in die Deckung, heraussnappen, zurück.',
-    en: 'Capture a series for "{name}" and drill normally: into cover, snap out, back again.',
-  },
+  'pc.capture.startCamera': { de: 'Kamera starten', en: 'Start camera' },
   'pc.capture.countLabel': { de: 'Anzahl Fotos', en: 'Number of photos' },
   'pc.capture.intervalLabel': { de: 'Intervall (ms)', en: 'Interval (ms)' },
   'pc.capture.delayLabel': { de: 'Start-Verzögerung (s)', en: 'Start delay (s)' },

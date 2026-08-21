@@ -7,7 +7,7 @@ bleiben.
 | Modul | Zuständigkeit |
 | --- | --- |
 | `storage.js` | Profil-CRUD, Aufnahme-Defaults, Zähleraktualisierung |
-| `capture.js` | Kamera, Zuschnitt, ROI-Auswahl, getaktete Aufnahmeserie |
+| `capture.js` | Kamera, quadratischer Mittenzuschnitt, getaktete Aufnahmeserie |
 | `labeling.js` | Label-Konstanten, Zählung, Validierung |
 | `training.js` | Embeddings, Klassenausgleich, KNN-Training |
 | `live-counter.js` | Erkennungsschleife, Entprellung, Diagnose |
@@ -23,7 +23,6 @@ Eine Snapshot-Position ist ein Objekt in `presence-counter:profiles`:
   id,                    // crypto.randomUUID()
   name,
   facingMode,            // 'user' oder 'environment'
-  roi,                   // { x, y, w, h } als Bruchteile, oder null
   captureCount,
   captureIntervalMs,
   classifierDataset,     // serialisiertes KNN-Dataset, null bis trainiert
@@ -37,11 +36,6 @@ Eine Snapshot-Position ist ein Objekt in `presence-counter:profiles`:
 }
 ```
 
-`roi` wird als Bruchteil des Bildes gespeichert, nicht in Pixeln, damit sie eine
-andere Kameraauflösung übersteht. Das gilt nur, solange die Auflösung
-vergleichbar bleibt, weshalb die Kamera mit einer festen Zielgröße angefordert
-wird.
-
 ## Kamera und Zuschnitt, `capture.js`
 
 `startCamera()` fordert eine feste Idealauflösung von 1280x720 an:
@@ -50,17 +44,18 @@ wird.
 video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } }
 ```
 
-Setup, Aufnahme und Live-Betrieb sind drei getrennte `getUserMedia`-Sitzungen,
-und Handykameras handeln bereitwillig pro Sitzung eine andere Auflösung aus. Da
-die ROI relativ gespeichert ist, verschiebt eine geänderte Auflösung still, was
-diese Bruchteile zuschneiden.
+Aufnahme und Live-Betrieb sind getrennte `getUserMedia`-Sitzungen, und
+Handykameras handeln bereitwillig pro Sitzung eine andere Auflösung aus. Die
+Bilder werden mittig quadratisch beschnitten, ein anderes Seitenverhältnis der
+Quelle heißt also, dass dieses Quadrat einen anderen Bildbereich abdeckt und
+Trainingsfotos und Live-Bilder nicht mehr dasselbe zeigen.
 
-`getCropRect()` liefert entweder die ROI oder, ohne ROI, einen **quadratischen
-Zuschnitt aus der Bildmitte**. MobileNet streckt alles, was es bekommt, ohne
-eigenen Zuschnitt auf 224x224 und wurde auf ungefähr quadratischen Bildern
-trainiert. Ein 9:16-Hochformat verzerrt also weit genug, um Embeddings zu
-verschieben. Ein 4:3-Webcambild ist eine milde Streckung, ein Hochformatbild vom
-Handy ist doppelt so extrem in die andere Richtung.
+`getCropRect()` liefert genau diesen **quadratischen Zuschnitt aus der
+Bildmitte**. MobileNet streckt alles, was es bekommt, ohne eigenen Zuschnitt auf
+224x224 und wurde auf ungefähr quadratischen Bildern trainiert. Ein
+9:16-Hochformat verzerrt also weit genug, um Embeddings zu verschieben. Ein
+4:3-Webcambild ist eine milde Streckung, ein Hochformatbild vom Handy ist
+doppelt so extrem in die andere Richtung.
 
 ::: warning Offene Frage
 Der Mittenzuschnitt wurde aus diesem Grund eingebaut und ist fachlich richtig, er
@@ -80,21 +75,24 @@ Drei Einstiegspunkte teilen sich dieses Rechteck:
 - `drawCroppedFrame()` zeichnet in ein Canvas, das der Aufrufer besitzt, für die
   laufende Vorschau, wo eine Allokation pro Bild Verschwendung wäre.
 
-`attachRoiSelector()` rechnet Zeigerpositionen über `getVideoDisplayRect()` in
-Bruchteile um, das die Letterbox durch `object-fit: contain` berücksichtigt. Ein
-Zug unter 2% in einer Richtung gilt als versehentlicher Tap und löscht die ROI,
-statt das Bild auf nichts zusammenzuschneiden.
-
 `captureSeries()` löst mit den aufgenommenen Data-URLs auf und ist jederzeit
 abbrechbar, auch während des Countdowns. Den Countdown gibt es, weil die Person
 auf den Fotos meist die Person mit dem Handy in der Hand ist.
 
-### Streamübergabe
+### Wo die Kamera aufgeht
 
-Der Setup-Screen stoppt seinen Stream beim Weitergehen nicht. Er übergibt den
-laufenden `MediaStream` über den Entwurf an den Aufnahme-Screen, damit die ROI,
-die gegen die Auflösung dieses Streams gezogen wurde, und die tatsächlich
-aufgenommenen Fotos aus derselben Quelle stammen.
+Nur auf dem Aufnahme- und dem Live-Bildschirm. Das Setup hat früher ebenfalls
+eine geöffnet, zum Ausrichten und für die Bereichsauswahl, die es nicht mehr
+gibt, und den Stream weitergereicht, damit Auswahl und Fotos aus derselben
+Quelle stammen. Beides ist weg, das Setup ist ein reines Formular und der
+Aufnahme-Screen öffnet die Kamera selbst.
+
+Er versucht es sofort beim Einhängen, denn der Weg dorthin ist das Ergebnis
+eines Taps, und dessen Aktivierung zählt normalerweise noch. Ein Startknopf
+erscheint nur, wenn das fehlschlägt, etwa bei abgelehnter Berechtigung oder
+einem Browser, der auf seiner eigenen Geste besteht, und verschwindet wieder,
+sobald ein Stream läuft. Der Aufnahmeknopf bleibt bis dahin deaktiviert, damit
+keine Serie gegen ein totes Videoelement aufgezeichnet werden kann.
 
 ## Labeling, `labeling.js`
 
@@ -212,8 +210,8 @@ ruckelige Vorschau mit 8 bis 10 fps.
 | Screen | Datei | Anmerkung |
 | --- | --- | --- |
 | Profilliste | `screens/profileList.js` | Klick auf die Karte startet den Live-Betrieb, Buttons über `closest('button')` ausgenommen |
-| Setup | `screens/setup.js` | Name, Kamera, ROI, übergibt den Stream an die Aufnahme |
-| Aufnahme | `screens/capture.js` | Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel |
+| Setup | `screens/setup.js` | Name, Kamerawahl, der 50/50-Hinweis, keine Kamera |
+| Aufnahme | `screens/capture.js` | Öffnet die Kamera, Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel |
 | Labeln | `screens/label.js` | Wischkarten über Pointer-Events, Ignorieren, Zurück |
 | Training | `screens/train.js` | Fortschritt, speichert das Profil, kein Zurück-Ziel |
 | Live | `screens/live.js` | Zähler, Statuszeile, Engine-Warnung, Debug-Werkzeuge |

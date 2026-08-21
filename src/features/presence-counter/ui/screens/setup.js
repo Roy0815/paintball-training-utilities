@@ -1,4 +1,3 @@
-import { startCamera, stopCamera, attachRoiSelector } from '../../capture.js';
 import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 
@@ -22,69 +21,38 @@ export function renderSetupScreen(container, draft, { onBack, onNext }) {
         </select>
       </label>
 
-      <button type="button" class="btn" id="start-camera-btn">${t('pc.setup.startCamera')}</button>
-      <p class="error" id="error-msg" hidden></p>
-      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('pc.setup.next')}</button>
-
-      <div class="video-wrap" id="video-wrap" hidden>
-        <video id="preview" playsinline muted></video>
-        <div class="roi-overlay" id="roi-overlay"></div>
+      <div class="ratio-hint">
+        <p class="ratio-hint-title">${t('pc.setup.ratioTitle')}</p>
+        <div class="ratio-bar" aria-hidden="true">
+          <span class="ratio-bar-cover">${t('label.cover')} 50%</span>
+          <span class="ratio-bar-snap">${t('label.snap')} 50%</span>
+        </div>
+        <p class="hint">${t('pc.setup.ratioHint')}</p>
       </div>
-      <p class="hint">${t('pc.setup.roiHint')}</p>
-      <button type="button" class="btn" id="clear-roi-btn" hidden>${t('pc.setup.clearRoi')}</button>
+
+      <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('pc.setup.next')}</button>
     </section>
   `;
 
-  const videoEl = container.querySelector('#preview');
-  const videoWrap = container.querySelector('#video-wrap');
-  const overlayEl = container.querySelector('#roi-overlay');
-  const errorMsg = container.querySelector('#error-msg');
-  const nextBtn = container.querySelector('#next-btn');
-  const clearRoiBtn = container.querySelector('#clear-roi-btn');
   const nameInput = container.querySelector('#name-input');
   const facingSelect = container.querySelector('#facing-select');
+  const nextBtn = container.querySelector('#next-btn');
 
-  let stream = null;
-  let roiSelector = null;
-
-  container.querySelector('#start-camera-btn').addEventListener('click', async () => {
-    errorMsg.hidden = true;
-    draft.facingMode = facingSelect.value;
-    try {
-      stopCamera(stream);
-      stream = await startCamera(videoEl, draft.facingMode);
-      videoWrap.hidden = false;
-      clearRoiBtn.hidden = false;
-      roiSelector?.destroy();
-      videoEl.addEventListener('loadedmetadata', () => roiSelector?.refresh(), { once: true });
-      roiSelector = attachRoiSelector(overlayEl, videoEl, draft.roi);
-      nextBtn.disabled = !draft.name.trim();
-    } catch (err) {
-      errorMsg.textContent = t('pc.setup.cameraError', { message: err.message });
-      errorMsg.hidden = false;
-    }
-  });
-
-  clearRoiBtn.addEventListener('click', () => roiSelector?.clear());
+  // The camera is not started here. It only ever mattered on this screen for
+  // aiming and for the region selector, both of which are gone, so the capture
+  // screen opens it directly instead.
+  nextBtn.disabled = !draft.name.trim();
 
   nameInput.addEventListener('input', () => {
     draft.name = nameInput.value;
-    nextBtn.disabled = !nameInput.value.trim() || !stream;
+    nextBtn.disabled = !nameInput.value.trim();
   });
 
   nextBtn.addEventListener('click', () => {
     draft.name = nameInput.value.trim();
-    draft.roi = roiSelector?.getRoi() ?? null;
-    // Hand the live stream to the capture screen instead of stopping it, so
-    // the ROI (drawn against this stream's resolution) and the capture itself
-    // use the exact same feed. See startCamera() for why that matters.
-    draft.stream = stream;
-    stream = null;
+    draft.facingMode = facingSelect.value;
     onNext();
   });
 
-  return () => {
-    roiSelector?.destroy();
-    stopCamera(stream);
-  };
+  return null;
 }

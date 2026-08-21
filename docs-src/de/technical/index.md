@@ -61,7 +61,7 @@ Module nutzen, aber kein gemeinsames Modul kennt ein Feature.
 
 ```
 Kamerabild
-  └── Zuschnitt auf ROI oder Mittenquadrat     capture.js
+  └── quadratischer Mittenzuschnitt            capture.js
       └── JPEG-Data-URL                        eines pro Foto
           └── Label: Snap / Deckung / Ignoriert labeling.js
               └── MobileNet-Embedding          1280 Floats pro Foto

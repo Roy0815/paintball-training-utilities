@@ -24,26 +24,28 @@ you like, one per spot you regularly train at.
 ## 1. Create a snapshot position
 
 Press **+ New snapshot position** and give it a name that tells you where it
-was, for example "hallway mirror" or "garage left".
+was, for example "Maya temple" or "dorito 1".
 
-Choose the front or rear camera and press **Start camera**. Place the phone
-exactly where it will stand later. Everything the model learns depends on this
-viewpoint.
+Choose the front or rear camera. The screen also shows the one thing that
+decides whether the training set is usable: half the photos in cover, half
+snapped out.
 
-Optionally drag a rectangle over the preview to define a **ROI**, a region of
-interest. Only that part of the picture is then analysed. This is worth doing
-when something moves in the background that has nothing to do with your reps,
-for example a street, a TV or other players. Press **Clear ROI** to remove it
-again.
+That is the whole form. The camera opens on the next screen, so that is where
+you aim the phone.
 
-Without a ROI, the app uses a square cut from the middle of the frame rather
-than the whole picture, because the recognition model expects roughly square
-images.
+Note that the app analyses a square cut from the middle of the frame rather than
+the whole picture, because the recognition model expects roughly square images.
+Whatever matters should be near the middle.
 
 ## 2. Capture training photos
 
-The preview now shows exactly the cut that will be saved, so what you see is
-what the model will get.
+The camera opens by itself when this screen appears. If your browser refuses to
+open it unasked, a **Start camera** button shows up at the top; press it once
+and it disappears.
+
+Place the phone exactly where it will stand later. Everything the model learns
+depends on this viewpoint. The preview shows exactly the cut that will be saved,
+so what you see is what the model gets.
 
 Three settings:
 
@@ -115,15 +117,15 @@ are added.
 - **Really drill during the capture series.** Photos posed to look right teach
   poses, not reps.
 - **Balance the two classes.** Roughly equal numbers of cover and snap photos.
-- **Use a ROI when the background moves.** Everything moving inside the analysed
-  area is something the model has to learn to ignore.
+- **Keep moving background out of the frame.** Anything that moves in the
+  picture is something the model has to learn to ignore.
 - **Retrain after moving the phone.** It takes a minute and is the fix for
   almost every accuracy problem.
 
 ## Retraining and deleting
 
-**Retrain** on a card keeps the name, camera and ROI, and takes you straight
-into a new capture series. Use it when the position has changed or the counting
+**Retrain** on a card keeps the name and camera, and takes you straight into a
+new capture series. Use it when the position has changed or the counting
 became unreliable.
 
 **Delete** removes the snapshot position including its counter and history.

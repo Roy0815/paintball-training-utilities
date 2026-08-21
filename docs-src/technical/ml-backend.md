@@ -178,7 +178,7 @@ be readable on screen.
 All of the following was investigated and verified not to be the cause. It is
 listed so the same ground does not get covered twice:
 
-ROI or resolution mismatch between the setup and capture sessions, class count
+crop or resolution mismatch between the setup and capture sessions, class count
 imbalance biasing the KNN vote, `k = 3` making the confidence threshold
 unreachable, inverted label buttons, MobileNet's internal resize, portrait
 aspect ratio distortion, WebGL float precision flags, front camera post
@@ -187,11 +187,12 @@ training loop closure bugs, canvas to texture upload (`canvas vs imageData`
 measured 1.0000 on both devices) and packed WebGL textures.
 
 Several of those turned out to be real bugs even though none of them was this
-one, and their fixes were kept: the
-[stream handoff](./snaptraining-dryrun#stream-handoff),
+one, and their fixes were kept:
 [class balancing](./snaptraining-dryrun#class-balancing),
 [k = 5 with a 0.6 threshold](./snaptraining-dryrun#k-and-the-threshold) and the
-[center square crop](./snaptraining-dryrun#camera-and-cropping-capture-js).
+[center square crop](./snaptraining-dryrun#camera-and-cropping-capture-js). One
+more, handing the camera stream from setup to capture so both saw the same
+resolution, has since become moot: setup no longer opens a camera at all.
 
 ## Expected outcome per device
 

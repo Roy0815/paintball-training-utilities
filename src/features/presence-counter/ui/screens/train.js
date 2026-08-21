@@ -41,10 +41,9 @@ export function renderTrainScreen(container, draft, { onDone }) {
       if (cancelled) return;
 
       const existing = draft.profileId ? await getProfile(draft.profileId) : null;
-      const profile = existing ?? createProfileDraft({ name: draft.name, facingMode: draft.facingMode, roi: draft.roi });
+      const profile = existing ?? createProfileDraft({ name: draft.name, facingMode: draft.facingMode });
       profile.name = draft.name;
       profile.facingMode = draft.facingMode;
-      profile.roi = draft.roi;
       profile.classifierDataset = classifierDataset;
       profile.trainingDiagnostics = diagnostics;
       profile.engine = engine;

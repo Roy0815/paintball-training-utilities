@@ -24,25 +24,28 @@ anlegen, eine pro Stelle, an der du regelmäßig trainierst.
 ## 1. Snapshot-Position anlegen
 
 Drücke **+ Neue Snapshot-Position** und gib ihr einen Namen, der dir sagt, wo
-das war, zum Beispiel "Flur-Spiegel" oder "Garage links".
+das war, zum Beispiel "Maya Tempel" oder "Dorito 1".
 
-Wähle Front- oder Rückkamera und drücke **Kamera starten**. Stelle das Handy
-genau dorthin, wo es später stehen soll. Alles, was das Modell lernt, hängt an
-diesem Blickwinkel.
+Wähle Front- oder Rückkamera. Der Bildschirm zeigt dir außerdem das eine, was
+darüber entscheidet, ob der Trainingssatz brauchbar wird: halb Deckung, halb
+Snap.
 
-Optional kannst du im Vorschaubild ein Rechteck ziehen und damit eine **ROI**
-festlegen, also einen Bildausschnitt. Nur dieser Teil wird dann analysiert. Das
-lohnt sich, wenn sich im Hintergrund etwas bewegt, das nichts mit deinen
-Wiederholungen zu tun hat, etwa eine Straße, ein Fernseher oder andere Spieler.
-**ROI zurücksetzen** entfernt sie wieder.
+Mehr ist das Formular nicht. Die Kamera geht im nächsten Schritt auf, dort
+richtest du das Handy aus.
 
-Ohne ROI nutzt die App ein Quadrat aus der Bildmitte statt des ganzen Bildes,
-weil das Erkennungsmodell ungefähr quadratische Bilder erwartet.
+Zur Info: die App wertet ein Quadrat aus der Bildmitte aus und nicht das ganze
+Bild, weil das Erkennungsmodell ungefähr quadratische Bilder erwartet. Was
+zählt, sollte also mittig liegen.
 
 ## 2. Trainingsfotos aufnehmen
 
-Die Vorschau zeigt jetzt genau den Ausschnitt, der gespeichert wird. Was du
-siehst, ist das, was das Modell bekommt.
+Die Kamera startet von selbst, sobald dieser Bildschirm aufgeht. Weigert sich
+dein Browser, sie ungefragt zu öffnen, erscheint oben ein Knopf **Kamera
+starten**, den du einmal drückst und der danach verschwindet.
+
+Stelle das Handy genau dorthin, wo es später stehen soll. Alles, was das Modell
+lernt, hängt an diesem Blickwinkel. Die Vorschau zeigt genau den Ausschnitt, der
+gespeichert wird. Was du siehst, ist das, was das Modell bekommt.
 
 Drei Einstellungen:
 
@@ -121,15 +124,15 @@ es still.
   Posen bei, keine Wiederholungen.
 - **Beide Klassen ausgewogen halten.** Ungefähr gleich viele Deckungs- und
   Snap-Fotos.
-- **ROI nutzen, wenn sich im Hintergrund etwas bewegt.** Alles, was sich im
-  analysierten Bereich bewegt, muss das Modell ignorieren lernen.
+- **Bewegten Hintergrund aus dem Bild halten.** Alles, was sich im Bild bewegt,
+  muss das Modell ignorieren lernen.
 - **Nach dem Umstellen des Handys neu trainieren.** Das dauert eine Minute und
   löst fast jedes Genauigkeitsproblem.
 
 ## Neu trainieren und löschen
 
-**Neu trainieren** auf einer Karte behält Name, Kamera und ROI und führt direkt
-in eine neue Aufnahmeserie. Nutze das, wenn sich die Position geändert hat oder
+**Neu trainieren** auf einer Karte behält Name und Kamera und führt direkt in
+eine neue Aufnahmeserie. Nutze das, wenn sich die Position geändert hat oder
 die Zählung unzuverlässig wurde.
 
 **Löschen** entfernt die Snapshot-Position samt Zähler und Verlauf. Es gibt eine

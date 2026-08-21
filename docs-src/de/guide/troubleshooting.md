@@ -60,8 +60,7 @@ sind, funktionieren die Ansagen ohne Änderung an deinen Snapshot-Positionen.
 
 Die Statuszeile aktualisiert sich einmal pro klassifiziertem Bild. Ist das Handy
 langsam, liegt zwischen zwei Bildern eine echte Lücke, und ein sehr schnelles
-Heraussnappen kann dazwischenfallen. Halte oben kurz inne oder nutze eine ROI,
-damit weniger Bild zu verarbeiten ist.
+Heraussnappen kann dazwischenfallen. Halte oben in der Bewegung kurz inne.
 
 ## Offline geht gar nichts
 

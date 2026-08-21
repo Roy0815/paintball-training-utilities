@@ -26,12 +26,11 @@ export function deleteProfile(id) {
  * A fresh, untrained profile. classifierDataset, previewImage and trainedAt
  * are filled in by the training screen.
  */
-export function createProfileDraft({ name, facingMode, roi }) {
+export function createProfileDraft({ name, facingMode }) {
   return {
     id: crypto.randomUUID(),
     name,
     facingMode,
-    roi: roi ?? null,
     captureCount: DEFAULT_CAPTURE_COUNT,
     captureIntervalMs: DEFAULT_CAPTURE_INTERVAL_MS,
     classifierDataset: null,

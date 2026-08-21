@@ -50,7 +50,7 @@ Aufnahme- und dem Live-Bildschirm.
 | 🔬 Diagnose ausführen | Ein Bild, vollständig aufgeschlüsselt. Siehe [Diagnosebericht lesen](./ml-backend#einen-diagnosebericht-lesen). |
 | ⚙️ Engine | Schaltet durch `auto`, `webgl`, `nopack`, `wasm`, `cpu` und lädt neu. Erzwungene Modi überspringen die Verifikation absichtlich. |
 | 📋 Debug-Log kopieren | Legt beide Panels in die Zwischenablage. |
-| Debug-Panel | Kameraauflösung, ROI, Klassenanzahlen, Backend-Infos und Inferenzzeit pro Tick mit gleitendem Mittel und Maximum. |
+| Debug-Panel | Kameraauflösung, Klassenanzahlen, Backend-Infos und Inferenzzeit pro Tick mit gleitendem Mittel und Maximum. |
 
 Der Engine-Modus gilt auch fürs Training. Ein Profil muss in dem Modus trainiert
 werden, in dem es später laufen soll.

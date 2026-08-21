@@ -6,7 +6,7 @@ name and is kept so existing stored profiles stay readable.
 | Module | Responsibility |
 | --- | --- |
 | `storage.js` | Profile CRUD, capture defaults, counter updates |
-| `capture.js` | Camera, cropping, ROI selection, timed capture series |
+| `capture.js` | Camera, center square cropping, timed capture series |
 | `labeling.js` | Label constants, counting, validation |
 | `training.js` | Embeddings, class balancing, KNN training |
 | `live-counter.js` | Detection loop, debouncing, diagnostics |
@@ -22,7 +22,6 @@ A snapshot position is one object in `presence-counter:profiles`:
   id,                    // crypto.randomUUID()
   name,
   facingMode,            // 'user' or 'environment'
-  roi,                   // { x, y, w, h } as fractions, or null
   captureCount,
   captureIntervalMs,
   classifierDataset,     // serialized KNN dataset, null until trained
@@ -36,10 +35,6 @@ A snapshot position is one object in `presence-counter:profiles`:
 }
 ```
 
-`roi` is stored as fractions of the frame rather than pixels, so it survives a
-different camera resolution. That only holds if the resolution stays comparable,
-which is why the camera is requested with a pinned target size.
-
 ## Camera and cropping, `capture.js`
 
 `startCamera()` asks for a fixed ideal resolution of 1280x720:
@@ -48,15 +43,17 @@ which is why the camera is requested with a pinned target size.
 video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } }
 ```
 
-Setup, capture and live mode are three separate `getUserMedia` sessions, and
-phone cameras readily negotiate a different resolution per session. Since the
-ROI is fractional, a resolution change silently moves what those fractions crop.
+Capture and live mode are separate `getUserMedia` sessions, and phone cameras
+readily negotiate a different resolution per session. Frames are cropped to a
+square from the middle, so a different source aspect ratio means that square
+covers a different field of view, and the training photos and the live frames
+would no longer show the same thing.
 
-`getCropRect()` returns either the ROI or, without one, a **center square crop**.
-MobileNet stretches whatever it receives to 224x224 without cropping and was
-trained on roughly square images, so a 9:16 portrait frame distorts far enough to
-shift embeddings. A 4:3 webcam frame is a mild stretch, a portrait phone frame is
-twice as extreme in the other direction.
+`getCropRect()` returns that **center square crop**. MobileNet stretches whatever
+it receives to 224x224 without cropping and was trained on roughly square images,
+so a 9:16 portrait frame distorts far enough to shift embeddings. A 4:3 webcam
+frame is a mild stretch, a portrait phone frame is twice as extreme in the other
+direction.
 
 ::: warning Open question
 The center square crop was added for that reason and is sound, but it does throw
@@ -76,21 +73,22 @@ Three entry points share that rect:
 - `drawCroppedFrame()` draws into a canvas the caller owns, for the continuously
   updating preview, where allocating per frame would be wasteful.
 
-`attachRoiSelector()` maps pointer positions to fractions through
-`getVideoDisplayRect()`, which accounts for `object-fit: contain` letterboxing.
-A drag smaller than 2% in either dimension is treated as a stray tap and clears
-the ROI instead of cropping the frame down to nothing.
-
 `captureSeries()` resolves with the captured data URLs and is cancellable at any
 point, including during the countdown. The countdown exists because the person
 in the photos is usually the person holding the phone.
 
-### Stream handoff
+### Where the camera opens
 
-The setup screen does not stop its stream when moving on. It hands the live
-`MediaStream` to the capture screen through the draft, so the ROI drawn against
-that stream's resolution and the photos actually captured come from the exact
-same feed.
+Only on the capture and live screens. Setup used to open one too, for aiming and
+for the region selector that no longer exists, and handed its stream on so the
+selection and the photos came from the same feed. With both gone, setup is a
+plain form and the capture screen opens the camera itself.
+
+It tries as soon as it mounts, since arriving there is the result of a tap and
+that activation normally still counts. A start button appears only if that
+throws, on a denied permission or a browser that insists on its own gesture, and
+disappears again once a stream is running. The capture button stays disabled
+until then, so a series can never be recorded against a dead video element.
 
 ## Labeling, `labeling.js`
 
@@ -198,8 +196,8 @@ loop, not on classification ticks. Tied to inference it looked like a choppy 8 t
 | Screen | File | Notes |
 | --- | --- | --- |
 | Profile list | `screens/profileList.js` | Card click starts live mode, buttons excluded via `closest('button')` |
-| Setup | `screens/setup.js` | Name, camera, ROI, hands its stream to capture |
-| Capture | `screens/capture.js` | Series settings, crop preview, thumbnails, debug panel |
+| Setup | `screens/setup.js` | Name, camera choice, the 50/50 reminder, no camera |
+| Capture | `screens/capture.js` | Opens the camera, series settings, crop preview, thumbnails, debug panel |
 | Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
 | Train | `screens/train.js` | Progress, saves the profile, no back target |
 | Live | `screens/live.js` | Counter, status line, engine warning, debug tooling |

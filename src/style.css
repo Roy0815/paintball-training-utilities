@@ -500,19 +500,6 @@ select {
   display: block;
 }
 
-.roi-overlay {
-  position: absolute;
-  inset: 0;
-  cursor: crosshair;
-}
-
-.roi-box {
-  position: absolute;
-  border: 2px solid var(--accent);
-  background: rgba(34, 211, 238, 0.15);
-  pointer-events: none;
-}
-
 .thumb-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));

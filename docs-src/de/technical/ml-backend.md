@@ -189,7 +189,7 @@ auf dem Bildschirm lesbar sein musste.
 Alles Folgende wurde untersucht und als Ursache ausgeschlossen. Aufgelistet,
 damit dieselbe Strecke nicht zweimal abgelaufen wird:
 
-ROI- oder Auflösungsunterschiede zwischen Setup- und Aufnahmesitzung, Verzerrung
+Zuschnitt- oder Auflösungsunterschiede zwischen Setup- und Aufnahmesitzung, Verzerrung
 der KNN-Abstimmung durch ungleiche Klassenanzahlen, `k = 3`, das die
 Konfidenzschwelle unerreichbar macht, vertauschte Label-Buttons, MobileNets
 interne Skalierung, Verzerrung durch das Hochformat, WebGL-Flags zur
@@ -199,11 +199,13 @@ der Canvas-zu-Textur-Upload (`canvas vs imageData` maß auf beiden Geräten
 1.0000) und gepackte WebGL-Texturen.
 
 Mehrere davon waren echte Fehler, auch wenn keiner dieser eine war, und ihre
-Korrekturen sind geblieben: die
-[Streamübergabe](./snaptraining-dryrun#streamubergabe), der
+Korrekturen sind geblieben: der
 [Klassenausgleich](./snaptraining-dryrun#klassenausgleich),
 [k = 5 mit Schwelle 0.6](./snaptraining-dryrun#k-und-die-schwelle) und der
-[Mittenzuschnitt](./snaptraining-dryrun#kamera-und-zuschnitt-capture-js).
+[Mittenzuschnitt](./snaptraining-dryrun#kamera-und-zuschnitt-capture-js). Eine
+weitere, die Übergabe des Kamerastreams vom Setup an die Aufnahme, damit beide
+dieselbe Auflösung sehen, hat sich erledigt: das Setup öffnet gar keine Kamera
+mehr.
 
 ## Erwartetes Ergebnis je Gerät
 

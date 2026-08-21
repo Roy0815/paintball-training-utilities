@@ -9,14 +9,8 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
 
   container.innerHTML = `
     <section class="screen">
-      <div class="ratio-hint">
-        <p class="ratio-hint-title">${t('pc.capture.ratioTitle')}</p>
-        <div class="ratio-bar" aria-hidden="true">
-          <span class="ratio-bar-cover">${t('label.cover')} 50%</span>
-          <span class="ratio-bar-snap">${t('label.snap')} 50%</span>
-        </div>
-        <p class="hint">${t('pc.capture.hint', { name: draft.name })}</p>
-      </div>
+      <button type="button" class="btn btn-primary" id="start-camera-btn" hidden>${t('pc.capture.startCamera')}</button>
+      <p class="error" id="error-msg" hidden></p>
 
       <div class="video-wrap" id="video-wrap">
         <video id="preview" playsinline muted></video>
@@ -42,10 +36,9 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
         </label>
       </div>
 
-      <button type="button" class="btn btn-primary" id="capture-btn">${t('pc.capture.start')}</button>
+      <button type="button" class="btn btn-primary" id="capture-btn" disabled>${t('pc.capture.start')}</button>
       <button type="button" class="btn" id="cancel-capture-btn" hidden>${t('pc.capture.stop')}</button>
       <p class="hint" id="progress-text"></p>
-      <p class="error" id="error-msg" hidden></p>
 
       <button type="button" class="btn btn-primary" id="next-btn" disabled>${t('pc.capture.next')}</button>
 
@@ -60,6 +53,7 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
   const videoWrap = container.querySelector('#video-wrap');
   const cropPreview = container.querySelector('#crop-preview');
   const cropCanvas = container.querySelector('#crop-canvas');
+  const startCameraBtn = container.querySelector('#start-camera-btn');
   const captureBtn = container.querySelector('#capture-btn');
   const cancelBtn = container.querySelector('#cancel-capture-btn');
   const progressText = container.querySelector('#progress-text');
@@ -97,43 +91,42 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
     cropPreview.hidden = false;
     function drawFrame() {
       if (videoEl.readyState >= 2) {
-        drawCroppedFrame(videoEl, draft.roi, cropCanvas);
+        drawCroppedFrame(videoEl, cropCanvas);
       }
       previewRafId = requestAnimationFrame(drawFrame);
     }
     drawFrame();
   }
 
-  (async () => {
-    let reusedStreamFromSetup = false;
+  /**
+   * Opening the camera is attempted right away, since arriving here is itself
+   * the result of a tap and that activation normally still counts. It can
+   * still fail, on a denied permission or a browser that insists on its own
+   * gesture, so the start button appears only in that case and disappears
+   * again once a stream is running.
+   */
+  async function openCamera() {
+    errorMsg.hidden = true;
     try {
-      if (draft.stream) {
-        // Reuse the stream handed off from the setup screen so the ROI
-        // (drawn against that stream's resolution) still lines up here.
-        stream = draft.stream;
-        draft.stream = null;
-        reusedStreamFromSetup = true;
-        videoEl.srcObject = stream;
-        await videoEl.play();
-      } else {
-        stream = await startCamera(videoEl, draft.facingMode);
-      }
+      stream = await startCamera(videoEl, draft.facingMode);
+      startCameraBtn.hidden = true;
+      captureBtn.disabled = false;
       debugPanel.textContent =
-        `facingMode: ${draft.facingMode}\n` +
-        `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}\n` +
-        `roi: ${JSON.stringify(draft.roi)}\n` +
-        `reusedStreamFromSetup: ${reusedStreamFromSetup}`;
+        `facingMode: ${draft.facingMode}\n` + `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}`;
       console.log('[presence-counter] capture camera started:', {
         facingMode: draft.facingMode,
         videoSize: `${videoEl.videoWidth}x${videoEl.videoHeight}`,
-        roi: draft.roi,
       });
       startCropPreviewLoop();
     } catch (err) {
       errorMsg.textContent = t('pc.capture.cameraError', { message: err.message });
       errorMsg.hidden = false;
+      startCameraBtn.hidden = false;
     }
-  })();
+  }
+
+  startCameraBtn.addEventListener('click', openCamera);
+  openCamera();
 
   captureBtn.addEventListener('click', async () => {
     errorMsg.hidden = true;
@@ -154,7 +147,6 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
     const frames = await captureSeries(videoEl, {
       count,
       intervalMs,
-      roi: draft.roi,
       startDelayMs: delayMs,
       isCancelled: () => cancelled,
       onCountdown: (msRemaining) => {

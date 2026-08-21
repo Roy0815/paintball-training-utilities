@@ -57,7 +57,7 @@ shared knows about a feature.
 
 ```
 camera frame
-  └── crop to ROI or center square           capture.js
+  └── center square crop                     capture.js
       └── JPEG data URL                      one per captured photo
           └── label: snap / cover / ignore   labeling.js
               └── MobileNet embedding        1280 floats per photo

@@ -47,7 +47,6 @@ export async function startLiveDetection(
   {
     classifierDataset,
     trainingDiagnostics,
-    roi,
     intervalMs = 10,
     confirmFrames = 2,
     k = 5,
@@ -64,7 +63,6 @@ export async function startLiveDetection(
   const readyInfo = {
     numClasses: classifier.getNumClasses(),
     exampleCounts: classifier.getClassExampleCount(),
-    roi,
     k,
     confidenceThreshold,
     ...getBackendInfo(),
@@ -90,7 +88,7 @@ export async function startLiveDetection(
     if (stopped) return;
     if (!paused && videoEl.readyState >= 2 && classifier.getNumClasses() > 0) {
       const tickStart = performance.now();
-      const canvas = captureFrameCanvas(videoEl, roi);
+      const canvas = captureFrameCanvas(videoEl);
       const embedding = embedImage(model, canvas);
       const result = await classifier.predictClass(embedding, k);
       embedding.dispose();
@@ -161,14 +159,14 @@ export async function startLiveDetection(
   }
 
   async function collectDiagnostic() {
-    const canvas = captureFrameCanvas(videoEl, roi);
+    const canvas = captureFrameCanvas(videoEl);
     const canvasEmbedding = embedImage(model, canvas);
     const imageDataEmbedding = embedCanvasViaImageData(model, canvas);
     const videoEmbedding = embedImage(model, videoEl);
 
     const lines = [`=== DIAGNOSE ${new Date().toLocaleTimeString('de-DE')} ===`];
     lines.push(`ua: ${navigator.userAgent}`);
-    lines.push(`video: ${videoEl.videoWidth}x${videoEl.videoHeight}, roi: ${JSON.stringify(roi)}`);
+    lines.push(`video: ${videoEl.videoWidth}x${videoEl.videoHeight}`);
     lines.push(`backend: ${JSON.stringify(getBackendInfo())}`);
 
     lines.push('', '-- canvas pixels (CPU readback) --');

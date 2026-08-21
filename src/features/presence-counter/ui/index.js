@@ -94,14 +94,14 @@ export async function mount(container) {
   async function goSetup() {
     pushStep();
     await teardownScreen();
-    state.draft = { profileId: null, name: '', facingMode: 'user', roi: null, items: [] };
+    state.draft = { profileId: null, name: '', facingMode: 'user', items: [] };
     screenCleanup = renderSetupScreen(container, state.draft, { onBack: backTo(goList), onNext: goCapture });
   }
 
   // Re-renders setup without resetting state.draft. Used as the back target
-  // from the capture screen, where goSetup() would silently discard the name,
-  // camera and ROI already entered. Backward only, so unlike goSetup() it
-  // must not push a history step of its own.
+  // from the capture screen, where goSetup() would silently discard the name
+  // and camera already entered. Backward only, so unlike goSetup() it must not
+  // push a history step of its own.
   async function goEditSetup() {
     await teardownScreen();
     screenCleanup = renderSetupScreen(container, state.draft, { onBack: backTo(goList), onNext: goCapture });
@@ -114,7 +114,6 @@ export async function mount(container) {
       profileId: profile.id,
       name: profile.name,
       facingMode: profile.facingMode,
-      roi: profile.roi,
       items: [],
     };
     screenCleanup = renderCaptureScreen(container, state.draft, { onBack: backTo(goList), onNext: goLabel });

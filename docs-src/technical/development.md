@@ -48,7 +48,7 @@ live screens.
 | 🔬 Diagnose | One frame, fully inspected. See [reading a diagnostic report](./ml-backend#reading-a-diagnostic-report). |
 | ⚙️ Engine | Cycles `auto`, `webgl`, `nopack`, `wasm`, `cpu` and reloads. Forced modes skip verification on purpose. |
 | 📋 Debug-Log kopieren | Copies both panels to the clipboard. |
-| Debug panel | Camera resolution, ROI, class counts, backend info, and per tick inference time with a rolling average and peak. |
+| Debug panel | Camera resolution, class counts, backend info, and per tick inference time with a rolling average and peak. |
 
 The engine mode applies to training as well as live use. A profile has to be
 retrained under the mode it will run in.

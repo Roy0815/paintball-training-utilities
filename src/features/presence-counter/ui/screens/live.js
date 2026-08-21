@@ -64,7 +64,7 @@ export function renderLiveScreen(container, profile, { onBack }) {
     cropPreview.hidden = false;
     function drawFrame() {
       if (videoEl.readyState >= 2) {
-        drawCroppedFrame(videoEl, profile.roi, cropCanvas);
+        drawCroppedFrame(videoEl, cropCanvas);
       }
       previewRafId = requestAnimationFrame(drawFrame);
     }
@@ -115,26 +115,20 @@ export function renderLiveScreen(container, profile, { onBack }) {
       debugStartInfo =
         `facingMode: ${profile.facingMode}\n` +
         `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}\n` +
-        `roi: ${JSON.stringify(profile.roi)}\n` +
         `trainedAt: ${profile.trainedAt ? new Date(profile.trainedAt).toLocaleString('de-DE') : '-'}`;
       debugPanel.textContent = debugStartInfo;
       console.log('[presence-counter] live camera started:', {
         facingMode: profile.facingMode,
         videoSize: `${videoEl.videoWidth}x${videoEl.videoHeight}`,
-        roi: profile.roi,
         trainedAt: profile.trainedAt,
       });
       startCropPreviewLoop();
       detection = await startLiveDetection(videoEl, {
         classifierDataset: profile.classifierDataset,
         trainingDiagnostics: profile.trainingDiagnostics,
-        roi: profile.roi,
         onReady: ({
           numClasses,
           exampleCounts,
-          // Pulled out so it does not reach backendInfo below, which is printed
-          // key by key and would repeat the roi line debugStartInfo already has.
-          roi: _roi,
           k,
           confidenceThreshold,
           ...backendInfo
