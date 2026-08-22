@@ -70,7 +70,9 @@ export async function describeTensor(tensor, options) {
  */
 export function describeCanvasPixels(canvas, { stride = 7 } = {}) {
   const { width, height } = canvas;
-  const data = canvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, width, height).data;
+  const data = canvas
+    .getContext('2d', { willReadFrequently: true })
+    .getImageData(0, 0, width, height).data;
   const sums = [0, 0, 0];
   let min = 255;
   let max = 0;
@@ -114,7 +116,9 @@ export function describeImagePixels(image, { size = 64 } = {}) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
-  canvas.getContext('2d', { willReadFrequently: true }).drawImage(image, 0, 0, size, size);
+  canvas
+    .getContext('2d', { willReadFrequently: true })
+    .drawImage(image, 0, 0, size, size);
   return {
     naturalWidth: image.naturalWidth,
     naturalHeight: image.naturalHeight,
@@ -127,7 +131,10 @@ export async function cosineSimilarity(a, b) {
   const result = tf.tidy(() => {
     const flatA = tf.reshape(a, [a.size]);
     const flatB = tf.reshape(b, [b.size]);
-    return tf.div(tf.sum(tf.mul(flatA, flatB)), tf.mul(tf.norm(flatA), tf.norm(flatB)));
+    return tf.div(
+      tf.sum(tf.mul(flatA, flatB)),
+      tf.mul(tf.norm(flatA), tf.norm(flatB)),
+    );
   });
   const value = (await result.data())[0];
   result.dispose();
@@ -154,27 +161,42 @@ function buildIndexToLabel(classifier) {
  * vote, which hides whether a wrong answer was a near miss (a real
  * separability problem) or a total mismatch (broken input).
  */
-export async function classifierSimilarityReport(classifier, embedding, { topN = 8 } = {}) {
+export async function classifierSimilarityReport(
+  classifier,
+  embedding,
+  { topN = 8 } = {},
+) {
   const { labels, indexToLabel } = buildIndexToLabel(classifier);
-  const similarities = tf.tidy(() => tf.cast(classifier.similarities(embedding), 'float32'));
+  const similarities = tf.tidy(() =>
+    tf.cast(classifier.similarities(embedding), 'float32'),
+  );
   const values = await similarities.data();
   similarities.dispose();
 
   const perClass = {};
   for (const label of labels) perClass[label] = [];
-  for (let i = 0; i < values.length; i += 1) perClass[indexToLabel[i]].push(values[i]);
+  for (let i = 0; i < values.length; i += 1)
+    perClass[indexToLabel[i]].push(values[i]);
 
   const ranked = Array.from(values)
-    .map((similarity, index) => ({ similarity, index, label: indexToLabel[index] }))
+    .map((similarity, index) => ({
+      similarity,
+      index,
+      label: indexToLabel[index],
+    }))
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, topN);
 
   return {
     perClass: Object.fromEntries(
-      Object.entries(perClass).map(([label, list]) => [label, describeValues(Float32Array.from(list), { head: 0 })])
+      Object.entries(perClass).map(([label, list]) => [
+        label,
+        describeValues(Float32Array.from(list), { head: 0 }),
+      ]),
     ),
     ranked,
-    distinctValues: new Set(Array.from(values).map((value) => round(value, 6))).size,
+    distinctValues: new Set(Array.from(values).map((value) => round(value, 6)))
+      .size,
     total: values.length,
   };
 }
@@ -182,11 +204,11 @@ export async function classifierSimilarityReport(classifier, embedding, { topN =
 export function formatSimilarityReport(report) {
   const lines = Object.entries(report.perClass).map(
     ([label, stats]) =>
-      `  ${label}: min ${round(stats.min)} mean ${round(stats.mean)} max ${round(stats.max)} (nan ${stats.nan})`
+      `  ${label}: min ${round(stats.min)} mean ${round(stats.mean)} max ${round(stats.max)} (nan ${stats.nan})`,
   );
   lines.push(`  distinct values: ${report.distinctValues}/${report.total}`);
   lines.push(
-    `  top: ${report.ranked.map((entry) => `${entry.label}#${entry.index} ${round(entry.similarity)}`).join(', ')}`
+    `  top: ${report.ranked.map((entry) => `${entry.label}#${entry.index} ${round(entry.similarity)}`).join(', ')}`,
   );
   return lines.join('\n');
 }
@@ -214,7 +236,10 @@ export async function datasetSelfReport(classifier) {
   // The Gram matrix of all rows: its diagonal holds the squared row norms,
   // everything above it holds every pairwise similarity.
   const gram = tf.tidy(() => {
-    const matrix = tf.concat(labels.map((label) => dataset[label]), 0);
+    const matrix = tf.concat(
+      labels.map((label) => dataset[label]),
+      0,
+    );
     return tf.matMul(matrix, matrix, false, true);
   });
   const values = await gram.data();
@@ -229,16 +254,22 @@ export async function datasetSelfReport(classifier) {
     rowNorms.push(Math.sqrt(values[i * rowCount + i]));
     for (let j = i + 1; j < rowCount; j += 1) {
       const similarity = values[i * rowCount + j];
-      if (indexToLabel[i] === indexToLabel[j]) intra[indexToLabel[i]].push(similarity);
+      if (indexToLabel[i] === indexToLabel[j])
+        intra[indexToLabel[i]].push(similarity);
       else inter.push(similarity);
     }
   }
 
-  const mean = (list) => (list.length ? list.reduce((sum, value) => sum + value, 0) / list.length : NaN);
+  const mean = (list) =>
+    list.length
+      ? list.reduce((sum, value) => sum + value, 0) / list.length
+      : NaN;
   return {
     perClass,
     rowNorms: describeValues(Float32Array.from(rowNorms), { head: 0 }),
-    intra: Object.fromEntries(Object.entries(intra).map(([label, list]) => [label, mean(list)])),
+    intra: Object.fromEntries(
+      Object.entries(intra).map(([label, list]) => [label, mean(list)]),
+    ),
     inter: mean(inter),
   };
 }
@@ -248,16 +279,16 @@ export function formatDatasetSelfReport(report) {
   const lines = Object.entries(report.perClass).map(
     ([label, entry]) =>
       `  ${label}: shape ${entry.shape.join('x')}, nan ${entry.values.nan}, zeros ${entry.values.zeros}, ` +
-      `min ${round(entry.values.min)} max ${round(entry.values.max)}`
+      `min ${round(entry.values.min)} max ${round(entry.values.max)}`,
   );
   lines.push(
     `  row L2 (must be 1.0): min ${round(report.rowNorms.min)} mean ${round(report.rowNorms.mean)} ` +
-      `max ${round(report.rowNorms.max)} nan ${report.rowNorms.nan}`
+      `max ${round(report.rowNorms.max)} nan ${report.rowNorms.nan}`,
   );
   lines.push(
     `  intra-class sim: ${Object.entries(report.intra)
       .map(([label, value]) => `${label} ${round(value)}`)
-      .join(', ')} | inter-class sim: ${round(report.inter)}`
+      .join(', ')} | inter-class sim: ${round(report.inter)}`,
   );
   return lines.join('\n');
 }
@@ -273,17 +304,21 @@ export function formatTrainingDiagnostics(diagnostics) {
   const byLabel = {};
   for (const entry of diagnostics) (byLabel[entry.label] ??= []).push(entry);
   for (const [label, entries] of Object.entries(byLabel)) {
-    const meanOf = (readValue) => entries.reduce((sum, entry) => sum + readValue(entry), 0) / entries.length;
+    const meanOf = (readValue) =>
+      entries.reduce((sum, entry) => sum + readValue(entry), 0) /
+      entries.length;
     lines.push(
       `  ${label} (${entries.length}): natural ${entries[0].naturalWidth}x${entries[0].naturalHeight}, ` +
         `pixel mean ${round(meanOf((entry) => entry.pixelMean))}, ` +
         `pixel max ${Math.max(...entries.map((entry) => entry.pixelMax))}, ` +
         `emb l2 ${round(meanOf((entry) => entry.l2))}, ` +
         `emb mean ${round(meanOf((entry) => entry.mean))}, ` +
-        `nan ${entries.reduce((sum, entry) => sum + entry.nan, 0)}`
+        `nan ${entries.reduce((sum, entry) => sum + entry.nan, 0)}`,
     );
   }
-  const distinct = new Set(diagnostics.map((entry) => round(entry.l2, 5) + '/' + round(entry.mean, 5))).size;
+  const distinct = new Set(
+    diagnostics.map((entry) => round(entry.l2, 5) + '/' + round(entry.mean, 5)),
+  ).size;
   lines.push(`  distinct embeddings: ${distinct}/${diagnostics.length}`);
   return lines.join('\n');
 }
@@ -317,7 +352,10 @@ export async function testBackendArithmetic() {
   identity.dispose();
   let identityError = 0;
   for (let i = 0; i < size; i += 1) {
-    identityError = Math.max(identityError, Math.abs(identityValues[i] - values[i]));
+    identityError = Math.max(
+      identityError,
+      Math.abs(identityValues[i] - values[i]),
+    );
   }
   checks.elementwise = identityError;
 
@@ -325,12 +363,17 @@ export async function testBackendArithmetic() {
   const normalizedValues = await normalized.data();
   normalized.dispose();
   let lengthSquared = 0;
-  for (let i = 0; i < size; i += 1) lengthSquared += normalizedValues[i] * normalizedValues[i];
+  for (let i = 0; i < size; i += 1)
+    lengthSquared += normalizedValues[i] * normalizedValues[i];
   checks.normalize = Math.abs(Math.sqrt(lengthSquared) - 1);
 
   const rows = 4;
-  const matrix = tf.tidy(() => tf.reshape(tf.tile(input, [rows]), [rows, size]));
-  const product = tf.tidy(() => tf.matMul(matrix, tf.reshape(input, [size, 1])));
+  const matrix = tf.tidy(() =>
+    tf.reshape(tf.tile(input, [rows]), [rows, size]),
+  );
+  const product = tf.tidy(() =>
+    tf.matMul(matrix, tf.reshape(input, [size, 1])),
+  );
   const productValues = await product.data();
   matrix.dispose();
   product.dispose();
@@ -338,14 +381,23 @@ export async function testBackendArithmetic() {
   for (let i = 0; i < size; i += 1) expectedDot += values[i] * values[i];
   let matMulError = 0;
   for (let i = 0; i < rows; i += 1) {
-    matMulError = Math.max(matMulError, Math.abs(productValues[i] - expectedDot) / expectedDot);
+    matMulError = Math.max(
+      matMulError,
+      Math.abs(productValues[i] - expectedDot) / expectedDot,
+    );
   }
   checks.matMul = matMulError;
 
   input.dispose();
 
-  const failed = Object.entries(checks).filter(([, error]) => !(error <= SELF_TEST_TOLERANCE));
-  return { ok: failed.length === 0, checks, failed: failed.map(([name]) => name) };
+  const failed = Object.entries(checks).filter(
+    ([, error]) => !(error <= SELF_TEST_TOLERANCE),
+  );
+  return {
+    ok: failed.length === 0,
+    checks,
+    failed: failed.map(([name]) => name),
+  };
 }
 
 /**
@@ -398,6 +450,12 @@ export async function testModelOutput(model) {
   return {
     ok: failed.length === 0,
     failed,
-    stats: { nan, zeros, unitLengthError, lagFourRepeats, length: values.length },
+    stats: {
+      nan,
+      zeros,
+      unitLengthError,
+      lagFourRepeats,
+      length: values.length,
+    },
   };
 }

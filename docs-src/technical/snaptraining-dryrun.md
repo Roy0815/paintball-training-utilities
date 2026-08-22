@@ -3,16 +3,16 @@
 Directory `src/features/snaptraining-dryrun/`. The id predates the current display
 name and is kept so existing stored profiles stay readable.
 
-| Module | Responsibility |
-| --- | --- |
-| `storage.js` | Profile CRUD, capture defaults, counter and peek duration updates |
-| `capture.js` | Camera, center square cropping, timed capture series |
-| `labeling.js` | Label constants, counting, validation |
-| `training.js` | Embeddings, class balancing, KNN training |
-| `live-counter.js` | Detection loop, debouncing, diagnostics |
-| `settings.js` | Camera and number sound flags |
-| `ui/index.js` | Wizard state machine and history handling |
-| `ui/screens/*.js` | One render function per screen |
+| Module            | Responsibility                                                    |
+| ----------------- | ----------------------------------------------------------------- |
+| `storage.js`      | Profile CRUD, capture defaults, counter and peek duration updates |
+| `capture.js`      | Camera, center square cropping, timed capture series              |
+| `labeling.js`     | Label constants, counting, validation                             |
+| `training.js`     | Embeddings, class balancing, KNN training                         |
+| `live-counter.js` | Detection loop, debouncing, diagnostics                           |
+| `settings.js`     | Camera and number sound flags                                     |
+| `ui/index.js`     | Wizard state machine and history handling                         |
+| `ui/screens/*.js` | One render function per screen                                    |
 
 ## The profile
 
@@ -316,15 +316,15 @@ the same one used everywhere else: an explicit
 
 ## Screens
 
-| Screen | File | Notes |
-| --- | --- | --- |
-| Profile list | `screens/profileList.js` | Card click starts live mode, buttons excluded via `closest('button')` |
-| Setup | `screens/setup.js` | Name, camera choice, the per class minimum, no camera |
-| Capture | `screens/capture.js` | Opens the camera, series settings, crop preview, thumbnails, debug panel |
-| Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
-| Train | `screens/train.js` | Progress, saves the profile, no back target |
-| Live | `screens/live.js` | Counter, peek stats, delayed start with a cancellable countdown, engine warning, debug tooling |
-| Settings | `screens/settings.js` | Camera and number sound switches, reached from the app's settings screen |
+| Screen       | File                     | Notes                                                                                          |
+| ------------ | ------------------------ | ---------------------------------------------------------------------------------------------- |
+| Profile list | `screens/profileList.js` | Card click starts live mode, buttons excluded via `closest('button')`                          |
+| Setup        | `screens/setup.js`       | Name, camera choice, the per class minimum, no camera                                          |
+| Capture      | `screens/capture.js`     | Opens the camera, series settings, crop preview, thumbnails, debug panel                       |
+| Label        | `screens/label.js`       | Swipe cards with pointer events, ignore, previous                                              |
+| Train        | `screens/train.js`       | Progress, saves the profile, no back target                                                    |
+| Live         | `screens/live.js`        | Counter, peek stats, delayed start with a cancellable countdown, engine warning, debug tooling |
+| Settings     | `screens/settings.js`    | Camera and number sound switches, reached from the app's settings screen                       |
 
 ::: warning The profile card click target
 The card uses a plain click listener on an in flow element, not an absolutely

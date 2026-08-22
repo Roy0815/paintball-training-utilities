@@ -32,7 +32,7 @@ export function renderHome(container) {
                 </span>
                 <span class="tile-icon">${renderTileIcon(feature)}</span>
               </a>
-            `
+            `,
           )
           .join('')}
       </div>

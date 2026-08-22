@@ -13,8 +13,14 @@ function guideSidebar(prefix, texts) {
       text: texts.guide,
       items: [
         { text: texts.guideOverview, link: `${prefix}/guide/` },
-        { text: texts.guideSnaptraining, link: `${prefix}/guide/snaptraining-dryrun` },
-        { text: texts.guideTroubleshooting, link: `${prefix}/guide/troubleshooting` },
+        {
+          text: texts.guideSnaptraining,
+          link: `${prefix}/guide/snaptraining-dryrun`,
+        },
+        {
+          text: texts.guideTroubleshooting,
+          link: `${prefix}/guide/troubleshooting`,
+        },
       ],
     },
   ];
@@ -26,11 +32,20 @@ function technicalSidebar(prefix, texts) {
       text: texts.technical,
       items: [
         { text: texts.techOverview, link: `${prefix}/technical/` },
-        { text: texts.techStructure, link: `${prefix}/technical/project-structure` },
+        {
+          text: texts.techStructure,
+          link: `${prefix}/technical/project-structure`,
+        },
         { text: texts.techShell, link: `${prefix}/technical/app-shell` },
-        { text: texts.techFeature, link: `${prefix}/technical/snaptraining-dryrun` },
+        {
+          text: texts.techFeature,
+          link: `${prefix}/technical/snaptraining-dryrun`,
+        },
         { text: texts.techBackend, link: `${prefix}/technical/ml-backend` },
-        { text: texts.techDevelopment, link: `${prefix}/technical/development` },
+        {
+          text: texts.techDevelopment,
+          link: `${prefix}/technical/development`,
+        },
       ],
     },
   ];
@@ -73,11 +88,16 @@ export default defineConfig({
     root: {
       label: 'English',
       lang: 'en-US',
-      description: 'How to use and how to develop the Paintball Training Utilities PWA.',
+      description:
+        'How to use and how to develop the Paintball Training Utilities PWA.',
       themeConfig: {
         nav: [
           { text: 'User guide', link: '/guide/', activeMatch: '^/guide/' },
-          { text: 'Technical', link: '/technical/', activeMatch: '^/technical/' },
+          {
+            text: 'Technical',
+            link: '/technical/',
+            activeMatch: '^/technical/',
+          },
         ],
         sidebar: {
           '/guide/': guideSidebar('', EN),
@@ -94,11 +114,20 @@ export default defineConfig({
       label: 'Deutsch',
       lang: 'de-DE',
       link: '/de/',
-      description: 'Bedienung und Entwicklung der Paintball Training Utilities PWA.',
+      description:
+        'Bedienung und Entwicklung der Paintball Training Utilities PWA.',
       themeConfig: {
         nav: [
-          { text: 'Anwenderdoku', link: '/de/guide/', activeMatch: '^/de/guide/' },
-          { text: 'Technisch', link: '/de/technical/', activeMatch: '^/de/technical/' },
+          {
+            text: 'Anwenderdoku',
+            link: '/de/guide/',
+            activeMatch: '^/de/guide/',
+          },
+          {
+            text: 'Technisch',
+            link: '/de/technical/',
+            activeMatch: '^/de/technical/',
+          },
         ],
         sidebar: {
           '/de/guide/': guideSidebar('/de', DE),
@@ -116,7 +145,12 @@ export default defineConfig({
   themeConfig: {
     // Shown left of the site title in the nav bar, on every page and locale.
     logo: '/logo.png',
-    socialLinks: [{ icon: 'github', link: 'https://github.com/Roy0815/paintball-training-utilities' }],
+    socialLinks: [
+      {
+        icon: 'github',
+        link: 'https://github.com/Roy0815/paintball-training-utilities',
+      },
+    ],
     search: {
       provider: 'local',
       options: {
@@ -131,7 +165,11 @@ export default defineConfig({
                 resetButtonTitle: 'Suche zurücksetzen',
                 backButtonTitle: 'Suche schließen',
                 noResultsText: 'Keine Ergebnisse für',
-                footer: { selectText: 'auswählen', navigateText: 'wechseln', closeText: 'schließen' },
+                footer: {
+                  selectText: 'auswählen',
+                  navigateText: 'wechseln',
+                  closeText: 'schließen',
+                },
               },
             },
           },

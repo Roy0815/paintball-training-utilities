@@ -2,9 +2,9 @@
 
 Multi tool PWA for paintball training. Runs entirely client side in the browser (on-device ML, no backend, no cloud costs) and is deployed via GitHub Pages.
 
-| | |
-| --- | --- |
-| **App** | https://roy0815.github.io/paintball-training-utilities/ |
+|                   |                                                              |
+| ----------------- | ------------------------------------------------------------ |
+| **App**           | https://roy0815.github.io/paintball-training-utilities/      |
 | **Documentation** | https://roy0815.github.io/paintball-training-utilities/docs/ |
 
 ## Documentation

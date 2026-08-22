@@ -50,11 +50,11 @@ gespeichert wird. Was du siehst, ist das, was das Modell bekommt.
 
 Drei Einstellungen:
 
-| Einstellung | Bedeutung |
-| --- | --- |
-| Anzahl Fotos | Wie viele Fotos die Serie aufnimmt. 30 ist ein guter Startwert. |
-| Intervall (ms) | Zeit zwischen zwei Fotos. 1000 heißt ein Foto pro Sekunde. |
-| Start-Verzögerung (s) | Countdown vor dem ersten Foto, damit du in Position kommst. |
+| Einstellung           | Bedeutung                                                       |
+| --------------------- | --------------------------------------------------------------- |
+| Anzahl Fotos          | Wie viele Fotos die Serie aufnimmt. 30 ist ein guter Startwert. |
+| Intervall (ms)        | Zeit zwischen zwei Fotos. 1000 heißt ein Foto pro Sekunde.      |
+| Start-Verzögerung (s) | Countdown vor dem ersten Foto, damit du in Position kommst.     |
 
 Drücke **Serie aufnehmen** und drille ganz normal, solange die Serie läuft: in
 Deckung, heraussnappen, zurück in Deckung. Ziel sind **ungefähr gleich viele
@@ -164,12 +164,12 @@ Trainingsfotos**, und die Prozentzahlen auf dem Bildschirm sind nichts anderes
 als deren Abstimmung:
 
 | Die sechs ähnlichsten Trainingsfotos | Snap | Deckung | Zählt? |
-| --- | --- | --- | --- |
-| 6 Snap | 100% | 0% | ja |
-| 5 Snap, 1 Deckung | 83% | 17% | ja |
-| 4 Snap, 2 Deckung | 67% | 33% | ja |
-| 3 Snap, 3 Deckung | 50% | 50% | nein |
-| 2 Snap, 4 Deckung | 33% | 67% | nein |
+| ------------------------------------ | ---- | ------- | ------ |
+| 6 Snap                               | 100% | 0%      | ja     |
+| 5 Snap, 1 Deckung                    | 83%  | 17%     | ja     |
+| 4 Snap, 2 Deckung                    | 67%  | 33%     | ja     |
+| 3 Snap, 3 Deckung                    | 50%  | 50%     | nein   |
+| 2 Snap, 4 Deckung                    | 33%  | 67%     | nein   |
 
 Eine Wiederholung braucht mehr als 60%, und eine Stufe bei genau 60% gibt es
 nicht. Praktisch heißt das: **vier der sechs ähnlichsten Fotos müssen

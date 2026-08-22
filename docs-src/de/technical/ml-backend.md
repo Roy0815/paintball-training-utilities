@@ -77,13 +77,13 @@ nächste kaputte Gerät nie erwischen.
 `ENGINE_MODES` erlaubt zusätzlich, ein Backend zu erzwingen. Der ⚙️-Button auf
 dem Live-Bildschirm schaltet durch, die Wahl liegt in `localStorage`:
 
-| Modus | Bedeutung |
-| --- | --- |
-| `auto` | Prüfen und wählen. Standard und das, was Nutzer bekommen. |
-| `webgl` | GPU mit tf.js-Standardeinstellungen. |
+| Modus    | Bedeutung                                                   |
+| -------- | ----------------------------------------------------------- |
+| `auto`   | Prüfen und wählen. Standard und das, was Nutzer bekommen.   |
+| `webgl`  | GPU mit tf.js-Standardeinstellungen.                        |
 | `nopack` | GPU mit allen `WEBGL_PACK_*`-Flags aus, ein Wert pro Texel. |
-| `wasm` | SIMD-beschleunigte CPU, kein GPU-Treiber beteiligt. |
-| `cpu` | Reines JS. Am langsamsten und am vertrauenswürdigsten. |
+| `wasm`   | SIMD-beschleunigte CPU, kein GPU-Treiber beteiligt.         |
+| `cpu`    | Reines JS. Am langsamsten und am vertrauenswürdigsten.      |
 
 Erzwungene Modi **überspringen die Verifikation absichtlich** und können daher
 falsche Ergebnisse liefern. Sie existieren für A/B-Tests auf einem bestimmten
@@ -96,11 +96,11 @@ Gerät.
 Läuft auf dem rohen Backend, bevor das Modell geladen wird, auf einem Vektor mit
 1280 Werten, also derselben Breite wie ein MobileNet-Embedding:
 
-| Prüfung | Wofür sie steht |
-| --- | --- |
-| elementwise | `tf.mul(x, scalar(1))` muss `x` zurückgeben |
-| normalize | eine Reduktion gefolgt von einer Division, genau das ist Normalisierung auf Einheitslänge |
-| matMul | die gesamte Ähnlichkeitssuche des KNN |
+| Prüfung     | Wofür sie steht                                                                           |
+| ----------- | ----------------------------------------------------------------------------------------- |
+| elementwise | `tf.mul(x, scalar(1))` muss `x` zurückgeben                                               |
+| normalize   | eine Reduktion gefolgt von einer Division, genau das ist Normalisierung auf Einheitslänge |
+| matMul      | die gesamte Ähnlichkeitssuche des KNN                                                     |
 
 Die Normalisierungsprüfung ist die allgemeine Form der Invariante, die hier
 gebrochen war: ein normalisierter Vektor, dessen Länge nicht 1.0 ist, beweist
@@ -167,15 +167,15 @@ Embedding und ein gesundes Embedding der falschen Pixel.
 
 Worauf man in welcher Reihenfolge schaut:
 
-| Zeile | Gesunder Wert | Was ein schlechter Wert bedeutet |
-| --- | --- | --- |
-| `row L2 (must be 1.0)` | exakt 1.0 | `addExample()` normalisiert jede gespeicherte Zeile auf Einheitslänge, alles andere beweist falsche Arithmetik zur Trainingszeit |
-| `canvas vs imageData` | ~1.0 | dieselben Pixel über zwei Upload-Wege, ein niedrigerer Wert heißt, der Canvas-zu-Textur-Upload sieht nicht, was gezeichnet wurde |
-| `intra-class sim` gegen `inter-class sim` | intra deutlich höher | intra unter inter heißt, der Merkmalsraum ist durcheinander |
-| `distinct values` | nahe am Gesamtwert | wenige verschiedene Ähnlichkeiten heißt, alles liegt gleichauf, was ein hartes, inhaltsunabhängiges 100%/0% erzeugt |
-| `zeros` in einem Embedding | grob 10 bis 15% von 1280 | fast keine Sparsity heißt, die ReLU-Struktur ist weg |
-| `nan` | 0 | alles andere ist eine tote Berechnung |
-| Kopfwerte, die sich alle 4 wiederholen | keine Wiederholung | ein Texturadressierungsfehler |
+| Zeile                                     | Gesunder Wert            | Was ein schlechter Wert bedeutet                                                                                                 |
+| ----------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `row L2 (must be 1.0)`                    | exakt 1.0                | `addExample()` normalisiert jede gespeicherte Zeile auf Einheitslänge, alles andere beweist falsche Arithmetik zur Trainingszeit |
+| `canvas vs imageData`                     | ~1.0                     | dieselben Pixel über zwei Upload-Wege, ein niedrigerer Wert heißt, der Canvas-zu-Textur-Upload sieht nicht, was gezeichnet wurde |
+| `intra-class sim` gegen `inter-class sim` | intra deutlich höher     | intra unter inter heißt, der Merkmalsraum ist durcheinander                                                                      |
+| `distinct values`                         | nahe am Gesamtwert       | wenige verschiedene Ähnlichkeiten heißt, alles liegt gleichauf, was ein hartes, inhaltsunabhängiges 100%/0% erzeugt              |
+| `zeros` in einem Embedding                | grob 10 bis 15% von 1280 | fast keine Sparsity heißt, die ReLU-Struktur ist weg                                                                             |
+| `nan`                                     | 0                        | alles andere ist eine tote Berechnung                                                                                            |
+| Kopfwerte, die sich alle 4 wiederholen    | keine Wiederholung       | ein Texturadressierungsfehler                                                                                                    |
 
 Eine Kosinusähnlichkeit über 1.0 zwischen Einheitsvektoren ist unmöglich und
 selbst schon ein Beweis für falsche Arithmetik.

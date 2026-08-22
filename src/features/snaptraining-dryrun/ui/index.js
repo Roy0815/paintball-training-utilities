@@ -95,7 +95,10 @@ export async function mount(container) {
     pushStep();
     await teardownScreen();
     state.draft = { profileId: null, name: '', facingMode: 'user', items: [] };
-    screenCleanup = renderSetupScreen(container, state.draft, { onBack: backTo(goList), onNext: goCapture });
+    screenCleanup = renderSetupScreen(container, state.draft, {
+      onBack: backTo(goList),
+      onNext: goCapture,
+    });
   }
 
   // Re-renders setup without resetting state.draft. Used as the back target
@@ -104,7 +107,10 @@ export async function mount(container) {
   // push a history step of its own.
   async function goEditSetup() {
     await teardownScreen();
-    screenCleanup = renderSetupScreen(container, state.draft, { onBack: backTo(goList), onNext: goCapture });
+    screenCleanup = renderSetupScreen(container, state.draft, {
+      onBack: backTo(goList),
+      onNext: goCapture,
+    });
   }
 
   async function goRetrain(profile) {
@@ -116,19 +122,28 @@ export async function mount(container) {
       facingMode: profile.facingMode,
       items: [],
     };
-    screenCleanup = renderCaptureScreen(container, state.draft, { onBack: backTo(goList), onNext: goLabel });
+    screenCleanup = renderCaptureScreen(container, state.draft, {
+      onBack: backTo(goList),
+      onNext: goLabel,
+    });
   }
 
   async function goCapture() {
     pushStep();
     await teardownScreen();
-    screenCleanup = renderCaptureScreen(container, state.draft, { onBack: backTo(goEditSetup), onNext: goLabel });
+    screenCleanup = renderCaptureScreen(container, state.draft, {
+      onBack: backTo(goEditSetup),
+      onNext: goLabel,
+    });
   }
 
   async function goLabel() {
     pushStep();
     await teardownScreen();
-    screenCleanup = renderLabelScreen(container, state.draft, { onBack: backTo(goCapture), onNext: goTrain });
+    screenCleanup = renderLabelScreen(container, state.draft, {
+      onBack: backTo(goCapture),
+      onNext: goTrain,
+    });
   }
 
   async function goTrain() {
@@ -139,7 +154,9 @@ export async function mount(container) {
       showLoading();
       await teardownScreen();
       const { renderTrainScreen } = await import('./screens/train.js');
-      screenCleanup = renderTrainScreen(container, state.draft, { onDone: goList });
+      screenCleanup = renderTrainScreen(container, state.draft, {
+        onDone: goList,
+      });
       backTo(null);
     } finally {
       transitioning = false;
@@ -154,7 +171,9 @@ export async function mount(container) {
       showLoading();
       await teardownScreen();
       const { renderLiveScreen } = await import('./screens/live.js');
-      screenCleanup = renderLiveScreen(container, profile, { onBack: backTo(goList) });
+      screenCleanup = renderLiveScreen(container, profile, {
+        onBack: backTo(goList),
+      });
     } finally {
       transitioning = false;
     }

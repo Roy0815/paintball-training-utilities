@@ -83,4 +83,3 @@ export async function removeLastPeekDuration(id) {
   await saveProfile(profile);
   return profile;
 }
-

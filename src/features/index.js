@@ -28,7 +28,8 @@ export const features = [
       return mount(container);
     },
     async mountSettings(container) {
-      const { renderSettingsScreen } = await import('./snaptraining-dryrun/ui/screens/settings.js');
+      const { renderSettingsScreen } =
+        await import('./snaptraining-dryrun/ui/screens/settings.js');
       renderSettingsScreen(container, {
         onBack: () => {
           window.location.hash = '#/settings';

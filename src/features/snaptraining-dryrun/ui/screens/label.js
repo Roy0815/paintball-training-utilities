@@ -47,11 +47,13 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
         ${!valid ? `<p class="error">${t('snap-dryrun.label.summaryMissing', { list: missing.join(', ') })}</p>` : ''}
         <button type="button" class="btn" id="prev-photo-btn">${t('snap-dryrun.label.prev')}</button>
         <button type="button" class="btn btn-primary" id="next-btn" ${valid ? '' : 'disabled'}>${t(
-      'snap-dryrun.label.nextTrain'
-    )}</button>
+          'snap-dryrun.label.nextTrain',
+        )}</button>
       </section>
     `;
-    container.querySelector('#prev-photo-btn').addEventListener('click', goBackOne);
+    container
+      .querySelector('#prev-photo-btn')
+      .addEventListener('click', goBackOne);
     container.querySelector('#next-btn').addEventListener('click', onNext);
   }
 
@@ -66,7 +68,9 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
     const item = draft.items[index];
     const total = draft.items.length;
     const currentState = describeCurrentLabel(item);
-    const currentLabelText = currentState ? ` · ${t('snap-dryrun.label.currentPrefix')}: ${currentState}` : '';
+    const currentLabelText = currentState
+      ? ` · ${t('snap-dryrun.label.currentPrefix')}: ${currentState}`
+      : '';
 
     container.innerHTML = `
       <section class="screen">
@@ -91,22 +95,31 @@ export function renderLabelScreen(container, draft, { onBack, onNext }) {
         </div>
         <button type="button" class="btn btn-ignore" id="ignore-btn">${t('snap-dryrun.label.btnIgnore')}</button>
         <button type="button" class="btn" id="prev-photo-btn" ${index === 0 ? 'disabled' : ''}>${t(
-      'snap-dryrun.label.prev'
-    )}</button>
+          'snap-dryrun.label.prev',
+        )}</button>
       </section>
     `;
 
     if (index > 0) {
-      container.querySelector('#prev-photo-btn').addEventListener('click', goBackOne);
+      container
+        .querySelector('#prev-photo-btn')
+        .addEventListener('click', goBackOne);
     }
-    container.querySelector('#empty-btn').addEventListener('click', () => labelCurrent(LABELS.EMPTY));
-    container.querySelector('#person-btn').addEventListener('click', () => labelCurrent(LABELS.PERSON));
-    container.querySelector('#ignore-btn').addEventListener('click', ignoreCurrent);
+    container
+      .querySelector('#empty-btn')
+      .addEventListener('click', () => labelCurrent(LABELS.EMPTY));
+    container
+      .querySelector('#person-btn')
+      .addEventListener('click', () => labelCurrent(LABELS.PERSON));
+    container
+      .querySelector('#ignore-btn')
+      .addEventListener('click', ignoreCurrent);
 
     attachSwipeHandlers(container.querySelector('#swipe-card'), {
       tagPerson: container.querySelector('#tag-person'),
       tagEmpty: container.querySelector('#tag-empty'),
-      onCommit: (direction) => labelCurrent(direction === 'right' ? LABELS.PERSON : LABELS.EMPTY),
+      onCommit: (direction) =>
+        labelCurrent(direction === 'right' ? LABELS.PERSON : LABELS.EMPTY),
     });
   }
 

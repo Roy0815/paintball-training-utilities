@@ -1,10 +1,23 @@
-import { startCamera, stopCamera, captureSeries, drawCroppedFrame } from '../../capture.js';
+import {
+  startCamera,
+  stopCamera,
+  captureSeries,
+  drawCroppedFrame,
+} from '../../capture.js';
 import { toLabelItems } from '../../labeling.js';
-import { DEFAULT_CAPTURE_COUNT, DEFAULT_CAPTURE_INTERVAL_MS, DEFAULT_CAPTURE_DELAY_MS } from '../../storage.js';
+import {
+  DEFAULT_CAPTURE_COUNT,
+  DEFAULT_CAPTURE_INTERVAL_MS,
+  DEFAULT_CAPTURE_DELAY_MS,
+} from '../../storage.js';
 import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 import { isDebugMode } from '../../../../shared/debug.js';
-import { unlockAudio, playNumber, playCameraCapture } from '../../../../shared/audio.js';
+import {
+  unlockAudio,
+  playNumber,
+  playCameraCapture,
+} from '../../../../shared/audio.js';
 import { isCameraSoundEnabled, isNumberSoundEnabled } from '../../settings.js';
 
 export function renderCaptureScreen(container, draft, { onBack, onNext }) {
@@ -117,14 +130,17 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
       startCameraBtn.hidden = true;
       captureBtn.disabled = false;
       debugPanel.textContent =
-        `facingMode: ${draft.facingMode}\n` + `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}`;
+        `facingMode: ${draft.facingMode}\n` +
+        `videoSize: ${videoEl.videoWidth}x${videoEl.videoHeight}`;
       console.log('[snaptraining] capture camera started:', {
         facingMode: draft.facingMode,
         videoSize: `${videoEl.videoWidth}x${videoEl.videoHeight}`,
       });
       startCropPreviewLoop();
     } catch (err) {
-      errorMsg.textContent = t('snap-dryrun.capture.cameraError', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.capture.cameraError', {
+        message: err.message,
+      });
       errorMsg.hidden = false;
       startCameraBtn.hidden = false;
     }
@@ -147,8 +163,14 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
     cancelBtn.hidden = false;
     nextBtn.disabled = true;
 
-    const count = Math.max(parseInt(countInput.value, 10) || DEFAULT_CAPTURE_COUNT, 1);
-    const intervalMs = Math.max(parseInt(intervalInput.value, 10) || DEFAULT_CAPTURE_INTERVAL_MS, 100);
+    const count = Math.max(
+      parseInt(countInput.value, 10) || DEFAULT_CAPTURE_COUNT,
+      1,
+    );
+    const intervalMs = Math.max(
+      parseInt(intervalInput.value, 10) || DEFAULT_CAPTURE_INTERVAL_MS,
+      100,
+    );
     const delayMs = Math.max(parseInt(delayInput.value, 10) || 0, 0) * 1000;
     draft.captureCount = count;
     draft.captureIntervalMs = intervalMs;
@@ -165,7 +187,9 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
       isCancelled: () => cancelled,
       onCountdown: (msRemaining) => {
         const seconds = Math.ceil(msRemaining / 1000);
-        progressText.textContent = t('snap-dryrun.capture.countdown', { seconds });
+        progressText.textContent = t('snap-dryrun.capture.countdown', {
+          seconds,
+        });
         const isCheckpoint = seconds > 0 && (seconds <= 5 || seconds % 5 === 0);
         if (isCheckpoint && seconds !== lastAnnouncedSecond) {
           lastAnnouncedSecond = seconds;
@@ -173,7 +197,10 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
         }
       },
       onCapture: (dataUrl, index, total) => {
-        progressText.textContent = t('snap-dryrun.capture.progress', { index, total });
+        progressText.textContent = t('snap-dryrun.capture.progress', {
+          index,
+          total,
+        });
         if (isCameraSoundEnabled()) playCameraCapture();
         const img = document.createElement('img');
         img.src = dataUrl;

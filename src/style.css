@@ -28,7 +28,12 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -73,7 +78,9 @@ body {
   border-radius: 999px;
   color: var(--text);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .back-link:hover,
@@ -155,7 +162,9 @@ body {
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .lang-btn:hover {
@@ -275,7 +284,9 @@ h3 {
   color: var(--text);
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .icon-btn:hover,
@@ -306,7 +317,10 @@ h3 {
   box-shadow: var(--shadow);
   text-decoration: none;
   color: var(--text);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
 }
 
 .tile:hover,
@@ -434,7 +448,10 @@ select {
   border-radius: 8px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.05s ease;
 }
 
 .btn:hover:not(:disabled):not([aria-disabled='true']) {
@@ -543,7 +560,9 @@ select {
   background: var(--bg-elevated);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .switch[aria-checked='true'] {
@@ -559,7 +578,9 @@ select {
   height: 1.1rem;
   border-radius: 50%;
   background: var(--text);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
 }
 
 .switch[aria-checked='true'] .switch-thumb {
@@ -858,7 +879,6 @@ select {
   transform: scale(1.15);
   color: var(--accent);
 }
-
 
 progress {
   width: 100%;

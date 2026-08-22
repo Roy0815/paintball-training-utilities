@@ -10,7 +10,12 @@ export const LABELS = { PERSON: 'person', EMPTY: 'empty' };
  * so training's own `item.label` filter already excludes them.
  */
 export function toLabelItems(dataUrls) {
-  return dataUrls.map((dataUrl, index) => ({ id: `f${index}`, dataUrl, label: null, ignored: false }));
+  return dataUrls.map((dataUrl, index) => ({
+    id: `f${index}`,
+    dataUrl,
+    label: null,
+    ignored: false,
+  }));
 }
 
 export function countByLabel(items) {
@@ -20,7 +25,7 @@ export function countByLabel(items) {
       if (item.ignored) counts.ignored += 1;
       return counts;
     },
-    { [LABELS.PERSON]: 0, [LABELS.EMPTY]: 0, ignored: 0 }
+    { [LABELS.PERSON]: 0, [LABELS.EMPTY]: 0, ignored: 0 },
   );
 }
 
@@ -29,10 +34,14 @@ export function validateLabels(items) {
   const counts = countByLabel(items);
   const missing = [];
   if (counts[LABELS.PERSON] < MIN_EXAMPLES_PER_CLASS) {
-    missing.push(`${t('label.snap')}: ${counts[LABELS.PERSON]}/${MIN_EXAMPLES_PER_CLASS}`);
+    missing.push(
+      `${t('label.snap')}: ${counts[LABELS.PERSON]}/${MIN_EXAMPLES_PER_CLASS}`,
+    );
   }
   if (counts[LABELS.EMPTY] < MIN_EXAMPLES_PER_CLASS) {
-    missing.push(`${t('label.cover')}: ${counts[LABELS.EMPTY]}/${MIN_EXAMPLES_PER_CLASS}`);
+    missing.push(
+      `${t('label.cover')}: ${counts[LABELS.EMPTY]}/${MIN_EXAMPLES_PER_CLASS}`,
+    );
   }
   return { valid: missing.length === 0, missing, counts };
 }

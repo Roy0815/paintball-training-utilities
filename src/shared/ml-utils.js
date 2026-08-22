@@ -130,9 +130,11 @@ async function selectBackend(mode) {
 
   const attempts = [];
   for (const candidate of AUTO_CANDIDATES) {
-    const isLastCandidate = candidate === AUTO_CANDIDATES[AUTO_CANDIDATES.length - 1];
+    const isLastCandidate =
+      candidate === AUTO_CANDIDATES[AUTO_CANDIDATES.length - 1];
     try {
-      if (!(await activateBackend(candidate))) throw new Error('backend unavailable');
+      if (!(await activateBackend(candidate)))
+        throw new Error('backend unavailable');
       await tf.ready();
       const arithmetic = await testBackendArithmetic();
       attempts.push({ backend: candidate, ...arithmetic });
@@ -140,7 +142,10 @@ async function selectBackend(mode) {
         engineReport = { mode, attempts };
         return;
       }
-      console.warn(`[ml] backend "${candidate}" failed its arithmetic self-test:`, arithmetic);
+      console.warn(
+        `[ml] backend "${candidate}" failed its arithmetic self-test:`,
+        arithmetic,
+      );
     } catch (err) {
       attempts.push({ backend: candidate, ok: false, error: err.message });
       console.warn(`[ml] backend "${candidate}" unavailable:`, err);
@@ -165,19 +170,28 @@ export function loadMobileNet() {
       let model = await mobilenet.load({ version: 2, alpha: 1.0 });
       if (mode !== 'auto') return model;
 
-      const tried = new Set(engineReport.attempts.map((attempt) => attempt.backend));
+      const tried = new Set(
+        engineReport.attempts.map((attempt) => attempt.backend),
+      );
       for (;;) {
         const output = await testModelOutput(model);
         engineReport.modelCheck = { backend: tf.getBackend(), ...output };
         if (output.ok) return model;
-        console.warn(`[ml] backend "${tf.getBackend()}" passed arithmetic but failed on the model:`, output);
+        console.warn(
+          `[ml] backend "${tf.getBackend()}" passed arithmetic but failed on the model:`,
+          output,
+        );
         const next = AUTO_CANDIDATES.find((candidate) => !tried.has(candidate));
         if (!next) return model;
         tried.add(next);
         model.model?.dispose?.();
         await activateBackend(next);
         await tf.ready();
-        engineReport.attempts.push({ backend: next, ok: true, note: 'model-check fallback' });
+        engineReport.attempts.push({
+          backend: next,
+          ok: true,
+          note: 'model-check fallback',
+        });
         model = await mobilenet.load({ version: 2, alpha: 1.0 });
       }
     })();
@@ -278,7 +292,9 @@ function getRenderer() {
     const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
     if (!gl) return 'n/a';
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
-    return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    return ext
+      ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+      : gl.getParameter(gl.RENDERER);
   } catch {
     return 'n/a';
   }

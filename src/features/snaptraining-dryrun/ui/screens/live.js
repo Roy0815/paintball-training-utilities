@@ -7,7 +7,11 @@ import {
   removeLastPeekDuration,
   DEFAULT_LIVE_START_DELAY_MS,
 } from '../../storage.js';
-import { ENGINE_MODES, getEngineMode, setEngineMode } from '../../../../shared/ml-utils.js';
+import {
+  ENGINE_MODES,
+  getEngineMode,
+  setEngineMode,
+} from '../../../../shared/ml-utils.js';
 import { setHeader } from '../../../../app/shell.js';
 import { t } from '../../../../shared/i18n.js';
 import { unlockAudio, playNumber } from '../../../../shared/audio.js';
@@ -117,14 +121,19 @@ export function renderLiveScreen(container, profile, { onBack }) {
   };
   backendBtn.textContent = `⚙️ Engine: ${ENGINE_LABELS[getEngineMode()]} (wechseln, lädt neu)`;
   backendBtn.addEventListener('click', () => {
-    const next = ENGINE_MODES[(ENGINE_MODES.indexOf(getEngineMode()) + 1) % ENGINE_MODES.length];
+    const next =
+      ENGINE_MODES[
+        (ENGINE_MODES.indexOf(getEngineMode()) + 1) % ENGINE_MODES.length
+      ];
     setEngineMode(next);
     window.location.reload();
   });
 
   debugCopyBtn.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(`${debugPanel.textContent}\n\n${diagnosePanel.textContent}`.trim());
+      await navigator.clipboard.writeText(
+        `${debugPanel.textContent}\n\n${diagnosePanel.textContent}`.trim(),
+      );
       debugCopyBtn.textContent = '✅ Kopiert!';
     } catch {
       debugCopyBtn.textContent = '❌ Kopieren fehlgeschlagen';
@@ -141,13 +150,23 @@ export function renderLiveScreen(container, profile, { onBack }) {
     const list = durations ?? [];
     removePeekBtn.disabled = list.length === 0;
     if (list.length === 0) {
-      peekStatsLine.textContent = t('snap-dryrun.live.peekStats', { avg: '-', min: '-', max: '-' });
+      peekStatsLine.textContent = t('snap-dryrun.live.peekStats', {
+        avg: '-',
+        min: '-',
+        max: '-',
+      });
       return;
     }
-    const avg = Math.round(list.reduce((sum, value) => sum + value, 0) / list.length);
+    const avg = Math.round(
+      list.reduce((sum, value) => sum + value, 0) / list.length,
+    );
     const min = Math.min(...list);
     const max = Math.max(...list);
-    peekStatsLine.textContent = t('snap-dryrun.live.peekStats', { avg, min, max });
+    peekStatsLine.textContent = t('snap-dryrun.live.peekStats', {
+      avg,
+      min,
+      max,
+    });
   }
   renderPeekStats(profile.peekDurations);
 
@@ -167,7 +186,13 @@ export function renderLiveScreen(container, profile, { onBack }) {
     detection = await startLiveDetection(videoEl, {
       classifierDataset: profile.classifierDataset,
       trainingDiagnostics: profile.trainingDiagnostics,
-      onReady: ({ numClasses, exampleCounts, k, confidenceThreshold, ...backendInfo }) => {
+      onReady: ({
+        numClasses,
+        exampleCounts,
+        k,
+        confidenceThreshold,
+        ...backendInfo
+      }) => {
         debugStartInfo +=
           `\nnumClasses: ${numClasses}\n` +
           `exampleCounts: ${JSON.stringify(exampleCounts)}\n` +
@@ -195,7 +220,11 @@ export function renderLiveScreen(container, profile, { onBack }) {
         counterDisplay.textContent = updated.counter;
         counterDisplay.classList.add('flash');
         setTimeout(() => counterDisplay.classList.remove('flash'), 400);
-        if (isNumberSoundEnabled() && updated.counter % MILESTONE_STEP === 0 && updated.counter <= MILESTONE_MAX) {
+        if (
+          isNumberSoundEnabled() &&
+          updated.counter % MILESTONE_STEP === 0 &&
+          updated.counter <= MILESTONE_MAX
+        ) {
           playNumber(updated.counter);
         }
       },
@@ -203,18 +232,29 @@ export function renderLiveScreen(container, profile, { onBack }) {
         const updated = await recordPeekDuration(profile.id, durationMs);
         renderPeekStats(updated.peekDurations);
       },
-      onTick: ({ confidences, present, canvasWidth, canvasHeight, inferenceMs, avgInferenceMs, maxInferenceMs, intervalMs }) => {
+      onTick: ({
+        confidences,
+        present,
+        canvasWidth,
+        canvasHeight,
+        inferenceMs,
+        avgInferenceMs,
+        maxInferenceMs,
+        intervalMs,
+      }) => {
         const personPct = Math.round((confidences.person ?? 0) * 100);
         const emptyPct = Math.round((confidences.empty ?? 0) * 100);
         statusLine.textContent = `${t('snap-dryrun.live.status', { snap: personPct, cover: emptyPct })} · ${
-          present ? t('snap-dryrun.live.stateSnap') : t('snap-dryrun.live.stateCover')
+          present
+            ? t('snap-dryrun.live.stateSnap')
+            : t('snap-dryrun.live.stateCover')
         }`;
         debugPanel.textContent =
           `${debugStartInfo}\n\ncanvas: ${canvasWidth}x${canvasHeight}\nconfidences: ${JSON.stringify(
-            confidences
+            confidences,
           )}\n` +
           `inference: ${inferenceMs.toFixed(0)}ms (avg ${avgInferenceMs.toFixed(0)}ms, max ${maxInferenceMs.toFixed(
-            0
+            0,
           )}ms) / target interval ${intervalMs}ms`;
       },
     });
@@ -302,7 +342,9 @@ export function renderLiveScreen(container, profile, { onBack }) {
       startCropPreviewLoop();
       statusLine.textContent = '';
     } catch (err) {
-      errorMsg.textContent = t('snap-dryrun.live.cameraError', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.live.cameraError', {
+        message: err.message,
+      });
       errorMsg.hidden = false;
     }
   })();

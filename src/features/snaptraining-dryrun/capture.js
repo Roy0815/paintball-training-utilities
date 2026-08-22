@@ -5,7 +5,11 @@ export async function startCamera(videoEl, facingMode = 'environment') {
     // cameras pick a different one per session far more readily than desktop
     // webcams do, and since frames are center cropped to a square, a different
     // source aspect ratio means the square covers a different field of view.
-    video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
+    video: {
+      facingMode: { ideal: facingMode },
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    },
     audio: false,
   });
   videoEl.srcObject = stream;
@@ -40,7 +44,19 @@ export function captureFrameCanvas(videoEl) {
   const canvas = document.createElement('canvas');
   canvas.width = Math.max(side, 1);
   canvas.height = Math.max(side, 1);
-  canvas.getContext('2d').drawImage(videoEl, sourceX, sourceY, side, side, 0, 0, canvas.width, canvas.height);
+  canvas
+    .getContext('2d')
+    .drawImage(
+      videoEl,
+      sourceX,
+      sourceY,
+      side,
+      side,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
   return canvas;
 }
 
@@ -60,7 +76,9 @@ export function drawCroppedFrame(videoEl, targetCanvas) {
     targetCanvas.width = size;
     targetCanvas.height = size;
   }
-  targetCanvas.getContext('2d').drawImage(videoEl, sourceX, sourceY, side, side, 0, 0, size, size);
+  targetCanvas
+    .getContext('2d')
+    .drawImage(videoEl, sourceX, sourceY, side, side, 0, 0, size, size);
 }
 
 /**
@@ -70,7 +88,10 @@ export function drawCroppedFrame(videoEl, targetCanvas) {
  * one holding the phone, and without it the first few captures are spent
  * watching them walk into position.
  */
-export function captureSeries(videoEl, { count, intervalMs, startDelayMs = 0, onCapture, onCountdown, isCancelled }) {
+export function captureSeries(
+  videoEl,
+  { count, intervalMs, startDelayMs = 0, onCapture, onCountdown, isCancelled },
+) {
   return new Promise((resolve) => {
     const frames = [];
 

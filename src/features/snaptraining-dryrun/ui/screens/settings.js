@@ -30,26 +30,30 @@ export function renderSettingsScreen(container, { onBack }) {
         'camera-sound-toggle',
         t('snap-dryrun.settings.cameraSound'),
         t('snap-dryrun.settings.cameraSoundHint'),
-        isCameraSoundEnabled()
+        isCameraSoundEnabled(),
       )}
       ${renderToggleRow(
         'number-sound-toggle',
         t('snap-dryrun.settings.numberSound'),
         t('snap-dryrun.settings.numberSoundHint'),
-        isNumberSoundEnabled()
+        isNumberSoundEnabled(),
       )}
     </section>
   `;
 
-  container.querySelector('#camera-sound-toggle').addEventListener('click', (event) => {
-    const next = !isCameraSoundEnabled();
-    setCameraSoundEnabled(next);
-    event.currentTarget.setAttribute('aria-checked', String(next));
-  });
+  container
+    .querySelector('#camera-sound-toggle')
+    .addEventListener('click', (event) => {
+      const next = !isCameraSoundEnabled();
+      setCameraSoundEnabled(next);
+      event.currentTarget.setAttribute('aria-checked', String(next));
+    });
 
-  container.querySelector('#number-sound-toggle').addEventListener('click', (event) => {
-    const next = !isNumberSoundEnabled();
-    setNumberSoundEnabled(next);
-    event.currentTarget.setAttribute('aria-checked', String(next));
-  });
+  container
+    .querySelector('#number-sound-toggle')
+    .addEventListener('click', (event) => {
+      const next = !isNumberSoundEnabled();
+      setNumberSoundEnabled(next);
+      event.currentTarget.setAttribute('aria-checked', String(next));
+    });
 }

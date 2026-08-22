@@ -81,10 +81,10 @@ gespeicherte Embeddings. Deshalb dauert Training auf dem Handy nur Sekunden.
 
 ## Wo die interessanten Entscheidungen stehen
 
-| Thema | Seite |
-| --- | --- |
-| Verzeichnisaufbau, Build und Deployment | [Projektstruktur](./project-structure) |
-| Router, Header, i18n, Navigation | [App-Shell](./app-shell) |
-| Kamera, Training und Zählung im Detail | [Snaptraining Dryrun im Detail](./snaptraining-dryrun) |
-| Backendauswahl und ihre Verifikation | [ML-Backend und Verifikation](./ml-backend) |
-| Dev-Loop, Gerätetests, Konventionen | [Entwicklungs-Workflow](./development) |
+| Thema                                   | Seite                                                  |
+| --------------------------------------- | ------------------------------------------------------ |
+| Verzeichnisaufbau, Build und Deployment | [Projektstruktur](./project-structure)                 |
+| Router, Header, i18n, Navigation        | [App-Shell](./app-shell)                               |
+| Kamera, Training und Zählung im Detail  | [Snaptraining Dryrun im Detail](./snaptraining-dryrun) |
+| Backendauswahl und ihre Verifikation    | [ML-Backend und Verifikation](./ml-backend)            |
+| Dev-Loop, Gerätetests, Konventionen     | [Entwicklungs-Workflow](./development)                 |

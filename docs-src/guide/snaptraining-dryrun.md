@@ -50,11 +50,11 @@ so what you see is what the model gets.
 
 Three settings:
 
-| Setting | What it does |
-| --- | --- |
-| Number of photos | How many photos the series takes. 30 is a good starting point. |
-| Interval (ms) | Time between two photos. 1000 means one photo per second. |
-| Start delay (s) | Countdown before the first photo, so you can get into position. |
+| Setting          | What it does                                                    |
+| ---------------- | --------------------------------------------------------------- |
+| Number of photos | How many photos the series takes. 30 is a good starting point.  |
+| Interval (ms)    | Time between two photos. 1000 means one photo per second.       |
+| Start delay (s)  | Countdown before the first photo, so you can get into position. |
 
 Press **Capture series** and drill normally for the length of the series: go
 into cover, snap out, go back into cover. Aim for **roughly the same number of
@@ -158,12 +158,12 @@ photos**, and the percentages on screen are nothing more than how those six
 voted:
 
 | The six closest training photos | Snap | Cover | Counts? |
-| --- | --- | --- | --- |
-| 6 snap | 100% | 0% | yes |
-| 5 snap, 1 cover | 83% | 17% | yes |
-| 4 snap, 2 cover | 67% | 33% | yes |
-| 3 snap, 3 cover | 50% | 50% | no |
-| 2 snap, 4 cover | 33% | 67% | no |
+| ------------------------------- | ---- | ----- | ------- |
+| 6 snap                          | 100% | 0%    | yes     |
+| 5 snap, 1 cover                 | 83%  | 17%   | yes     |
+| 4 snap, 2 cover                 | 67%  | 33%   | yes     |
+| 3 snap, 3 cover                 | 50%  | 50%   | no      |
+| 2 snap, 4 cover                 | 33%  | 67%   | no      |
 
 A rep needs more than 60%, and there is no step at exactly 60%, so in practice
 **four of the six closest photos have to be snap photos**.

@@ -11,7 +11,8 @@ function parseRoute(hash) {
   const featureMatch = path.match(/^\/feature\/([^/]+)/);
   if (featureMatch) return { name: 'feature', featureId: featureMatch[1] };
   const settingsMatch = path.match(/^\/settings\/([^/]+)/);
-  if (settingsMatch) return { name: 'feature-settings', featureId: settingsMatch[1] };
+  if (settingsMatch)
+    return { name: 'feature-settings', featureId: settingsMatch[1] };
   if (path === '/settings') return { name: 'settings' };
   return { name: 'home' };
 }
@@ -28,7 +29,12 @@ async function render(container) {
   if (route.name === 'feature') {
     const feature = getFeature(route.featureId);
     if (!feature) {
-      setHeader({ title: t('notFound.title'), onBack: () => { window.location.hash = '#/'; } });
+      setHeader({
+        title: t('notFound.title'),
+        onBack: () => {
+          window.location.hash = '#/';
+        },
+      });
       container.innerHTML = `<p class="error">${t('notFound.message')}</p>`;
       return;
     }
@@ -40,7 +46,12 @@ async function render(container) {
   if (route.name === 'feature-settings') {
     const feature = getFeature(route.featureId);
     if (!feature?.mountSettings) {
-      setHeader({ title: t('notFound.title'), onBack: () => { window.location.hash = '#/settings'; } });
+      setHeader({
+        title: t('notFound.title'),
+        onBack: () => {
+          window.location.hash = '#/settings';
+        },
+      });
       container.innerHTML = `<p class="error">${t('notFound.message')}</p>`;
       return;
     }

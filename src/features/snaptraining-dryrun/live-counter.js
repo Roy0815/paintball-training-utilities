@@ -66,7 +66,7 @@ export async function startLiveDetection(
     onPeekComplete,
     onTick,
     onReady,
-  }
+  },
 ) {
   const model = await loadMobileNet();
   const classifier = createClassifier();
@@ -108,12 +108,16 @@ export async function startLiveDetection(
 
       const inferenceMs = performance.now() - tickStart;
       inferenceTimes.push(inferenceMs);
-      if (inferenceTimes.length > INFERENCE_WINDOW_TICKS) inferenceTimes.shift();
-      const avgInferenceMs = inferenceTimes.reduce((sum, value) => sum + value, 0) / inferenceTimes.length;
+      if (inferenceTimes.length > INFERENCE_WINDOW_TICKS)
+        inferenceTimes.shift();
+      const avgInferenceMs =
+        inferenceTimes.reduce((sum, value) => sum + value, 0) /
+        inferenceTimes.length;
       const maxInferenceMs = Math.max(...inferenceTimes);
 
       const confidence = result.confidences[result.label] ?? 0;
-      const isPersonFrame = result.label === LABELS.PERSON && confidence >= confidenceThreshold;
+      const isPersonFrame =
+        result.label === LABELS.PERSON && confidence >= confidenceThreshold;
 
       if (isPersonFrame === confirmedPresent) {
         pendingLabelIsPerson = null;
@@ -187,7 +191,9 @@ export async function startLiveDetection(
     const imageDataEmbedding = embedCanvasViaImageData(model, canvas);
     const videoEmbedding = embedImage(model, videoEl);
 
-    const lines = [`=== DIAGNOSE ${new Date().toLocaleTimeString('de-DE')} ===`];
+    const lines = [
+      `=== DIAGNOSE ${new Date().toLocaleTimeString('de-DE')} ===`,
+    ];
     lines.push(`ua: ${navigator.userAgent}`);
     lines.push(`video: ${videoEl.videoWidth}x${videoEl.videoHeight}`);
     lines.push(`backend: ${JSON.stringify(getBackendInfo())}`);
@@ -207,26 +213,43 @@ export async function startLiveDetection(
     lines.push('', '-- cross-check --');
     // Same pixels through two upload paths, so anything below ~0.99 means the
     // canvas to texture upload is not seeing what was drawn.
-    lines.push(`  canvas vs imageData (expect ~1.0): ${(await cosineSimilarity(canvasEmbedding, imageDataEmbedding)).toFixed(4)}`);
+    lines.push(
+      `  canvas vs imageData (expect ~1.0): ${(await cosineSimilarity(canvasEmbedding, imageDataEmbedding)).toFixed(4)}`,
+    );
     // Different framing (square crop against full frame), so a value well
     // below 1.0 is normal. Only ~1.0 or ~0 is informative here.
-    lines.push(`  canvas vs video (differs by crop): ${(await cosineSimilarity(canvasEmbedding, videoEmbedding)).toFixed(4)}`);
+    lines.push(
+      `  canvas vs video (differs by crop): ${(await cosineSimilarity(canvasEmbedding, videoEmbedding)).toFixed(4)}`,
+    );
 
-    lines.push('', '-- training-time record (per photo, captured while training) --');
+    lines.push(
+      '',
+      '-- training-time record (per photo, captured while training) --',
+    );
     lines.push(formatTrainingDiagnostics(trainingDiagnostics));
 
     lines.push('', '-- stored training set --');
     // The KNN's topK() sorts with a plain JS comparator, so tied similarities
     // keep their original index order and the vote lands entirely on whichever
     // class was concatenated first. Naming the order makes that case obvious.
-    lines.push(`  class order (ties resolve to the first): ${Object.keys(classifier.getClassifierDataset()).join(', ')}`);
+    lines.push(
+      `  class order (ties resolve to the first): ${Object.keys(classifier.getClassifierDataset()).join(', ')}`,
+    );
     lines.push(formatDatasetSelfReport(await datasetSelfReport(classifier)));
 
     lines.push('', '-- similarities: canvas embedding --');
-    lines.push(formatSimilarityReport(await classifierSimilarityReport(classifier, canvasEmbedding)));
+    lines.push(
+      formatSimilarityReport(
+        await classifierSimilarityReport(classifier, canvasEmbedding),
+      ),
+    );
 
     lines.push('', '-- similarities: ImageData embedding --');
-    lines.push(formatSimilarityReport(await classifierSimilarityReport(classifier, imageDataEmbedding)));
+    lines.push(
+      formatSimilarityReport(
+        await classifierSimilarityReport(classifier, imageDataEmbedding),
+      ),
+    );
 
     canvasEmbedding.dispose();
     imageDataEmbedding.dispose();

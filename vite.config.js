@@ -24,7 +24,8 @@ export default defineConfig(({ command }) => ({
       manifest: {
         name: 'Paintball Training Utilities',
         short_name: 'PB Utilities',
-        description: 'Camera based training tools for paintball. Runs entirely on the device.',
+        description:
+          'Camera based training tools for paintball. Runs entirely on the device.',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
@@ -33,7 +34,12 @@ export default defineConfig(({ command }) => ({
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          {
+            src: 'icons/icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ],
       },
       workbox: {

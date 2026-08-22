@@ -32,7 +32,9 @@ function range(start, end, step = 1) {
 
 // 1-5, then every fifth number through 100. Matches "present so far" in
 // numbers/README.md; extend this (and the README) together if more get added.
-const NUMBERS = [...new Set([...range(1, 5), ...range(5, 100, 5)])].sort((a, b) => a - b);
+const NUMBERS = [...new Set([...range(1, 5), ...range(5, 100, 5)])].sort(
+  (a, b) => a - b,
+);
 
 // Update in the Google Cloud Console if a voice name gets retired.
 const VOICES = {
@@ -51,7 +53,9 @@ async function synthesize(number, lang) {
     }),
   });
   if (!response.ok) {
-    throw new Error(`TTS request failed for ${number}_${lang}: ${response.status} ${await response.text()}`);
+    throw new Error(
+      `TTS request failed for ${number}_${lang}: ${response.status} ${await response.text()}`,
+    );
   }
   const { audioContent } = await response.json();
   return Buffer.from(audioContent, 'base64');

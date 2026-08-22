@@ -12,8 +12,15 @@ import qrcode from 'qrcode-terminal';
 // HTTP/2, which rides on a plain TCP connection, keeps it up.
 const child = spawn(
   'cloudflared',
-  ['tunnel', '--protocol', 'http2', '--url', 'https://localhost:5173', '--no-tls-verify'],
-  { stdio: ['ignore', 'pipe', 'pipe'] }
+  [
+    'tunnel',
+    '--protocol',
+    'http2',
+    '--url',
+    'https://localhost:5173',
+    '--no-tls-verify',
+  ],
+  { stdio: ['ignore', 'pipe', 'pipe'] },
 );
 
 const urlPattern = /https:\/\/[a-z0-9-]+\.trycloudflare\.com/;

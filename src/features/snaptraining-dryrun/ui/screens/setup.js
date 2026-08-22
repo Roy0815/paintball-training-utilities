@@ -17,8 +17,8 @@ export function renderSetupScreen(container, draft, { onBack, onNext }) {
         ${t('snap-dryrun.setup.cameraLabel')}
         <select id="facing-select">
           <option value="environment" ${draft.facingMode === 'environment' ? 'selected' : ''}>${t(
-    'snap-dryrun.setup.cameraRear'
-  )}</option>
+            'snap-dryrun.setup.cameraRear',
+          )}</option>
           <option value="user" ${draft.facingMode === 'user' ? 'selected' : ''}>${t('snap-dryrun.setup.cameraFront')}</option>
         </select>
       </label>

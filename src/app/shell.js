@@ -1,4 +1,10 @@
-import { t, getLang, setLang, LANGUAGES, onLangChange } from '../shared/i18n.js';
+import {
+  t,
+  getLang,
+  setLang,
+  LANGUAGES,
+  onLangChange,
+} from '../shared/i18n.js';
 
 let headerEl = null;
 let titleEl = null;
@@ -18,8 +24,8 @@ function renderLangSwitch() {
   langSwitchEl.innerHTML = LANGUAGES.map(
     (lang) =>
       `<button type="button" class="lang-btn" data-lang="${lang}" aria-pressed="${lang === getLang()}">${t(
-        `shell.langName.${lang}`
-      )}</button>`
+        `shell.langName.${lang}`,
+      )}</button>`,
   ).join('');
   langSwitchEl.querySelectorAll('.lang-btn').forEach((btn) => {
     btn.addEventListener('click', () => setLang(btn.dataset.lang));
@@ -52,7 +58,7 @@ function setupScrollHint(sentinelEl) {
       const scrollable = doc.scrollHeight > doc.clientHeight + 1;
       scrollHintEl.hidden = !scrollable || entry.isIntersecting;
     },
-    { rootMargin: `0px 0px ${SCROLL_END_MARGIN_PX}px 0px` }
+    { rootMargin: `0px 0px ${SCROLL_END_MARGIN_PX}px 0px` },
   ).observe(sentinelEl);
 }
 
@@ -98,7 +104,9 @@ export function renderShell(root) {
     updateTitleAlignment(currentForceLeftAlign);
   });
 
-  window.addEventListener('resize', () => updateTitleAlignment(currentForceLeftAlign));
+  window.addEventListener('resize', () =>
+    updateTitleAlignment(currentForceLeftAlign),
+  );
 
   setupScrollHint(root.querySelector('#scroll-end'));
   return root.querySelector('#view');
@@ -114,9 +122,12 @@ export function renderShell(root) {
 function fitCenteredTitle() {
   const header = headerEl.getBoundingClientRect();
   const center = header.left + header.width / 2;
-  const leftEdge = backBtn.hidden ? header.left : backBtn.getBoundingClientRect().right;
+  const leftEdge = backBtn.hidden
+    ? header.left
+    : backBtn.getBoundingClientRect().right;
   const rightEdge = langSwitchEl.getBoundingClientRect().left;
-  const halfWidth = Math.min(center - leftEdge, rightEdge - center) - TITLE_GAP_PX;
+  const halfWidth =
+    Math.min(center - leftEdge, rightEdge - center) - TITLE_GAP_PX;
   titleEl.style.maxWidth = `${Math.max(halfWidth * 2, 0)}px`;
 }
 

@@ -33,15 +33,22 @@ export function renderTrainScreen(container, draft, { onDone }) {
       } = await trainFromLabeledItems(draft.items, {
         onProgress: (done, total) => {
           if (cancelled) return;
-          statusEl.textContent = t('snap-dryrun.train.runningProgress', { done, total });
+          statusEl.textContent = t('snap-dryrun.train.runningProgress', {
+            done,
+            total,
+          });
           progressEl.max = total;
           progressEl.value = done;
         },
       });
       if (cancelled) return;
 
-      const existing = draft.profileId ? await getProfile(draft.profileId) : null;
-      const profile = existing ?? createProfileDraft({ name: draft.name, facingMode: draft.facingMode });
+      const existing = draft.profileId
+        ? await getProfile(draft.profileId)
+        : null;
+      const profile =
+        existing ??
+        createProfileDraft({ name: draft.name, facingMode: draft.facingMode });
       profile.name = draft.name;
       profile.facingMode = draft.facingMode;
       profile.classifierDataset = classifierDataset;
@@ -51,12 +58,16 @@ export function renderTrainScreen(container, draft, { onDone }) {
       profile.trainedAt = Date.now();
       await saveProfile(profile);
 
-      statusEl.textContent = t('snap-dryrun.train.done', { name: profile.name });
+      statusEl.textContent = t('snap-dryrun.train.done', {
+        name: profile.name,
+      });
       progressEl.hidden = true;
       doneBtn.hidden = false;
     } catch (err) {
       if (cancelled) return;
-      errorMsg.textContent = t('snap-dryrun.train.error', { message: err.message });
+      errorMsg.textContent = t('snap-dryrun.train.error', {
+        message: err.message,
+      });
       errorMsg.hidden = false;
       progressEl.hidden = true;
     }

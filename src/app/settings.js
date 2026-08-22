@@ -22,7 +22,10 @@ export function renderSettings(container) {
     },
   });
 
-  const featureLinks = features.filter((feature) => feature.mountSettings).map(renderFeatureLink).join('');
+  const featureLinks = features
+    .filter((feature) => feature.mountSettings)
+    .map(renderFeatureLink)
+    .join('');
 
   container.innerHTML = `
     <section class="screen">
@@ -74,11 +77,13 @@ export function renderSettings(container) {
   }
   document.addEventListener('click', handleOutsideClick);
 
-  container.querySelector('#debug-toggle').addEventListener('click', (event) => {
-    const next = !isDebugMode();
-    setDebugMode(next);
-    event.currentTarget.setAttribute('aria-checked', String(next));
-  });
+  container
+    .querySelector('#debug-toggle')
+    .addEventListener('click', (event) => {
+      const next = !isDebugMode();
+      setDebugMode(next);
+      event.currentTarget.setAttribute('aria-checked', String(next));
+    });
 
   return () => {
     document.removeEventListener('click', handleOutsideClick);

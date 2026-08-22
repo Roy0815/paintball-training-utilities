@@ -5,7 +5,10 @@ import {
   serializeDataset,
   getEngineSignature,
 } from '../../shared/ml-utils.js';
-import { describeImagePixels, describeTensor } from '../../shared/ml-diagnostics.js';
+import {
+  describeImagePixels,
+  describeTensor,
+} from '../../shared/ml-diagnostics.js';
 import { LABELS } from './labeling.js';
 
 function loadImage(src) {
@@ -46,7 +49,10 @@ export async function trainFromLabeledItems(items, { onProgress } = {}) {
     '[snaptraining] training on',
     labeled.length,
     'examples:',
-    labeled.reduce((acc, item) => ({ ...acc, [item.label]: (acc[item.label] ?? 0) + 1 }), {})
+    labeled.reduce(
+      (acc, item) => ({ ...acc, [item.label]: (acc[item.label] ?? 0) + 1 }),
+      {},
+    ),
   );
 
   const diagnostics = [];
@@ -71,17 +77,28 @@ export async function trainFromLabeledItems(items, { onProgress } = {}) {
     onProgress?.(i + 1, labeled.length);
   }
 
-  console.log('[snaptraining] classifier example counts:', classifier.getClassExampleCount());
+  console.log(
+    '[snaptraining] classifier example counts:',
+    classifier.getClassExampleCount(),
+  );
 
   const dataset = await serializeDataset(classifier);
   console.log(
     '[snaptraining] serialized dataset shapes:',
-    Object.fromEntries(Object.entries(dataset).map(([label, { shape }]) => [label, shape]))
+    Object.fromEntries(
+      Object.entries(dataset).map(([label, { shape }]) => [label, shape]),
+    ),
   );
   console.log('[snaptraining] training diagnostics:', diagnostics);
   classifier.dispose();
 
-  const previewItem = labeled.find((item) => item.label === LABELS.PERSON) ?? labeled[0];
+  const previewItem =
+    labeled.find((item) => item.label === LABELS.PERSON) ?? labeled[0];
 
-  return { dataset, diagnostics, engine: getEngineSignature(), previewImage: previewItem?.dataUrl ?? null };
+  return {
+    dataset,
+    diagnostics,
+    engine: getEngineSignature(),
+    previewImage: previewItem?.dataUrl ?? null,
+  };
 }

@@ -4,16 +4,16 @@ Verzeichnis `src/features/snaptraining-dryrun/`. Die id stammt aus der Zeit vor 
 heutigen Anzeigenamen und bleibt, damit bereits gespeicherte Profile lesbar
 bleiben.
 
-| Modul | Zuständigkeit |
-| --- | --- |
-| `storage.js` | Profil-CRUD, Aufnahme-Defaults, Zähler- und Peek-Dauer-Aktualisierung |
-| `capture.js` | Kamera, quadratischer Mittenzuschnitt, getaktete Aufnahmeserie |
-| `labeling.js` | Label-Konstanten, Zählung, Validierung |
-| `training.js` | Embeddings, Klassenausgleich, KNN-Training |
-| `live-counter.js` | Erkennungsschleife, Entprellung, Diagnose |
-| `settings.js` | Kamera- und Zahlen-Sound-Flags |
-| `ui/index.js` | Wizard-Zustandsautomat und History-Handling |
-| `ui/screens/*.js` | Eine Renderfunktion pro Screen |
+| Modul             | Zuständigkeit                                                         |
+| ----------------- | --------------------------------------------------------------------- |
+| `storage.js`      | Profil-CRUD, Aufnahme-Defaults, Zähler- und Peek-Dauer-Aktualisierung |
+| `capture.js`      | Kamera, quadratischer Mittenzuschnitt, getaktete Aufnahmeserie        |
+| `labeling.js`     | Label-Konstanten, Zählung, Validierung                                |
+| `training.js`     | Embeddings, Klassenausgleich, KNN-Training                            |
+| `live-counter.js` | Erkennungsschleife, Entprellung, Diagnose                             |
+| `settings.js`     | Kamera- und Zahlen-Sound-Flags                                        |
+| `ui/index.js`     | Wizard-Zustandsautomat und History-Handling                           |
+| `ui/screens/*.js` | Eine Renderfunktion pro Screen                                        |
 
 ## Das Profil
 
@@ -339,15 +339,15 @@ wie überall sonst: eine explizite Regel
 
 ## Screens
 
-| Screen | Datei | Anmerkung |
-| --- | --- | --- |
-| Profilliste | `screens/profileList.js` | Klick auf die Karte startet den Live-Betrieb, Buttons über `closest('button')` ausgenommen |
-| Setup | `screens/setup.js` | Name, Kamerawahl, das Minimum pro Klasse, keine Kamera |
-| Aufnahme | `screens/capture.js` | Öffnet die Kamera, Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel |
-| Labeln | `screens/label.js` | Wischkarten über Pointer-Events, Ignorieren, Zurück |
-| Training | `screens/train.js` | Fortschritt, speichert das Profil, kein Zurück-Ziel |
-| Live | `screens/live.js` | Zähler, Peek-Statistik, verzögerter Start mit abbrechbarem Countdown, Engine-Warnung, Debug-Werkzeuge |
-| Einstellungen | `screens/settings.js` | Schalter für Kamera- und Zahlen-Sound, erreichbar über den Einstellungen-Screen der App |
+| Screen        | Datei                    | Anmerkung                                                                                             |
+| ------------- | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Profilliste   | `screens/profileList.js` | Klick auf die Karte startet den Live-Betrieb, Buttons über `closest('button')` ausgenommen            |
+| Setup         | `screens/setup.js`       | Name, Kamerawahl, das Minimum pro Klasse, keine Kamera                                                |
+| Aufnahme      | `screens/capture.js`     | Öffnet die Kamera, Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel                |
+| Labeln        | `screens/label.js`       | Wischkarten über Pointer-Events, Ignorieren, Zurück                                                   |
+| Training      | `screens/train.js`       | Fortschritt, speichert das Profil, kein Zurück-Ziel                                                   |
+| Live          | `screens/live.js`        | Zähler, Peek-Statistik, verzögerter Start mit abbrechbarem Countdown, Engine-Warnung, Debug-Werkzeuge |
+| Einstellungen | `screens/settings.js`    | Schalter für Kamera- und Zahlen-Sound, erreichbar über den Einstellungen-Screen der App               |
 
 ::: warning Das Klickziel der Profilkarte
 Die Karte nutzt einen einfachen Click-Listener auf einem Element im normalen

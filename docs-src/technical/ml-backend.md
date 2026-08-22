@@ -71,13 +71,13 @@ never catch the next broken device.
 `ENGINE_MODES` also allows forcing a backend, cycled with the ⚙️ button on the
 live screen and persisted in `localStorage`:
 
-| Mode | Meaning |
-| --- | --- |
-| `auto` | Verify and pick. The default and what users get. |
-| `webgl` | GPU, tf.js defaults. |
+| Mode     | Meaning                                                     |
+| -------- | ----------------------------------------------------------- |
+| `auto`   | Verify and pick. The default and what users get.            |
+| `webgl`  | GPU, tf.js defaults.                                        |
 | `nopack` | GPU with all `WEBGL_PACK_*` flags off, one value per texel. |
-| `wasm` | SIMD accelerated CPU, no GPU driver involved. |
-| `cpu` | Plain JS. Slowest and the most trustworthy of all. |
+| `wasm`   | SIMD accelerated CPU, no GPU driver involved.               |
+| `cpu`    | Plain JS. Slowest and the most trustworthy of all.          |
 
 Forced modes **skip verification on purpose**, so they can produce wrong results.
 They exist for A/B testing on a specific device.
@@ -89,11 +89,11 @@ They exist for A/B testing on a specific device.
 Runs on the raw backend before the model is loaded, on a 1280 value vector, the
 same width as a MobileNet embedding:
 
-| Check | What it mirrors |
-| --- | --- |
-| elementwise | `tf.mul(x, scalar(1))` must return `x` |
-| normalize | a reduction feeding a division, which is what unit length normalization is |
-| matMul | the KNN's entire similarity search |
+| Check       | What it mirrors                                                            |
+| ----------- | -------------------------------------------------------------------------- |
+| elementwise | `tf.mul(x, scalar(1))` must return `x`                                     |
+| normalize   | a reduction feeding a division, which is what unit length normalization is |
+| matMul      | the KNN's entire similarity search                                         |
 
 The normalize check is the general form of the invariant that broke here. A
 normalized vector whose length is not 1.0 proves broken arithmetic no matter what
@@ -156,15 +156,15 @@ outside: a degenerate embedding, and a healthy embedding of the wrong pixels.
 
 What to look at, in order:
 
-| Line | Healthy value | What a bad value means |
-| --- | --- | --- |
-| `row L2 (must be 1.0)` | exactly 1.0 | `addExample()` unit normalizes every stored row, so anything else is proof of broken arithmetic at training time |
-| `canvas vs imageData` | ~1.0 | the same pixels through two upload paths, so a lower value means the canvas to texture upload is not seeing what was drawn |
-| `intra-class sim` vs `inter-class sim` | intra clearly higher | intra below inter means the feature space is scrambled |
-| `distinct values` | close to the total | few distinct similarities means everything is tying, which produces a hard content independent 100%/0% |
-| `zeros` in an embedding | roughly 10 to 15% of 1280 | near zero sparsity means the ReLU structure is gone |
-| `nan` | 0 | anything else is a dead computation |
-| head values repeating every 4th | no repeats | a texture addressing bug |
+| Line                                   | Healthy value             | What a bad value means                                                                                                     |
+| -------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `row L2 (must be 1.0)`                 | exactly 1.0               | `addExample()` unit normalizes every stored row, so anything else is proof of broken arithmetic at training time           |
+| `canvas vs imageData`                  | ~1.0                      | the same pixels through two upload paths, so a lower value means the canvas to texture upload is not seeing what was drawn |
+| `intra-class sim` vs `inter-class sim` | intra clearly higher      | intra below inter means the feature space is scrambled                                                                     |
+| `distinct values`                      | close to the total        | few distinct similarities means everything is tying, which produces a hard content independent 100%/0%                     |
+| `zeros` in an embedding                | roughly 10 to 15% of 1280 | near zero sparsity means the ReLU structure is gone                                                                        |
+| `nan`                                  | 0                         | anything else is a dead computation                                                                                        |
+| head values repeating every 4th        | no repeats                | a texture addressing bug                                                                                                   |
 
 Cosine similarity above 1.0 between unit vectors is impossible and is itself
 proof of broken arithmetic.

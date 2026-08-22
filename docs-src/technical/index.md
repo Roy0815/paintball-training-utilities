@@ -77,10 +77,10 @@ what makes training on a phone take seconds.
 
 ## Where the interesting decisions live
 
-| Topic | Page |
-| --- | --- |
-| Folder layout, build and deployment | [Project structure](./project-structure) |
-| Router, header, i18n, navigation state | [App shell](./app-shell) |
+| Topic                                   | Page                                                   |
+| --------------------------------------- | ------------------------------------------------------ |
+| Folder layout, build and deployment     | [Project structure](./project-structure)               |
+| Router, header, i18n, navigation state  | [App shell](./app-shell)                               |
 | Camera, training and counting internals | [Snaptraining Dryrun internals](./snaptraining-dryrun) |
-| Backend selection and its verification | [ML backend and verification](./ml-backend) |
-| Dev loop, device testing, conventions | [Development workflow](./development) |
+| Backend selection and its verification  | [ML backend and verification](./ml-backend)            |
+| Dev loop, device testing, conventions   | [Development workflow](./development)                  |

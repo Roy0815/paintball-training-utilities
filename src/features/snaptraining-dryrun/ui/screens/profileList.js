@@ -5,10 +5,16 @@ import { t, formatDate } from '../../../../shared/i18n.js';
 
 function formatTrainedAt(profile) {
   if (!profile.trainedAt) return t('snap-dryrun.list.notTrained');
-  return t('snap-dryrun.list.trainedAt', { date: formatDate(profile.trainedAt) });
+  return t('snap-dryrun.list.trainedAt', {
+    date: formatDate(profile.trainedAt),
+  });
 }
 
-export function renderListScreen(container, profiles, { onCreate, onRetrain, onLive, onBack, refresh }) {
+export function renderListScreen(
+  container,
+  profiles,
+  { onCreate, onRetrain, onLive, onBack, refresh },
+) {
   setHeader({ title: t('feature.snaptrainingDryrun.name'), onBack });
 
   container.innerHTML = `
@@ -36,7 +42,7 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
                         <div class="profile-card-actions">
                           <button type="button" class="btn" data-action="retrain">${t('snap-dryrun.list.retrain')}</button>
                           <button type="button" class="btn btn-danger" data-action="delete">${t(
-                            'snap-dryrun.list.delete'
+                            'snap-dryrun.list.delete',
                           )}</button>
                         </div>
                       </div>
@@ -49,7 +55,7 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
                           : ''
                       }
                     </article>
-                  `
+                  `,
                 )
                 .join('')}
             </div>`
@@ -57,7 +63,9 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
     </section>
   `;
 
-  container.querySelector('#new-profile-btn').addEventListener('click', onCreate);
+  container
+    .querySelector('#new-profile-btn')
+    .addEventListener('click', onCreate);
 
   container.querySelectorAll('.profile-card').forEach((card) => {
     const id = card.dataset.id;
@@ -92,14 +100,22 @@ export function renderListScreen(container, profiles, { onCreate, onRetrain, onL
       });
     }
 
-    card.querySelector('[data-action="retrain"]').addEventListener('click', () => onRetrain(profile));
+    card
+      .querySelector('[data-action="retrain"]')
+      .addEventListener('click', () => onRetrain(profile));
 
-    card.querySelector('[data-action="delete"]').addEventListener('click', async () => {
-      if (window.confirm(t('snap-dryrun.list.deleteConfirm', { name: profile.name }))) {
-        await storage.deleteProfile(id);
-        refresh();
-      }
-    });
+    card
+      .querySelector('[data-action="delete"]')
+      .addEventListener('click', async () => {
+        if (
+          window.confirm(
+            t('snap-dryrun.list.deleteConfirm', { name: profile.name }),
+          )
+        ) {
+          await storage.deleteProfile(id);
+          refresh();
+        }
+      });
   });
 
   return null;
