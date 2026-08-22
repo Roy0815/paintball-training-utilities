@@ -42,7 +42,15 @@ function renderLangSwitch() {
 function setupScrollHint(sentinelEl) {
   new IntersectionObserver(
     ([entry]) => {
-      scrollHintEl.hidden = entry.isIntersecting;
+      // A short screen still fills #app's min-height via main's flex: 1, so
+      // the sentinel lands right on the viewport's own edge, where sub-pixel
+      // rounding can decide intersection either way. Whether the page can
+      // scroll at all sidesteps that: scrollHeight and clientHeight come from
+      // the same element at the same instant, so there is no tolerance to
+      // guess.
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight > doc.clientHeight + 1;
+      scrollHintEl.hidden = !scrollable || entry.isIntersecting;
     },
     { rootMargin: `0px 0px ${SCROLL_END_MARGIN_PX}px 0px` }
   ).observe(sentinelEl);

@@ -165,12 +165,27 @@ ausgeblendet, damit er nie auf dem letzten Element liegt. Die Screens hier sind
 auf einem Handy lang genug zum Scrollen, und ein wichtiger Button knapp unter
 der Kante wirkt nicht versteckt, sondern schlicht nicht vorhanden.
 
-Gesteuert wird er über die Scrollwerte des Dokuments und nicht über einen
-Scroll-Container, weil die Seite als Ganzes scrollt. Ein `ResizeObserver` auf
-`#view` deckt die Fälle ab, in denen weder ein Scroll- noch ein Resize-Event
-feuert: Screens tauschen ihren Inhalt ohne Navigation, und eine Kameravorschau
-ändert ihre Höhe, sobald der Stream seine Auflösung meldet. Scroll und Resize
-werden auf den nächsten Frame gebündelt, weil der Handler Layout liest.
+Er beantwortet direkt die Frage "ist das Seitenende sichtbar", mit einem
+`IntersectionObserver` auf einem 1px-Sentinel direkt nach `#view`, statt
+Scroll-Offsets zu vergleichen. Offset-Arithmetik muss eine Toleranz für
+gebrochene Gerätepixel raten und liest einen Layout-Viewport, den ein mobiler
+Browser genau dann unter einem verschiebt, wenn seine Leisten einklappen, und
+genau dann zählt die Antwort. Der Observer braucht auch kein eigenes
+Scroll-, Resize- oder Content-Height-Plumbing: Alles, was das Seitenende
+verschiebt, feuert ihn von selbst neu. Er bekommt 40px `rootMargin` unten,
+ungefähr das untere Padding eines Screens, damit der Hinweis aufgibt, sobald
+das letzte echte Element daran vorbei ist, statt durch leeres Padding hindurch
+festzuhalten.
+
+Ein kurzer Screen streckt `main#view` (`flex: 1`) trotzdem, um `#app`s
+`min-height: 100dvh` zu füllen, wodurch der Sentinel bei wenig Inhalt genau auf
+der Kante des Viewports landet, wo Rundung auf Subpixel-Ebene die Intersection
+des Observers in beide Richtungen entscheiden kann. Der Callback prüft deshalb
+zusätzlich `document.documentElement.scrollHeight > clientHeight`: Ob die Seite
+überhaupt scrollen kann, hat keine solche Rundungs-Unschärfe, weil beide Werte
+vom selben Element im selben Moment kommen, und blendet den Hinweis zwangsweise
+aus, wenn die Seite nicht scrollbar ist, unabhängig davon, was der Sentinel
+meldet.
 
 Zwei zugehörige CSS-Details stehen in `style.css`: `#app` nutzt `100dvh` neben
 `100vh`, weil `vh` den Streifen hinter den Browserleisten mitzählt und Screens

@@ -154,12 +154,24 @@ page so it never covers the last element. Screens here are long enough to scroll
 on a phone, and a primary button just below the fold reads as a missing button
 rather than a hidden one.
 
-It is driven by the document's own scroll metrics rather than a scroll
-container, because the page scrolls as a whole. A `ResizeObserver` on `#view`
-covers the cases where no scroll or resize event fires at all: screens swap
-their content without navigating, and a camera preview changes height once the
-stream reports its resolution. Both scroll and resize are coalesced onto the
-next animation frame, since the handler reads layout.
+It answers "is the end of the page on screen" with an `IntersectionObserver` on
+a 1px sentinel placed right after `#view`, rather than comparing scroll offsets.
+Offset arithmetic has to guess a tolerance for fractional device pixels and
+reads a layout viewport that a mobile browser resizes underneath you as its
+toolbars collapse, which is exactly when the answer matters. The observer also
+needs no scroll, resize or content-height plumbing of its own: anything that
+moves the end of the page re-fires it. It gets 40px of bottom `rootMargin`,
+roughly a screen's bottom padding, so the hint gives up once the last real
+element is clear of it instead of hanging on through empty padding.
+
+A short screen still stretches `main#view` (`flex: 1`) to fill `#app`'s
+`min-height: 100dvh`, so on a page with little content the sentinel lands right
+on the viewport's own edge, where sub-pixel rounding can decide the observer's
+intersection either way. The callback therefore also checks
+`document.documentElement.scrollHeight > clientHeight`: whether the page can
+scroll at all has no such rounding ambiguity, since both numbers come from the
+same element at the same instant, and it force-hides the hint when the page
+isn't scrollable regardless of what the sentinel reports.
 
 Two related CSS details live in `style.css`: `#app` uses `100dvh` alongside
 `100vh`, because `vh` includes the strip behind the mobile browser's own bars
