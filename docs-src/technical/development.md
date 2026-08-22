@@ -43,6 +43,28 @@ virtualized NAT, after which Cloudflare serves error 1033 for the printed URL
 instead. HTTP/2 rides on a plain TCP connection and stays up for the length of
 a session.
 
+## Regenerating spoken number clips
+
+```bash
+npm run generate:numbers
+```
+
+`scripts/generate-number-clips.mjs` recreates the clips in
+`public/audio/numbers/` (see that folder's `README.md` for which numbers exist
+and how they're used) via Google Cloud Text-to-Speech, needed if a number is
+missing or a source recording is lost. Requires a `GC_TEXT2SPEECH_API_KEY` in
+`.env`, from a Google Cloud project with the "Cloud Text-to-Speech API"
+enabled; usage stays well inside the free monthly quota.
+
+Every clip is piped through `ffmpeg` (via the `ffmpeg-static` devDependency,
+no system install needed) to strip lead-in and trailing silence before being
+written. The original recordings had close to a second of near-silence
+padding per clip, which made the countdown's number announcements lag behind
+the on-screen tick. A naive silence threshold cuts too eagerly: compound
+numbers like "fünfundzwanzig" have a brief pause mid-word that looks just like
+trailing silence, so the trailing cut requires a longer minimum duration than
+the leading one to avoid chopping the second half of the word off.
+
 ## On device debug tooling
 
 Built into the app rather than added and removed per bug, because it is what

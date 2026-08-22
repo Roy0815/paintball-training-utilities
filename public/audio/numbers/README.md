@@ -18,3 +18,9 @@ finer step or another module.
 Format: MP3, mono is fine. Keep the clips short, just the spoken number with no
 lead-in silence, so playback feels immediate. Any other extension needs a
 matching change in `shared/audio.js`.
+
+Generated via Google Cloud Text-to-Speech and trimmed with `ffmpeg` by
+`npm run generate:numbers` (`scripts/generate-number-clips.mjs`). Re-run it to
+add a missing number or replace a lost recording; see
+[the development docs](../../../docs-src/technical/development.md#regenerating-spoken-number-clips)
+for setup.

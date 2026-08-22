@@ -34,6 +34,7 @@ public/
     numbers/                 Gesprochene Zahlen, <zahl>_<sprache>.mp3
 docs-src/                    Diese Dokumentationsseite
 scripts/tunnel-qr.mjs        Cloudflare-Tunnel plus QR-Code für Handytests
+scripts/generate-number-clips.mjs  Erzeugt public/audio/numbers/ neu über Google TTS
 ```
 
 ::: tip Benennung

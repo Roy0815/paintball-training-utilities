@@ -24,3 +24,5 @@ docs-src/.vitepress/dist
 *.njsproj
 *.sln
 *.sw?
+
+.env

@@ -45,6 +45,30 @@ innerhalb weniger Minuten still abbricht, danach liefert Cloudflare für die
 ausgegebene URL nur noch Fehler 1033. HTTP/2 läuft über eine normale
 TCP-Verbindung und bleibt für die Dauer einer Session stabil.
 
+## Zahlen-Clips neu erzeugen
+
+```bash
+npm run generate:numbers
+```
+
+`scripts/generate-number-clips.mjs` erzeugt die Clips in
+`public/audio/numbers/` neu (siehe die `README.md` in diesem Ordner für die
+vorhandenen Zahlen und ihre Verwendung) über Google Cloud Text-to-Speech,
+nötig wenn eine Zahl fehlt oder eine Originalaufnahme verloren geht. Braucht
+einen `GC_TEXT2SPEECH_API_KEY` in `.env`, aus einem Google-Cloud-Projekt mit
+aktivierter "Cloud Text-to-Speech API"; die Nutzung bleibt weit innerhalb des
+kostenlosen monatlichen Kontingents.
+
+Jeder Clip läuft durch `ffmpeg` (über die Dev-Dependency `ffmpeg-static`, keine
+Systeminstallation nötig), um Stille vor und nach dem gesprochenen Wort
+abzuschneiden, bevor er geschrieben wird. Die Originalaufnahmen hatten pro
+Clip fast eine Sekunde Stille als Polsterung, wodurch die Zahlenansage im
+Countdown hinter dem sichtbaren Tick herhinkte. Eine naive Stille-Schwelle
+schneidet zu gierig: zusammengesetzte Zahlen wie "fünfundzwanzig" haben mitten
+im Wort eine kurze Pause, die genauso aussieht wie die Stille am Ende, daher
+braucht der Schnitt am Ende eine längere Mindestdauer als der am Anfang, um
+nicht die zweite Worthälfte abzuschneiden.
+
 ## Debug-Werkzeuge auf dem Gerät
 
 Fest eingebaut statt pro Fehler hinzugefügt und wieder entfernt, weil genau diese
