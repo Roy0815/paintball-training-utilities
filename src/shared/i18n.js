@@ -96,6 +96,7 @@ const STRINGS = {
     de: 'Maya Tempel / Dorito 1 / Eingangstür',
     en: 'Maya temple / dorito 1 / entrance door',
   },
+  'snap-dryrun.setup.nameRequired': { de: 'Name darf nicht leer sein', en: 'Name must not be empty' },
   'snap-dryrun.setup.cameraLabel': { de: 'Kamera', en: 'Camera' },
   'snap-dryrun.setup.cameraRear': { de: 'Rückkamera', en: 'Rear camera' },
   'snap-dryrun.setup.cameraFront': { de: 'Frontkamera', en: 'Front camera' },
