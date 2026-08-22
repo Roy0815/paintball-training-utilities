@@ -200,6 +200,7 @@ export function renderCaptureScreen(container, draft, { onBack, onNext }) {
   });
 
   return () => {
+    cancelled = true;
     if (previewRafId) cancelAnimationFrame(previewRafId);
     stopCamera(stream);
   };
