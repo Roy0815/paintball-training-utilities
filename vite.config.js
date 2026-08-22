@@ -53,6 +53,11 @@ export default defineConfig(({ command }) => ({
         // is not part of the app. Precaching it would put unrelated pages into
         // the offline install and add the docs to every service worker update.
         globIgnores: ['docs/**'],
+        // Without this, Workbox's default NavigationRoute treats /docs/ as just
+        // another in-scope navigation and serves it the cached app shell,
+        // which then boots the app's hash router straight to '#/'. This routes
+        // any direct navigation under docs/ to the network/HTTP cache instead.
+        navigateFallbackDenylist: [/\/docs(\/|$)/],
         // MobileNet weights (~5 MB) come from the TFHub CDN, so they are not
         // part of the build output and need their own runtime caching rule.
         runtimeCaching: [
