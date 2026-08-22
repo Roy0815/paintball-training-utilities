@@ -25,9 +25,16 @@ import { LABELS } from './labeling.js';
  * Classifies frames from `videoEl` in a loop and tracks a debounced presence
  * state. A raw snap/cover prediction only flips the confirmed state once it
  * has repeated for `confirmFrames` consecutive frames, which absorbs single
- * frame misclassifications. onDetect() fires once per cover to snap
- * transition, so holding a snap across many frames still counts once and the
- * next count needs a confirmed cover in between.
+ * frame misclassifications. onDetect() and onPeekComplete() both fire once
+ * per confirmed snap-to-cover transition, i.e. once a peek is over and the
+ * person is back in cover, not when they first appear, and are awaited in
+ * that order rather than fired concurrently, since both typically persist to
+ * the same stored profile and a concurrent read-modify-write would lose
+ * whichever update saved first. That means a peek still open when stop() is
+ * called never fires either callback, since that requires a later tick that
+ * will never run, so an in-progress peek is never counted and never
+ * contributes a duration. onPeekComplete() receives that peek's duration in
+ * ms.
  *
  * Returns { stop, runDiagnostic }.
  *
@@ -56,6 +63,7 @@ export async function startLiveDetection(
     k = 6,
     confidenceThreshold = 0.6,
     onDetect,
+    onPeekComplete,
     onTick,
     onReady,
   }
@@ -80,6 +88,7 @@ export async function startLiveDetection(
   let confirmedPresent = false;
   let pendingLabelIsPerson = null;
   let pendingStreak = 0;
+  let peekStartTime = null;
 
   // A rolling window rather than an all time average. The first few ticks
   // after a cold start (JIT warmup, first WASM calls) run much slower and
@@ -120,7 +129,17 @@ export async function startLiveDetection(
           confirmedPresent = isPersonFrame;
           pendingLabelIsPerson = null;
           pendingStreak = 0;
-          if (confirmedPresent) onDetect?.();
+          if (confirmedPresent) {
+            peekStartTime = Date.now();
+          } else if (peekStartTime !== null) {
+            // Awaited in sequence, not fired together: both callbacks do a
+            // read-modify-write on the same stored profile, and running them
+            // concurrently let the second one read a stale copy and overwrite
+            // the first one's update, silently losing the counter increment.
+            await onDetect?.();
+            await onPeekComplete?.(Date.now() - peekStartTime);
+            peekStartTime = null;
+          }
         }
       }
 

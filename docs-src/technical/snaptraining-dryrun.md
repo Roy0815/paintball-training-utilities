@@ -5,7 +5,7 @@ name and is kept so existing stored profiles stay readable.
 
 | Module | Responsibility |
 | --- | --- |
-| `storage.js` | Profile CRUD, capture defaults, counter updates |
+| `storage.js` | Profile CRUD, capture defaults, counter and peek duration updates |
 | `capture.js` | Camera, center square cropping, timed capture series |
 | `labeling.js` | Label constants, counting, validation |
 | `training.js` | Embeddings, class balancing, KNN training |
@@ -31,6 +31,7 @@ A snapshot position is one object in `snaptraining-dryrun:profiles`:
   previewImage,          // one training photo as the list thumbnail
   counter,
   history,               // timestamps of counted reps
+  peekDurations,         // ms durations of completed peeks
   createdAt,
   trainedAt,
 }
@@ -168,11 +169,43 @@ isPersonFrame = label === 'person' && confidence >= 0.6
 if isPersonFrame === confirmedPresent   reset the pending streak
 else                                    grow the streak
   streak >= confirmFrames (2)           flip confirmedPresent
-                                        count on a flip to present
+                                        confirmedPresent true:  note the start time
+                                        confirmedPresent false: count, report the peek duration
 ```
 
-One rep is one cover to snap transition. Holding a snap counts once, and the next
-rep needs a confirmed cover in between, so nothing double counts.
+One rep is one full cover-snap-cover cycle, counted on the return to cover
+rather than the moment of leaving it: only then is the peek actually over, and
+only then is its duration known. Holding a snap counts once regardless of how
+long it lasts, and the next rep needs a confirmed cover in between, so nothing
+double counts. See [peek duration](#peek-duration) below for what "count" and
+"report" mean concretely.
+
+### Peek duration
+
+`peekStartTime` is set to `Date.now()` the moment `confirmedPresent` flips to
+`true`, and read back the moment it flips to `false` again, so `onDetect()`
+and `onPeekComplete(durationMs)` fire together, in that order, with the
+elapsed time between the two. Both live in the same branch of the debounce, so
+a peek still open when `stop()` is called never fires either one: the falling
+edge needs a later tick that will never run, since `stop()` sets
+`stopped = true` and clears the pending `setTimeout`. That is deliberate, not
+an edge case worth guarding separately. It is what keeps a snap-out
+interrupted by pressing "Training stoppen" mid-peek, most commonly the walk
+back into frame to reach the phone, from being counted as a rep or recorded as
+an unusually slow peek at all.
+
+`storage.js` persists completed durations on the profile as `peekDurations: []`,
+appended by `recordPeekDuration()` on every `onPeekComplete`, mirroring
+`recordDetection()`'s counter update as an independent write. A profile saved
+before this field existed loads with `peekDurations === undefined`, so
+`recordPeekDuration()` and `removeLastPeekDuration()` both self heal with
+`profile.peekDurations ??= []` rather than depending on a migration step.
+`resetCounter()` clears `peekDurations` alongside `counter` and `history`, so
+the two can never disagree about whether a session has started.
+`removeLastPeekDuration()` pops the most recent entry, for the live screen's
+manual "Remove last value" control, and is unrelated to the automatic
+exclusion above: that one is for a peek that never completed, this one is for
+a completed peek the person judges was not representative anyway.
 
 ### k and the threshold
 
@@ -239,6 +272,48 @@ The live screen redraws its crop preview on its own `requestAnimationFrame`
 loop, not on classification ticks. Tied to inference it looked like a choppy 8 to
 10 fps preview on an unaccelerated backend.
 
+## Live screen states, `ui/screens/live.js`
+
+The screen used to start the camera and detection together, unconditionally,
+on mount. It now separates the two: the camera still starts immediately, so
+the phone can be positioned, but `startLiveDetection()` is not called until
+the person presses **Training starten** and a configurable start timer
+(seconds in the UI, converted to ms, default `DEFAULT_LIVE_START_DELAY_MS`)
+has counted down. That gives them time to get back into position, the same
+problem the capture screen's own start delay solves for the person being
+photographed, though the two delays are kept as separate constants since they
+serve unrelated screens and have no reason to change together.
+
+Three states, tracked as which of `#idle-controls` (the delay input plus
+**Training starten**) and `#stop-training-btn` is visible, never both at once:
+
+- **idle** — camera running, nothing counted yet, `#idle-controls` visible.
+- **counting down** — `#idle-controls` hidden, `#stop-training-btn` already
+  visible so the countdown itself can be aborted, status line shows the
+  countdown text.
+- **running** — `startLiveDetection()` active, status line shows the live
+  snap/cover percentages.
+
+Stopping, whether during the countdown or while running, clears the countdown
+`setInterval` if one is pending, calls `detection.stop()` if a classifier is
+loaded, and returns to idle without touching the camera stream or the crop
+preview loop, both of which run for the entire lifetime of the screen. Calling
+`startLiveDetection()` again on a later start is safe and cheap: MobileNet is
+memoized at module scope in `ml-utils.js`, so it is not reloaded, and `stop()`
+disposes the previous classifier's tensors before a new one is created.
+
+::: warning `[hidden]` on an element with its own `display`
+`#idle-controls` needs `display: flex` to lay out the delay field above the
+start button, and an authored `display` on the same class beats the browser's
+`[hidden] { display: none }` rule on the specificity tie, the same pitfall
+already documented for `.back-link` and others, see
+[CSS conventions](./app-shell#css-conventions-style-css). Without the
+override the element stayed visible and clickable after being hidden, which
+is what let "Training starten" fire more than once per session. The fix is
+the same one used everywhere else: an explicit
+`.idle-controls[hidden] { display: none; }` rule.
+:::
+
 ## Screens
 
 | Screen | File | Notes |
@@ -248,7 +323,7 @@ loop, not on classification ticks. Tied to inference it looked like a choppy 8 t
 | Capture | `screens/capture.js` | Opens the camera, series settings, crop preview, thumbnails, debug panel |
 | Label | `screens/label.js` | Swipe cards with pointer events, ignore, previous |
 | Train | `screens/train.js` | Progress, saves the profile, no back target |
-| Live | `screens/live.js` | Counter, status line, engine warning, debug tooling |
+| Live | `screens/live.js` | Counter, peek stats, delayed start with a cancellable countdown, engine warning, debug tooling |
 | Settings | `screens/settings.js` | Camera and number sound switches, reached from the app's settings screen |
 
 ::: warning The profile card click target

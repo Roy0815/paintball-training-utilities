@@ -6,7 +6,7 @@ bleiben.
 
 | Modul | Zuständigkeit |
 | --- | --- |
-| `storage.js` | Profil-CRUD, Aufnahme-Defaults, Zähleraktualisierung |
+| `storage.js` | Profil-CRUD, Aufnahme-Defaults, Zähler- und Peek-Dauer-Aktualisierung |
 | `capture.js` | Kamera, quadratischer Mittenzuschnitt, getaktete Aufnahmeserie |
 | `labeling.js` | Label-Konstanten, Zählung, Validierung |
 | `training.js` | Embeddings, Klassenausgleich, KNN-Training |
@@ -32,6 +32,7 @@ Eine Snapshot-Position ist ein Objekt in `snaptraining-dryrun:profiles`:
   previewImage,          // ein Trainingsfoto als Vorschaubild der Liste
   counter,
   history,               // Zeitstempel gezählter Wiederholungen
+  peekDurations,         // Dauer abgeschlossener Peeks in ms
   createdAt,
   trainedAt,
 }
@@ -180,12 +181,46 @@ isPersonFrame = label === 'person' && confidence >= 0.6
 wenn isPersonFrame === confirmedPresent   laufende Serie zurücksetzen
 sonst                                     Serie erhöhen
   Serie >= confirmFrames (2)               confirmedPresent umschalten
-                                           beim Umschalten auf präsent zählen
+                                           confirmedPresent true:  Startzeit merken
+                                           confirmedPresent false: zählen, Peek-Dauer melden
 ```
 
-Eine Wiederholung ist ein Übergang von Deckung zu Snap. Wer herausgesnapt bleibt,
-zählt einmal, und die nächste Wiederholung braucht eine bestätigte Deckung
-dazwischen. Doppelt zählt nichts.
+Eine Wiederholung ist ein vollständiger Zyklus Deckung-Snap-Deckung, gezählt
+bei der Rückkehr in die Deckung, nicht beim Herausgehen: erst dann ist der
+Peek wirklich vorbei und seine Dauer bekannt. Wer herausgesnapt bleibt, zählt
+einmal, egal wie lange, und die nächste Wiederholung braucht eine bestätigte
+Deckung dazwischen. Doppelt zählt nichts. Was "zählen" und "melden" konkret
+bedeuten, steht unter [Peek-Dauer](#peek-dauer).
+
+### Peek-Dauer
+
+`peekStartTime` wird auf `Date.now()` gesetzt, sobald `confirmedPresent` auf
+`true` kippt, und beim Zurückkippen auf `false` wieder ausgelesen. Dadurch
+feuern `onDetect()` und `onPeekComplete(durationMs)` gemeinsam, in dieser
+Reihenfolge, mit der verstrichenen Zeit dazwischen. Beide stecken im selben
+Zweig der Entprellung, ein beim Aufruf von `stop()` noch offener Peek löst
+also keines von beidem aus: die fallende Flanke braucht einen späteren Tick,
+der nie mehr laufen wird, weil `stop()` `stopped = true` setzt und den
+anstehenden `setTimeout` löscht. Das ist Absicht, keine gesondert
+abzusichernde Ausnahme. Genau das verhindert, dass ein durch "Training
+stoppen" mitten im Peek unterbrochener Snap-out, meist der Weg zurück ins Bild
+bis zum Handy, überhaupt als Wiederholung zählt oder als ungewöhnlich
+langsamer Peek aufgezeichnet wird.
+
+`storage.js` speichert abgeschlossene Dauern am Profil als
+`peekDurations: []`, angehängt von `recordPeekDuration()` bei jedem
+`onPeekComplete`, als vom Zählerupdate in `recordDetection()` unabhängiger
+Schreibzugriff. Ein Profil, das vor diesem Feld gespeichert wurde, lädt mit
+`peekDurations === undefined`, deshalb heilen sich `recordPeekDuration()` und
+`removeLastPeekDuration()` beide selbst mit `profile.peekDurations ??= []`,
+statt sich auf einen Migrationsschritt zu verlassen. `resetCounter()` leert
+`peekDurations` zusammen mit `counter` und `history`, damit beide nie
+widersprüchlich anzeigen, ob eine Session begonnen hat.
+`removeLastPeekDuration()` entfernt den zuletzt hinzugefügten Eintrag, für den
+manuellen "Letzten Wert entfernen"-Button des Live-Screens, und ist unabhängig
+vom automatischen Ausschluss oben: der eine gilt einem Peek, der nie
+abgeschlossen wurde, der andere einem abgeschlossenen Peek, der trotzdem als
+nicht repräsentativ eingeschätzt wird.
 
 ### k und die Schwelle
 
@@ -257,6 +292,51 @@ Der Live-Bildschirm zeichnet seine Zuschnittvorschau in einer eigenen
 Inferenz gekoppelt wirkte sie auf einem unbeschleunigten Backend wie eine
 ruckelige Vorschau mit 8 bis 10 fps.
 
+## Zustände des Live-Screens, `ui/screens/live.js`
+
+Früher startete der Screen Kamera und Erkennung gemeinsam und bedingungslos
+beim Einhängen. Jetzt sind beide getrennt: die Kamera startet weiterhin
+sofort, damit das Handy positioniert werden kann, aber `startLiveDetection()`
+wird erst aufgerufen, wenn die Person **Training starten** drückt und ein
+konfigurierbarer Start-Timer (im UI in Sekunden, intern in ms, Standard
+`DEFAULT_LIVE_START_DELAY_MS`) abgelaufen ist. Das gibt ihr Zeit, in Position
+zu laufen, dasselbe Problem, das die Start-Verzögerung des Aufnahme-Screens
+für die fotografierte Person löst, auch wenn beide Verzögerungen als
+getrennte Konstanten geführt werden, weil sie unterschiedliche Screens
+bedienen und keinen Grund haben, sich gemeinsam zu ändern.
+
+Drei Zustände, gehalten daran, welches von `#idle-controls` (Verzögerungsfeld
+plus **Training starten**) und `#stop-training-btn` sichtbar ist, nie beide
+gleichzeitig:
+
+- **idle** — Kamera läuft, noch nichts gezählt, `#idle-controls` sichtbar.
+- **Countdown** — `#idle-controls` ausgeblendet, `#stop-training-btn` schon
+  sichtbar, damit sich auch der Countdown selbst abbrechen lässt, Statuszeile
+  zeigt den Countdown-Text.
+- **läuft** — `startLiveDetection()` aktiv, Statuszeile zeigt die laufenden
+  Snap/Deckung-Prozentwerte.
+
+Stoppen, egal ob während des Countdowns oder im laufenden Betrieb, löscht ein
+eventuell laufendes Countdown-`setInterval`, ruft `detection.stop()` auf, falls
+ein Klassifikator geladen ist, und kehrt zu idle zurück, ohne den Kamera-Stream
+oder die Zuschnittvorschau-Schleife anzufassen, die beide über die gesamte
+Lebensdauer des Screens laufen. Ein erneuter Aufruf von `startLiveDetection()`
+bei einem späteren Start ist sicher und billig: MobileNet ist auf Modulebene
+in `ml-utils.js` gecacht, wird also nicht neu geladen, und `stop()` gibt die
+Tensoren des vorherigen Klassifikators frei, bevor ein neuer entsteht.
+
+::: warning `[hidden]` auf einem Element mit eigenem `display`
+`#idle-controls` braucht `display: flex`, um Verzögerungsfeld und Start-Button
+anzuordnen, und ein authored `display` auf derselben Klasse schlägt bei
+Spezifitätsgleichstand die Browserregel `[hidden] { display: none }`, genau
+dieselbe Falle, die für `.back-link` und andere bereits dokumentiert ist,
+siehe [CSS-Konventionen](./app-shell#css-konventionen-style-css). Ohne das
+Override blieb das Element nach dem Ausblenden sichtbar und klickbar, was
+"Training starten" mehrfach pro Sitzung auslösen ließ. Der Fix ist derselbe
+wie überall sonst: eine explizite Regel
+`.idle-controls[hidden] { display: none; }`.
+:::
+
 ## Screens
 
 | Screen | Datei | Anmerkung |
@@ -266,7 +346,7 @@ ruckelige Vorschau mit 8 bis 10 fps.
 | Aufnahme | `screens/capture.js` | Öffnet die Kamera, Serieneinstellungen, Zuschnittvorschau, Vorschaubilder, Debug-Panel |
 | Labeln | `screens/label.js` | Wischkarten über Pointer-Events, Ignorieren, Zurück |
 | Training | `screens/train.js` | Fortschritt, speichert das Profil, kein Zurück-Ziel |
-| Live | `screens/live.js` | Zähler, Statuszeile, Engine-Warnung, Debug-Werkzeuge |
+| Live | `screens/live.js` | Zähler, Peek-Statistik, verzögerter Start mit abbrechbarem Countdown, Engine-Warnung, Debug-Werkzeuge |
 | Einstellungen | `screens/settings.js` | Schalter für Kamera- und Zahlen-Sound, erreichbar über den Einstellungen-Screen der App |
 
 ::: warning Das Klickziel der Profilkarte

@@ -392,6 +392,17 @@ h3 {
   flex-wrap: wrap;
 }
 
+.idle-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Same [hidden] pitfall as .back-link, see its override above. */
+.idle-controls[hidden] {
+  display: none;
+}
+
 .field-row .field {
   flex: 1;
   min-width: 140px;
@@ -847,6 +858,7 @@ select {
   transform: scale(1.15);
   color: var(--accent);
 }
+
 
 progress {
   width: 100%;

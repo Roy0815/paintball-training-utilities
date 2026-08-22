@@ -98,14 +98,35 @@ in the list.
 
 Tap a trained snapshot position in the list to start live counting.
 
-- The **big number** is the current count.
-- The **status line** below it shows how confident the model currently is for
-  each class and whether it considers you snapped out or in cover.
-- **Reset counter** sets the count back to zero.
+The camera opens right away, so you can check the phone is still positioned
+correctly, but nothing is counted yet.
 
-A rep is counted on the transition from cover to snap, not every frame. Staying
-snapped out counts once. The next rep only counts after the app has seen you
-back in cover, so a single rep can never be double counted.
+- The **big number** is the current count.
+- Below it, the **peek stats** show the average, minimum and maximum duration
+  of a snap-out in milliseconds, i.e. how long you were visible between
+  clearing cover and being back in it. They read as dashes until the first
+  one completes.
+- The **status line** shows how confident the model currently is for each
+  class and whether it considers you snapped out or in cover, once counting
+  is running.
+
+Set the **start timer**, in seconds, and press **Start training**. That is how
+long you get to walk into position after pressing it, counted down out loud
+the same way the capture screen's own start delay is (see
+[training sounds](#training-sounds)). Counting only begins once it reaches
+zero. **Stop training** is available immediately, including during the
+countdown itself, and returns to the same start screen without losing the
+count or the peek stats, so you can start another set right away.
+
+A rep is counted, and its peek duration recorded, on the transition **back**
+into cover, not on the transition out of it, since the app only knows how long
+a snap-out took once it is over. A snap-out still in progress when you press
+**Stop training** is therefore not counted at all: that keeps the walk back to
+the phone at the end of a set from being recorded as an abnormally slow peek.
+**Remove last value** drops the most recently counted peek from the average,
+minimum and maximum by hand, for the case where even a completed one was not
+representative. **Reset counter** sets the count and the peek stats back to
+zero together.
 
 The app is deliberately slightly conservative: a state only changes after it has
 been seen twice in a row, which prevents a single misread frame from producing a

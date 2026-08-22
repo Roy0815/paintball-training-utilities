@@ -158,6 +158,15 @@ const STRINGS = {
   'snap-dryrun.live.stateSnap': { de: 'Snap!', en: 'Snap!' },
   'snap-dryrun.live.stateCover': { de: 'In Deckung', en: 'In cover' },
   'snap-dryrun.live.cameraError': { de: 'Live-Betrieb fehlgeschlagen: {message}', en: 'Live mode failed: {message}' },
+  'snap-dryrun.live.delayLabel': { de: 'Start-Timer (s)', en: 'Start timer (s)' },
+  'snap-dryrun.live.startTraining': { de: 'Training starten', en: 'Start training' },
+  'snap-dryrun.live.stopTraining': { de: 'Training stoppen', en: 'Stop training' },
+  'snap-dryrun.live.countdown': { de: 'Start in {seconds}s…', en: 'Starting in {seconds}s…' },
+  'snap-dryrun.live.peekStats': {
+    de: 'Dauer ⌀ {avg}ms · min {min}ms · max {max}ms',
+    en: 'Duration avg {avg}ms · min {min}ms · max {max}ms',
+  },
+  'snap-dryrun.live.removePeek': { de: 'Letzten Wert entfernen', en: 'Remove last value' },
 
   'snap-dryrun.settings.cameraSound': { de: 'Kamera-Sound', en: 'Camera sound' },
   'snap-dryrun.settings.cameraSoundHint': {

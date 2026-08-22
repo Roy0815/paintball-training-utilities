@@ -5,6 +5,7 @@ const store = createStore('snaptraining-dryrun:profiles');
 export const DEFAULT_CAPTURE_COUNT = 30;
 export const DEFAULT_CAPTURE_INTERVAL_MS = 1000;
 export const DEFAULT_CAPTURE_DELAY_MS = 5000;
+export const DEFAULT_LIVE_START_DELAY_MS = 5000;
 
 export function listProfiles() {
   return store.getAll();
@@ -37,6 +38,7 @@ export function createProfileDraft({ name, facingMode }) {
     previewImage: null,
     counter: 0,
     history: [],
+    peekDurations: [],
     createdAt: Date.now(),
     trainedAt: null,
   };
@@ -57,6 +59,27 @@ export async function resetCounter(id) {
   if (!profile) return null;
   profile.counter = 0;
   profile.history = [];
+  profile.peekDurations = [];
+  await saveProfile(profile);
+  return profile;
+}
+
+/** Records one completed peek's duration (cover-to-snap back to cover), in ms. */
+export async function recordPeekDuration(id, durationMs) {
+  const profile = await getProfile(id);
+  if (!profile) return null;
+  profile.peekDurations ??= [];
+  profile.peekDurations.push(durationMs);
+  await saveProfile(profile);
+  return profile;
+}
+
+/** Drops the most recently completed peek, e.g. when it wasn't representative. */
+export async function removeLastPeekDuration(id) {
+  const profile = await getProfile(id);
+  if (!profile) return null;
+  profile.peekDurations ??= [];
+  profile.peekDurations.pop();
   await saveProfile(profile);
   return profile;
 }

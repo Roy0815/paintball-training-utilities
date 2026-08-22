@@ -104,15 +104,35 @@ der Liste.
 Tippe in der Liste auf eine trainierte Snapshot-Position, um die Live-Zählung zu
 starten.
 
-- Die **große Zahl** ist der aktuelle Zählerstand.
-- Die **Statuszeile** darunter zeigt, wie sicher sich das Modell gerade für jede
-  Klasse ist und ob es dich als herausgesnapt oder in Deckung einstuft.
-- **Counter zurücksetzen** setzt den Zähler auf null.
+Die Kamera geht sofort auf, damit du prüfen kannst, ob das Handy noch richtig
+steht. Gezählt wird aber noch nichts.
 
-Gezählt wird der Übergang von Deckung zu Snap, nicht jedes Einzelbild. Wer
-herausgesnapt stehen bleibt, wird einmal gezählt. Die nächste Wiederholung zählt
-erst, wenn die App dich wieder in Deckung gesehen hat, eine Wiederholung kann
-also nie doppelt zählen.
+- Die **große Zahl** ist der aktuelle Zählerstand.
+- Darunter zeigt die **Peek-Statistik** Durchschnitt, Minimum und Maximum der
+  Dauer eines Snap-outs in Millisekunden, also wie lange du sichtbar warst,
+  vom Verlassen der Deckung bis zur Rückkehr. Bis zum ersten abgeschlossenen
+  Peek stehen dort Striche.
+- Die **Statuszeile** zeigt, sobald die Zählung läuft, wie sicher sich das
+  Modell gerade für jede Klasse ist und ob es dich als herausgesnapt oder in
+  Deckung einstuft.
+
+Stelle den **Start-Timer** in Sekunden ein und drücke **Training starten**.
+So viel Zeit bleibt dir, nach dem Drücken in Position zu laufen, laut
+heruntergezählt genauso wie die Start-Verzögerung beim Aufnehmen (siehe
+[Trainings-Sounds](#trainings-sounds)). Gezählt wird erst ab null. **Training
+stoppen** steht sofort zur Verfügung, auch schon während des Countdowns, und
+bringt dich zurück zum Startbildschirm, ohne Zähler oder Peek-Statistik zu
+verlieren, sodass du direkt eine weitere Serie starten kannst.
+
+Eine Wiederholung wird gezählt, und ihre Peek-Dauer aufgezeichnet, beim
+Übergang **zurück** in die Deckung, nicht beim Herausgehen, denn die App weiß
+erst nach Ende eines Snap-outs, wie lange er gedauert hat. Ein Snap-out, der
+noch läuft, wenn du **Training stoppen** drückst, zählt deshalb gar nicht: so
+wird der Weg zurück zum Handy am Ende einer Serie nicht als ungewöhnlich
+langsamer Peek mitgezählt. **Letzten Wert entfernen** nimmt den zuletzt
+gezählten Peek von Hand wieder aus Durchschnitt, Minimum und Maximum heraus,
+falls selbst ein abgeschlossener nicht repräsentativ war. **Counter
+zurücksetzen** setzt Zähler und Peek-Statistik gemeinsam auf null zurück.
 
 Die App ist absichtlich etwas konservativ: ein Zustand wechselt erst, wenn er
 zweimal hintereinander erkannt wurde. Das verhindert, dass ein einzelnes falsch
